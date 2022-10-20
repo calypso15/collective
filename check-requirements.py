@@ -78,3 +78,4 @@ def check_requirements() -> str:
     return State(2**math.floor(math.log2(state)))
 
 print(check_requirements().name)
+print('UPDATE!')
