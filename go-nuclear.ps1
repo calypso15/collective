@@ -1,9 +1,9 @@
 Invoke-Command -ScriptBlock {
     winget install python --accept-package-agreements --accept-source-agreements
-    winget install git --accept-package-agreements --accept-source-agreements
-
+    winget install git.git --accept-package-agreements --accept-source-agreements
 }
 
+$env:Path = [System.Environment]::GetEnvironmentVariable("Path","Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path","User")
 Set-Location $HOME
 
 Invoke-Command -ScriptBlock {
