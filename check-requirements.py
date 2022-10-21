@@ -8,10 +8,10 @@ from enum import IntEnum
 from subprocess import getoutput
 
 class State(IntEnum):
-    PASS = 0
-    WARN = 1
-    FAIL = 2
-    FATAL = 4
+    PASS = 1
+    WARN = 2
+    FAIL = 4
+    FATAL = 8
 
 def is_windows() -> bool:
     return platform.system() == 'Windows'
@@ -78,4 +78,3 @@ def check_requirements() -> str:
     return State(2**math.floor(math.log2(state)))
 
 print(check_requirements().name)
-print('UPDATE!')
