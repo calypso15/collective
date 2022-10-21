@@ -53,28 +53,47 @@ def check_requirements() -> str:
         print('System processor is Intel Core i7 or i9...PASS.')
     else:
         print('System processor is Intel Core i7 or i9...WARN.')
+        print(f'  System reports processor name \'{test}\'')
         state = state | State.WARN
-    print(f'  System reports processor name \'{test}\'')
 
     test = -(get_free_diskspace()//-(2**30))
     if test >= 500:
         print('Disk has at least 500GB of free space...PASS.')
     else:
         print('Disk has at least 500GB of free space...FAIL!')
+        print(f'  System reports {test}GB of free space.')
         state = state | State.FAIL
-    print(f'  System reports {test}GB of free space.')
 
     test = -(get_total_memory()//-(2**30))
     if test >= 64:
         print('System has at least 64GB of memory...PASS.')
     elif test >= 32:
         print('System has at least 64GB of memory...WARN.')
+        print(f'  System reports {test}GB of memory.')
         state = state | State.WARN
     else:
         print('System has at least 64GB of memory...FAIL!')
+        print(f'  System reports {test}GB of memory.')
         state = state | State.FAIL
-    print(f'  System reports {test}GB of memory.')
+
 
     return State(2**math.floor(math.log2(state)))
 
-print(check_requirements().name)
+print('Checking system requirements...')
+result = check_requirements()
+print('')
+
+if(result == State.PASS):
+    print('This system meets all requirements.')
+elif(result == State.WARN):
+    while(True):
+        print('This system may be insufficient, proceed at your own risk. ', end='')
+        answer = input('Proceed [y/n]? ')
+        if answer.lower() in ["y","yes"]:
+            break
+        elif answer.lower() in ["n","no"]:
+            print('Aborting.')
+            exit()
+else:
+    print('This system does not meet the minimum requirements, aborting.')
+    exit()
