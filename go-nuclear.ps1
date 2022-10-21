@@ -1,3 +1,4 @@
+# Update environment variables
 $env:Path = [System.Environment]::GetEnvironmentVariable("Path","Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path","User")
 
 # Install chocolatey
@@ -63,9 +64,8 @@ if(Compare-Object -ReferenceObject $(Get-Content $HOME/go-nuclear/go-nuclear.ps1
     exit
 }
 
+# Start python script
 Invoke-Command -ScriptBlock {
     pip install -r requirements.txt
     python check-requirements.py
 }
-
-Write-Host 'Test2'
