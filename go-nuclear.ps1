@@ -1,3 +1,5 @@
+$env:Path = [System.Environment]::GetEnvironmentVariable("Path","Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path","User")
+
 # Install chocolatey
 if ((Get-Command 'choco.exe' -ErrorAction SilentlyContinue) -eq $null) {
     Write-Host('Installing chocolatey...')
@@ -66,4 +68,4 @@ Invoke-Command -ScriptBlock {
     python check-requirements.py
 }
 
-Write-Host 'Test1'
+Write-Host 'Test2'
