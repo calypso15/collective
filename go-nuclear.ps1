@@ -40,7 +40,7 @@ if ((Get-Command 'python.exe' -ErrorAction SilentlyContinue) -eq $null) {
 $env:Path = [System.Environment]::GetEnvironmentVariable("Path","Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path","User")
 
 # Clone the go-nuclear repo if it doesn't already exist
-if (-Not (Test-Path -Path $HOME/go-nuclear)) {
+if (-Not (Test-Path -Path $HOME/Documents/go-nuclear)) {
     Set-Location $HOME/Documents
 
     Write-Host('Cloning go-nuclear repo...')
@@ -48,7 +48,7 @@ if (-Not (Test-Path -Path $HOME/go-nuclear)) {
         git clone https://github.com/calypso15/go-nuclear.git
     }
 
-    if (-Not (Test-Path -Path $HOME/go-nuclear)) {
+    if (-Not (Test-Path -Path $HOME/Documents/go-nuclear)) {
         throw 'Failed to clone go-nuclear repo, aborting.'
     }
 }
@@ -61,9 +61,9 @@ Invoke-Command -ScriptBlock {
 }
 
 # Check for updated script
-if(Compare-Object -ReferenceObject $(Get-Content $HOME/go-nuclear/go-nuclear.ps1) -DifferenceObject $(Get-Content $MyInvocation.MyCommand.Path)) {
+if(Compare-Object -ReferenceObject $(Get-Content $HOME/Documents/go-nuclear/go-nuclear.ps1) -DifferenceObject $(Get-Content $MyInvocation.MyCommand.Path)) {
     Write-Host('Updating go-nuclear bootstrap script...')
-    Copy-Item $HOME/go-nuclear/go-nuclear.ps1 $MyInvocation.MyCommand.Path
+    Copy-Item $HOME/Documents/go-nuclear/go-nuclear.ps1 $MyInvocation.MyCommand.Path
     &$MyInvocation.MyCommand.Path
     exit
 }
