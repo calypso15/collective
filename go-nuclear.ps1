@@ -73,3 +73,5 @@ Invoke-Command -ScriptBlock {
     pip install -r requirements.txt
     python check-requirements.py
 }
+
+Write-Host 'UPDATED!'
