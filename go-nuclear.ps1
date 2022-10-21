@@ -37,6 +37,8 @@ if ((Get-Command 'python.exe' -ErrorAction SilentlyContinue) -eq $null) {
     }
 }
 
+$env:Path = [System.Environment]::GetEnvironmentVariable("Path","Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path","User")
+
 # Clone the go-nuclear repo if it doesn't already exist
 if (-Not (Test-Path -Path $HOME/go-nuclear)) {
     Write-Host('Cloning go-nuclear repo...')
