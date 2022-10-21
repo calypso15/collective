@@ -39,10 +39,10 @@ if ((Get-Command 'python.exe' -ErrorAction SilentlyContinue) -eq $null) {
 
 $env:Path = [System.Environment]::GetEnvironmentVariable("Path","Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path","User")
 
-Set-Location $HOME/Documents/go-nuclear
-
 # Clone the go-nuclear repo if it doesn't already exist
 if (-Not (Test-Path -Path $HOME/go-nuclear)) {
+    Set-Location $HOME/Documents
+
     Write-Host('Cloning go-nuclear repo...')
     Invoke-Command -ScriptBlock {
         git clone https://github.com/calypso15/go-nuclear.git
