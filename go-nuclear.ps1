@@ -45,9 +45,7 @@ if (-Not (Test-Path -Path $HOME/Documents/go-nuclear)) {
 Set-Location $HOME/Documents/go-nuclear
 
 Write-Host('Updating go-nuclear repo...')
-Invoke-Command -ScriptBlock {
-    git pull
-}
+git pull
 
 # Check for updated script
 if(Compare-Object -ReferenceObject $(Get-Content $HOME/Documents/go-nuclear/go-nuclear.ps1) -DifferenceObject $(Get-Content $MyInvocation.MyCommand.Path)) {
@@ -60,15 +58,19 @@ if(Compare-Object -ReferenceObject $(Get-Content $HOME/Documents/go-nuclear/go-n
 # Install other chocolatey packages
 Set-Location $HOME/Documents/go-nuclear/choco
 
-Write-Host('Installing chocolatey packages...')
-Invoke-Command -ScriptBlock {
-    choco install packages.config --yes
-}
+# Write-Host('Installing chocolatey packages...')
+# Invoke-Command -ScriptBlock {
+#     choco install packages.config --yes
+# }
 
 # Start python script
 Set-Location $HOME/Documents/go-nuclear/python
+pip install -r requirements.txt
+python check-requirements.py
 
-Invoke-Command -ScriptBlock {
-    pip install -r requirements.txt
-    python check-requirements.py
+if($LastExitCode -ne 0) {
+    throw 'System requirements check failed, aborting.'
 }
+
+Write-Host('Creating VM directory...')
+New-Item -Path $HOME/Documents/VirtualMachines/S1 -ItemType Directory
