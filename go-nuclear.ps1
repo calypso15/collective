@@ -73,10 +73,10 @@ if($LastExitCode -ne 0) {
 }
 
 Write-Host('Creating VM directory...')
-New-Item -Path $HOME/Documents/VirtualMachines/S1 -ItemType Directory -Force
+$null = New-Item -Path $HOME/Documents/VirtualMachines/S1 -ItemType Directory -Force
 
 Write-Host('Creating malware directory...')
-New-Item -Path $HOME/Desktop/Malware -ItemType Directory -Force
+$null = New-Item -Path $HOME/Desktop/Malware -ItemType Directory -Force
 
 Write-Host('Excluding malware directory from Windows Defender...')
 Set-MpPreference -ExclusionPath $HOME/Desktop/Malware
