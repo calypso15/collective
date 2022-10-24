@@ -73,4 +73,4 @@ if($LastExitCode -ne 0) {
 }
 
 Write-Host('Creating VM directory...')
-New-Item -Path $HOME/Documents/VirtualMachines/S1 -ItemType Directory
+New-Item -Path $HOME/Documents/VirtualMachines/S1 -ItemType Directory -Force
