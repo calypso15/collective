@@ -41,14 +41,12 @@ if (-Not (Test-Path -Path $HOME/Documents/go-nuclear)) {
     }
 }
 
-{
-    # Update repo
-    Set-Location $HOME/Documents/go-nuclear
+# Update repo
+Set-Location $HOME/Documents/go-nuclear
 
-    Write-Host('Updating go-nuclear repo...')
-    Invoke-Command -ScriptBlock {
-        git pull
-    }
+Write-Host('Updating go-nuclear repo...')
+Invoke-Command -ScriptBlock {
+    git pull
 }
 
 # Check for updated script
@@ -59,22 +57,18 @@ if(Compare-Object -ReferenceObject $(Get-Content $HOME/Documents/go-nuclear/go-n
     exit
 }
 
-{
-    # Install other chocolatey packages
-    Set-Location $HOME/Documents/go-nuclear/choco
+# Install other chocolatey packages
+Set-Location $HOME/Documents/go-nuclear/choco
 
-    Write-Host('Installing chocolatey packages...')
-    Invoke-Command -ScriptBlock {
-        choco install packages.config --yes
-    }
+Write-Host('Installing chocolatey packages...')
+Invoke-Command -ScriptBlock {
+    choco install packages.config --yes
 }
 
-{
-    # Start python script
-    Set-Location $HOME/Documents/go-nuclear/python
+# Start python script
+Set-Location $HOME/Documents/go-nuclear/python
 
-    Invoke-Command -ScriptBlock {
-        pip install -r requirements.txt
-        python check-requirements.py
-    }
+Invoke-Command -ScriptBlock {
+    pip install -r requirements.txt
+    python check-requirements.py
 }
