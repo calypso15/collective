@@ -68,6 +68,8 @@ Set-Location $HOME/Documents/go-nuclear/python
 pip install -r requirements.txt
 python check-requirements.py
 
+Write-Host('')
+
 if($LastExitCode -ne 0) {
     throw 'System requirements check failed, aborting.'
 }
