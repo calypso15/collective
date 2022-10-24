@@ -3,6 +3,7 @@ import os
 import platform
 import psutil
 import shutil
+import sys
 
 from enum import IntEnum
 from subprocess import getoutput
@@ -85,15 +86,17 @@ print('')
 
 if(result == State.PASS):
     print('This system meets all requirements.')
+    sys.exit(0)
 elif(result == State.WARN):
     while(True):
         print('This system may be insufficient, proceed at your own risk. ', end='')
-        answer = input('Proceed [y/n]? ')
+        answer = input('Proceed? [y/n] ')
         if answer.lower() in ["y","yes"]:
-            break
+            sys.exit(0)
         elif answer.lower() in ["n","no"]:
             print('Aborting.')
-            exit()
+            sys.exit(1)
+
 else:
     print('This system does not meet the minimum requirements, aborting.')
-    exit()
+    sys.exit(1)
