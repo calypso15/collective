@@ -25,18 +25,6 @@ if ((Get-Command 'git.exe' -ErrorAction SilentlyContinue) -eq $null) {
     }
 }
 
-# Install python
-if ((Get-Command 'python.exe' -ErrorAction SilentlyContinue) -eq $null) {
-    Write-Host('Installing python...')
-    Invoke-Command -ScriptBlock {
-        choco install python --yes
-    }
-
-    if ((Get-Command 'python.exe' -ErrorAction SilentlyContinue) -eq $null) {
-        throw 'Failed to install git, aborting.'
-    }
-}
-
 $env:Path = [System.Environment]::GetEnvironmentVariable("Path","Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path","User")
 
 # Clone the go-nuclear repo if it doesn't already exist
@@ -53,11 +41,14 @@ if (-Not (Test-Path -Path $HOME/Documents/go-nuclear)) {
     }
 }
 
-Set-Location $HOME/Documents/go-nuclear
+{
+    # Update repo
+    Set-Location $HOME/Documents/go-nuclear
 
-Write-Host('Updating go-nuclear repo...')
-Invoke-Command -ScriptBlock {
-    git pull
+    Write-Host('Updating go-nuclear repo...')
+    Invoke-Command -ScriptBlock {
+        git pull
+    }
 }
 
 # Check for updated script
@@ -68,10 +59,22 @@ if(Compare-Object -ReferenceObject $(Get-Content $HOME/Documents/go-nuclear/go-n
     exit
 }
 
-# Start python script
-Invoke-Command -ScriptBlock {
-    pip install -r requirements.txt
-    python check-requirements.py
+{
+    # Install other chocolatey packages
+    Set-Location $HOME/Documents/go-nuclear/choco
+
+    Write-Host('Installing chocolatey packages...')
+    Invoke-Command -ScriptBlock {
+        choco install packages.config --yes
+    }
 }
 
-Write-Host 'UPDATED!'
+{
+    # Start python script
+    Set-Location $HOME/Documents/go-nuclear/python
+
+    Invoke-Command -ScriptBlock {
+        pip install -r requirements.txt
+        python check-requirements.py
+    }
+}
