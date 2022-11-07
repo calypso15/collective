@@ -5,9 +5,9 @@ import sys
 import tempfile
 import urllib
 
-VCLOUD_URL = os.getenv('VCLOUD_URL')
-VCLOUD_USER = os.getenv('VCLOUD_USER')
-VCLOUD_PASS = os.getenv('VCLOUD_PASS')
+VCLOUD_URL = os.environ.get('VCLOUD_URL')
+VCLOUD_USER = os.environ.get('VCLOUD_USER')
+VCLOUD_PASS = os.environ.get('VCLOUD_PASS')
 
 new_url = False
 new_user = False
@@ -35,6 +35,14 @@ while(VCLOUD_URL == None or VCLOUD_USER == None or VCLOUD_PASS == None):
 
     print('There was a problem with the VM Cloud credentials, please try again.')
     VCLOUD_URL = VCLOUD_USER = VCLOUD_PASS = None
+
+if new_url or new_user or new_pass:
+    a = input('Save changes to VM Cloud environment variables [y/n]? ')
+
+    if(a.lower() == 'y'):
+        os.environ['VCLOUD_URL'] = VCLOUD_URL
+        os.environ['VCLOUD_USER'] = VCLOUD_USER
+        os.environ['VCLOUD_PASS'] = VCLOUD_PASS
 
 TEMP_DIR = tempfile.gettempdir()
 DOWNLOAD_DIR = os.path.join(os.path.expanduser("~"), 'Downloads', 'vcloud')
