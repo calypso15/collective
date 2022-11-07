@@ -58,10 +58,10 @@ if(Compare-Object -ReferenceObject $(Get-Content $HOME/Documents/go-nuclear/go-n
 # Install other chocolatey packages
 Set-Location $HOME/Documents/go-nuclear/choco
 
-# Write-Host('Installing chocolatey packages...')
-# Invoke-Command -ScriptBlock {
-#     choco install packages.config --yes
-# }
+Write-Host('Installing chocolatey packages...')
+Invoke-Command -ScriptBlock {
+    choco install packages.config --yes
+}
 
 # Start python script
 Set-Location $HOME/Documents/go-nuclear/python
