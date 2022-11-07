@@ -9,7 +9,32 @@ VCLOUD_URL = os.getenv('VCLOUD_URL')
 VCLOUD_USER = os.getenv('VCLOUD_USER')
 VCLOUD_PASS = os.getenv('VCLOUD_PASS')
 
+new_url = False
+new_user = False
+new_pass = False
+
 AUTH = requests.auth.HTTPBasicAuth(VCLOUD_USER, VCLOUD_PASS)
+while(VCLOUD_URL == None or VCLOUD_USER == None or VCLOUD_PASS == None):
+    if VCLOUD_URL == None:
+        VCLOUD_URL = input('VM Cloud Url: ')
+        new_url = True
+
+    if VCLOUD_USER == None:
+        VCLOUD_USER = input('VM Cloud User: ')
+        new_user = True
+
+    if VCLOUD_PASS == None:
+        VCLOUD_PASS = input('VM Cloud Password: ')
+        new_pass = True
+
+    AUTH = requests.auth.HTTPBasicAuth(VCLOUD_USER, VCLOUD_PASS)
+
+    r = requests.get(VCLOUD_URL, auth=AUTH)
+    if r.status_code == 200:
+        break
+
+    print('There was a problem with the VM Cloud credentials, please try again.')
+    VCLOUD_URL = VCLOUD_USER = VCLOUD_PASS = None
 
 TEMP_DIR = tempfile.gettempdir()
 DOWNLOAD_DIR = os.path.join(os.path.expanduser("~"), 'Downloads', 'vcloud')
