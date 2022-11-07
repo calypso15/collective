@@ -6,6 +6,9 @@ import sys
 import tempfile
 import urllib
 
+with open('.env','a') as f:
+    pass
+
 dotenv_file = dotenv.find_dotenv()
 dotenv.load_dotenv(dotenv_file)
 
