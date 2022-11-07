@@ -1,9 +1,13 @@
+import dotenv
 import hashlib
 import os
 import requests
 import sys
 import tempfile
 import urllib
+
+dotenv_file = dotenv.find_dotenv()
+dotenv.load_dotenv(dotenv_file)
 
 VCLOUD_URL = os.environ.get('VCLOUD_URL')
 VCLOUD_USER = os.environ.get('VCLOUD_USER')
@@ -40,9 +44,9 @@ if new_url or new_user or new_pass:
     a = input('Save changes to VM Cloud environment variables [y/n]? ')
 
     if(a.lower() == 'y'):
-        os.environ['VCLOUD_URL'] = VCLOUD_URL
-        os.environ['VCLOUD_USER'] = VCLOUD_USER
-        os.environ['VCLOUD_PASS'] = VCLOUD_PASS
+        dotenv.set_key(dotenv_file, 'VCLOUD_URL', VCLOUD_URL)
+        dotenv.set_key(dotenv_file, 'VCLOUD_USER', VCLOUD_USER)
+        dotenv.set_key(dotenv_file, 'VCLOUD_PASS', VCLOUD_PASS)
 
 TEMP_DIR = tempfile.gettempdir()
 DOWNLOAD_DIR = os.path.join(os.path.expanduser("~"), 'Downloads', 'vcloud')
