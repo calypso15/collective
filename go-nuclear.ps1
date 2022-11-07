@@ -67,6 +67,7 @@ Set-Location $HOME/Documents/go-nuclear/choco
 Set-Location $HOME/Documents/go-nuclear/python
 pip install -r requirements.txt
 python check-requirements.py
+python download-files.py
 
 Write-Host('')
 

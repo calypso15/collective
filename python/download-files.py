@@ -56,6 +56,8 @@ def check_hash(filename, hash):
 if not os.path.exists(DOWNLOAD_DIR):
    os.makedirs(DOWNLOAD_DIR)
 
+print('Downloading OVAs...')
+
 files = [
     'TheBorg-001.ova',
     'TheEnterpriseX64-002.ova',
@@ -81,3 +83,5 @@ for file in files:
             print('matches.')
     except Exception as e:
         print(e)
+
+print('Finished downloading OVAs.')
