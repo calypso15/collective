@@ -54,7 +54,7 @@ if new_url or new_user or new_pass:
         dotenv.set_key(dotenv_file, 'VCLOUD_PASS', VCLOUD_PASS)
 
 TEMP_DIR = tempfile.gettempdir()
-DOWNLOAD_DIR = os.path.join(os.path.expanduser("~"), 'Downloads', 'vcloud')
+DOWNLOAD_DIR = os.path.join(os.path.expanduser("~"), 'Documents', '.vcloud')
 
 def download_file(filename):
     url = urllib.parse.urljoin(VCLOUD_URL, filename)
