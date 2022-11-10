@@ -47,16 +47,19 @@ foreach($file in $files)
 
 # Install VMs
 Write-Host('Installing new VMs...')
+Set-Location "$HOME/Downloads/vcloud"
+$files = Get-ChildItem -Recurse -File -Filter *.ova
 Set-Location "C:/Program Files (x86)/VMware/VMware Workstation/OVFTool"
-Get-ChildItem "$HOME/Downloads/vcloud" -Recurse -File -Filter *.ova |
-Foreach-Object {
-    ./ovftool --allowExtraConfig --net:"custom=vmnet8" -o $_.FullName "$HOME/Documents/Virtual Machines/S1"
+foreach($file in $files)
+{
+    ./ovftool --allowExtraConfig --net:"custom=vmnet8" -o $file.FullName "$HOME/Documents/Virtual Machines/S1"
 }
 
 # Start VMs
 Write-Host('Starting VMs...')
+Set-Location "$HOME/Documents/Virtual Machines/S1"
+$files = Get-ChildItem -Recurse -File -Filter *.vmx
 Set-Location "C:/Program Files (x86)/VMware/VMware Workstation"
-Get-ChildItem "$HOME/Documents/Virtual Machines/S1" -Recurse -File -Filter *.vmx |
 Foreach-Object {
-    ./vmrun -T ws start $_.FullName
+    ./vmrun -T ws start $file.FullName
 }
