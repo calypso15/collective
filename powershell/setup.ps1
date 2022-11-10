@@ -69,6 +69,6 @@ foreach($file in $files)
     ./vmrun -T ws start $file.FullName
     $ip = (./vmrun -T ws getGuestIPAddress $file.FullName -wait)
     Write-Host("...Machine is up with IP address $ip")
-    Write-Host("Disabling shared folders...")
+    Write-Host("Disabling shared folders for $($file.FullName)...")
     ./vmrun -T ws disableSharedFolders $file.FullName
 }
