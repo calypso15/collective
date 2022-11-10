@@ -62,5 +62,6 @@ $files = Get-ChildItem -Recurse -File -Filter *.vmx
 Set-Location "C:/Program Files (x86)/VMware/VMware Workstation"
 foreach($file in $files)
 {
+    ./vmrun -T ws disableSharedFolders $file.FullName
     ./vmrun -T ws start $file.FullName
 }
