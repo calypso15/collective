@@ -87,11 +87,11 @@ Set-MpPreference -ExclusionPath $HOME/Desktop/Malware
 
 vnetlib64 -- set vnet vmnet8 addr 192.168.192.0
 
-ovftool --allowExtraConfig -o $HOME/Downloads/vcloud/TheBorg-001.ova "$HOME/Documents/Virtual Machines/S1"
-vmrun -T ws start "$HOME/Documents/Virtual Machines/S1/TheBorg 001/TheBorg 001.vmx"
-ovftool --allowExtraConfig -o $HOME/Downloads/vcloud/TheEnterpriseX64-002.ova "$HOME/Documents/Virtual Machines/S1"
-vmrun -T ws start "$HOME/Documents/Virtual Machines/S1/TheEnterpriseX64 002/TheEnterpriseX64 002.vmx"
-ovftool --allowExtraConfig -o $HOME/Downloads/vcloud/TheMelbourneX64-003.ova "$HOME/Documents/Virtual Machines/S1"
-vmrun -T ws start "$HOME/Documents/Virtual Machines/S1/TheMelbourneX64 003/TheMelbourneX64 003.vmx"
-ovftool --allowExtraConfig -o $HOME/Downloads/vcloud/TheSaratogaX86-004.ova "$HOME/Documents/Virtual Machines/S1"
-vmrun -T ws start "$HOME/Documents/Virtual Machines/S1/TheSaratogaX86 004/TheSaratogaX86 004.vmx"
+"C:/Program Files (x86)/VMware/VMware Workstation/OVFTool/ovftool" --allowExtraConfig -o $HOME/Downloads/vcloud/TheBorg-001.ova "$HOME/Documents/Virtual Machines/S1"
+"C:/Program Files (x86)/VMware/VMware Workstation/vmrun" -T ws start "$HOME/Documents/Virtual Machines/S1/TheBorg 001/TheBorg 001.vmx"
+"C:/Program Files (x86)/VMware/VMware Workstation/OVFTool/ovftool" --allowExtraConfig -o $HOME/Downloads/vcloud/TheEnterpriseX64-002.ova "$HOME/Documents/Virtual Machines/S1"
+"C:/Program Files (x86)/VMware/VMware Workstation/vmrun" -T ws start "$HOME/Documents/Virtual Machines/S1/TheEnterpriseX64 002/TheEnterpriseX64 002.vmx"
+"C:/Program Files (x86)/VMware/VMware Workstation/OVFTool/ovftool" --allowExtraConfig -o $HOME/Downloads/vcloud/TheMelbourneX64-003.ova "$HOME/Documents/Virtual Machines/S1"
+"C:/Program Files (x86)/VMware/VMware Workstation/vmrun" -T ws start "$HOME/Documents/Virtual Machines/S1/TheMelbourneX64 003/TheMelbourneX64 003.vmx"
+"C:/Program Files (x86)/VMware/VMware Workstation/OVFTool/ovftool" --allowExtraConfig -o $HOME/Downloads/vcloud/TheSaratogaX86-004.ova "$HOME/Documents/Virtual Machines/S1"
+"C:/Program Files (x86)/VMware/VMware Workstation/vmrun" -T ws start "$HOME/Documents/Virtual Machines/S1/TheSaratogaX86 004/TheSaratogaX86 004.vmx"
