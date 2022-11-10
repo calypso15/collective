@@ -21,7 +21,7 @@ if($LastExitCode -ne 0) {
 }
 
 Write-Host('Creating VM directory...')
-$null = New-Item -Path $HOME/Documents/VirtualMachines/S1 -ItemType Directory -Force
+$null = New-Item -Path "$HOME/Documents/Virtual Machines/S1" -ItemType Directory -Force
 
 Write-Host('Creating malware directory...')
 $null = New-Item -Path $HOME/Desktop/Malware -ItemType Directory -Force
@@ -38,6 +38,7 @@ Write-Host('Deleting old VMs...')
 Set-Location "C:/Program Files (x86)/VMware/VMware Workstation"
 Get-ChildItem "$HOME/Documents/Virtual Machines/S1/" -Recurse -Filter *.vmx |
 Foreach-Object {
+    Write-Host('Deleting $($_.FullName)')
     ./vmrun -T ws stop $_.FullName hard
     ./vmrun -T ws deleteVM $_.FullName
 }
