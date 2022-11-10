@@ -38,7 +38,7 @@ Write-Host('Deleting old VMs...')
 Set-Location "C:/Program Files (x86)/VMware/VMware Workstation"
 Get-ChildItem "$HOME/Documents/Virtual Machines/S1/" -Recurse -Filter *.vmx |
 Foreach-Object {
-    vmrun -T ws deleteVM $_.FullName
+    ./vmrun -T ws deleteVM $_.FullName
 }
 
 # Install VMs
@@ -46,7 +46,7 @@ Write-Host('Installing new VMs...')
 Set-Location "C:/Program Files (x86)/VMware/VMware Workstation/OVFTool"
 Get-ChildItem "$HOME/Downloads/vcloud/" -Recurse -Filter *.ova |
 Foreach-Object {
-    ovftool --allowExtraConfig --net:"custom=vmnet8" -o $_.FullName "$HOME/Documents/Virtual Machines/S1"
+    ./ovftool --allowExtraConfig --net:"custom=vmnet8" -o $_.FullName "$HOME/Documents/Virtual Machines/S1"
 }
 
 # Start VMs
@@ -54,5 +54,5 @@ Write-Host('Starting VMs...')
 Set-Location "C:/Program Files (x86)/VMware/VMware Workstation"
 Get-ChildItem "$HOME/Documents/Virtual Machines/S1/" -Recurse -Filter *.vmx |
 Foreach-Object {
-    vmrun -T ws start $_.FullName
+    ./vmrun -T ws start $_.FullName
 }
