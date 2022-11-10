@@ -31,7 +31,7 @@ Set-MpPreference -ExclusionPath $HOME/Desktop/Malware
 
 # Set up vmnet8
 Set-Location "C:/Program Files (x86)/VMware/VMware Workstation"
-vnetlib64 -- set vnet vmnet8 addr 192.168.192.0
+./vnetlib64 -- set vnet vmnet8 addr 192.168.192.0
 
 # Delete existing VMs
 Write-Host('Deleting old VMs...')
