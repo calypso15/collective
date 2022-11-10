@@ -35,12 +35,14 @@ Set-Location "C:/Program Files (x86)/VMware/VMware Workstation"
 
 # Delete existing VMs
 Write-Host('Deleting old VMs...')
+Set-Location "$HOME/Documents/Virtual Machines/S1"
+$files = Get-ChildItem -Recurse -File -Filter *.vmx
 Set-Location "C:/Program Files (x86)/VMware/VMware Workstation"
-Get-ChildItem "$HOME/Documents/Virtual Machines/S1" -Recurse -File -Filter *.vmx |
-Foreach-Object {
-    Write-Host("Deleting $($_.FullName)")
-    ./vmrun -T ws stop $_.FullName hard
-    ./vmrun -T ws deleteVM $_.FullName
+foreach($file in $files)
+{
+    Write-Host("Deleting $($file.FullName)")
+    ./vmrun -T ws stop $file.FullName hard
+    ./vmrun -T ws deleteVM $file.FullName
 }
 
 # Install VMs
