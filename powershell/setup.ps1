@@ -38,6 +38,7 @@ Write-Host('Deleting old VMs...')
 Set-Location "C:/Program Files (x86)/VMware/VMware Workstation"
 Get-ChildItem "$HOME/Documents/Virtual Machines/S1/" -Recurse -Filter *.vmx |
 Foreach-Object {
+    ./vmrun -T ws stop $_.FullName hard
     ./vmrun -T ws deleteVM $_.FullName
 }
 
