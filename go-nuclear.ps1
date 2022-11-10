@@ -55,43 +55,4 @@ if(Compare-Object -ReferenceObject $(Get-Content $HOME/Documents/go-nuclear/go-n
     exit
 }
 
-# Install other chocolatey packages
-Set-Location $HOME/Documents/go-nuclear/choco
-
-Write-Host('Installing chocolatey packages...')
-Invoke-Command -ScriptBlock {
-    choco install packages.config --yes
-}
-
-# Start python script
-Set-Location $HOME/Documents/go-nuclear/python
-pip install -r requirements.txt
-python check-requirements.py
-Write-Host('')
-
-python download-files.py
-Write-Host('')
-
-if($LastExitCode -ne 0) {
-    throw 'System requirements check failed, aborting.'
-}
-
-Write-Host('Creating VM directory...')
-$null = New-Item -Path $HOME/Documents/VirtualMachines/S1 -ItemType Directory -Force
-
-Write-Host('Creating malware directory...')
-$null = New-Item -Path $HOME/Desktop/Malware -ItemType Directory -Force
-
-Write-Host('Excluding malware directory from Windows Defender...')
-Set-MpPreference -ExclusionPath $HOME/Desktop/Malware
-
-vnetlib64 -- set vnet vmnet8 addr 192.168.192.0
-
-& "C:/Program Files (x86)/VMware/VMware Workstation/OVFTool/ovftool" --allowExtraConfig -o $HOME/Downloads/vcloud/TheBorg-001.ova "$HOME/Documents/Virtual Machines/S1"
-& "C:/Program Files (x86)/VMware/VMware Workstation/vmrun" -T ws start "$HOME/Documents/Virtual Machines/S1/TheBorg 001/TheBorg 001.vmx"
-& "C:/Program Files (x86)/VMware/VMware Workstation/OVFTool/ovftool" --allowExtraConfig -o $HOME/Downloads/vcloud/TheEnterpriseX64-002.ova "$HOME/Documents/Virtual Machines/S1"
-& "C:/Program Files (x86)/VMware/VMware Workstation/vmrun" -T ws start "$HOME/Documents/Virtual Machines/S1/TheEnterpriseX64 002/TheEnterpriseX64 002.vmx"
-& "C:/Program Files (x86)/VMware/VMware Workstation/OVFTool/ovftool" --allowExtraConfig -o $HOME/Downloads/vcloud/TheMelbourneX64-003.ova "$HOME/Documents/Virtual Machines/S1"
-& "C:/Program Files (x86)/VMware/VMware Workstation/vmrun" -T ws start "$HOME/Documents/Virtual Machines/S1/TheMelbourneX64 003/TheMelbourneX64 003.vmx"
-& "C:/Program Files (x86)/VMware/VMware Workstation/OVFTool/ovftool" --allowExtraConfig -o $HOME/Downloads/vcloud/TheSaratogaX86-004.ova "$HOME/Documents/Virtual Machines/S1"
-& "C:/Program Files (x86)/VMware/VMware Workstation/vmrun" -T ws start "$HOME/Documents/Virtual Machines/S1/TheSaratogaX86 004/TheSaratogaX86 004.vmx"
+& "./powershell/setup.ps1"
