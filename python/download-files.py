@@ -6,6 +6,8 @@ import sys
 import tempfile
 import urllib
 
+from bs4 import BeautifulSoup
+
 with open('.env','a') as f:
     pass
 
@@ -96,14 +98,11 @@ def check_hash(filename, hash):
 if not os.path.exists(DOWNLOAD_DIR):
    os.makedirs(DOWNLOAD_DIR)
 
-print('Downloading OVAs...')
+page = requests.get(VCLOUD_URL, auth=AUTH).text
+soup = BeautifulSoup(page, 'html.parser')
+files = [node.get('href') for node in soup.find_all('a') if node.get('href').endswith('.ova')]
 
-files = [
-    'TheBorg-001.ova',
-    'TheEnterpriseX64-002.ova',
-    'TheMelbourneX64-003.ova',
-    'TheSaratogaX86-004.ova'
-]
+print('Downloading OVAs...')
 
 for file in files:
     try:
