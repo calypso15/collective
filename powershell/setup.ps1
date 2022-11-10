@@ -47,7 +47,7 @@ foreach($file in $files)
 
 # Install VMs
 Write-Host('Installing new VMs...')
-Set-Location "$HOME/Downloads/vcloud"
+Set-Location "$HOME/Documents/.vcloud"
 $files = Get-ChildItem -Recurse -File -Filter *.ova
 Set-Location "C:/Program Files (x86)/VMware/VMware Workstation/OVFTool"
 foreach($file in $files)
@@ -62,6 +62,7 @@ $files = Get-ChildItem -Recurse -File -Filter *.vmx
 Set-Location "C:/Program Files (x86)/VMware/VMware Workstation"
 foreach($file in $files)
 {
-    ./vmrun -T ws disableSharedFolders $file.FullName
     ./vmrun -T ws start $file.FullName
+    ./vmrun -T ws getGuestIPAddress $file.FullName -wait
+    ./vmrun -T ws disableSharedFolders $file.FullName
 }
