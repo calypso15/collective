@@ -36,7 +36,7 @@ Set-Location "C:/Program Files (x86)/VMware/VMware Workstation"
 # Delete existing VMs
 Write-Host('Deleting old VMs...')
 Set-Location "$HOME/Documents/Virtual Machines/S1"
-$files = Get-ChildItem -Recurse -File -Filter *.vmx
+$files = Get-ChildItem -Recurse -File -Filter *.vmx | Where-Object { $_.Extension -eq '.vmx' }
 Set-Location "C:/Program Files (x86)/VMware/VMware Workstation"
 foreach($file in $files)
 {
@@ -48,7 +48,7 @@ foreach($file in $files)
 # Install VMs
 Write-Host('Installing new VMs...')
 Set-Location "$HOME/Documents/.vcloud"
-$files = Get-ChildItem -Recurse -File -Filter *.ova
+$files = Get-ChildItem -Recurse -File -Filter *.ova | Where-Object { $_.Extension -eq '.ova' }
 Set-Location "C:/Program Files (x86)/VMware/VMware Workstation/OVFTool"
 foreach($file in $files)
 {
@@ -58,7 +58,7 @@ foreach($file in $files)
 # Start VMs
 Write-Host('Starting VMs...')
 Set-Location "$HOME/Documents/Virtual Machines/S1"
-$files = Get-ChildItem -Recurse -File -Filter *.vmx
+$files = Get-ChildItem -Recurse -File -Filter *.vmx | Where-Object { $_.Extension -eq '.vmx' }
 Set-Location "C:/Program Files (x86)/VMware/VMware Workstation"
 foreach($file in $files)
 {
