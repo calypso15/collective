@@ -28,7 +28,7 @@ if __name__ == '__main__':
     files = glob.glob(os.path.join(home, 'Documents/Virtual Machines/S1', '**/*.vmx'), recursive=True)
     for file in files:
         print(f'Starting {file}...')
-        subprocess.call(['C:/Program Files (x86)/VMware/VMware Workstation/vmrun', '-T ws', f'start "{file}"'])
+        subprocess.call(['C:/Program Files (x86)/VMware/VMware Workstation/vmrun', '-T ws', 'start', file])
 
         ip = subprocess.check_output(['C:/Program Files (x86)/VMware/VMware Workstation/vmrun', '-T ws', f'getGuestIPAddress {file}', '-wait'])
         print(f'...Machine is up with IP address {ip}')
