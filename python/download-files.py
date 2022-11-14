@@ -111,7 +111,7 @@ for file in manifest['files']:
         print(f"Checking hash of '{name}'...", end='')
         sys.stdout.flush()
 
-        if (not check_hash(file, hash, hash_type=hash_type)):
+        if (not check_hash(name, hash, hash_type=hash_type)):
             print('does not match.')
             download_file(name)
         else:
