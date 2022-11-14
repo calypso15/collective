@@ -120,7 +120,6 @@ for file in manifest['files']:
 
         if (not check_hash(name, hash_value, hash_type=hash_type)):
             print('does not match.')
-            exit()
             download_file(name)
         else:
             print('matches.')
