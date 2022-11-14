@@ -14,13 +14,13 @@ def make_dirs():
     make_dir(os.path.join(home, 'Documents/Virtual Machines/S1'))
     make_dir(os.path.join(home, 'Desktop/Malware'))
 
-def run_powershell(self, cmd):
+def run_powershell(cmd):
     completed = subprocess.run(["powershell", "-Command", cmd], capture_output=True)
     return completed
 
 if __name__ == '__main__':
     system_requirements.check_requirements()
-    vcloud_files.download_files()
+    # vcloud_files.download_files()
 
     make_dirs()
 
