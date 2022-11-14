@@ -46,6 +46,10 @@ def check_hash(filename, hash_value, hash_type='sha256'):
     return (alg.hexdigest() == hash_value)
 
 def download_files():
+    global VCLOUD_URL, VCLOUD_USER, VCLOUD_PASS
+    global AUTH
+    global TEMP_DIR, DOWNLOAD_DIR
+
     with open('.env', 'a') as f:
         pass
 
