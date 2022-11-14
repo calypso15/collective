@@ -1,5 +1,6 @@
 import dotenv
 import hashlib
+import json
 import os
 import requests
 import sys
@@ -60,7 +61,7 @@ def download_file(filename):
     url = urllib.parse.urljoin(VCLOUD_URL, filename)
     datafile = os.path.join(DOWNLOAD_DIR, filename)
 
-    local_filename = datafile
+    local_filename = requests.util.unquote(datafile)
 
     with requests.get(url, auth=AUTH, stream=True) as r:
         r.raise_for_status()
@@ -81,43 +82,38 @@ def download_file(filename):
 
     return local_filename
 
-
-def check_hash(filename, hash):
+def check_hash(filename, hash_value, hash_type='sha256'):
     datafile = os.path.join(DOWNLOAD_DIR, filename)
 
     if (not os.path.isfile(datafile)):
         return False
 
-    sha256_hash = hashlib.sha256()
+    alg = hashlib.new(hash_type)
     with open(datafile, 'rb') as f:
         for byte_block in iter(lambda: f.read(4096), b""):
-            sha256_hash.update(byte_block)
+            alg.update(byte_block)
 
-    return (sha256_hash.hexdigest() == hash)
+    return (alg.hexdigest() == hash_value)
 
 if not os.path.exists(DOWNLOAD_DIR):
    os.makedirs(DOWNLOAD_DIR)
 
-page = requests.get(VCLOUD_URL, auth=AUTH).text
-soup = BeautifulSoup(page, 'html.parser')
-files = [node.get('href') for node in soup.find_all('a') if node.get('href').endswith('.ova')]
+manifest = json.loads(requests.get(urllib.parse.urljoin(VCLOUD_URL, 'manifest.json'), auth=AUTH).text)
 
 print('Downloading OVAs...')
 
-for file in files:
+for file in manifest['files']:
     try:
-        download_file(file+'.sha256')
+        name = file['name']
+        hash_type = file['hash_type']
+        hash_value = file['hash_value']
 
-        hash = None
-        with open(os.path.join(DOWNLOAD_DIR, file+'.sha256'), 'r') as f:
-            hash = f.read().rstrip()
-
-        print(f"Checking hash of '{file}'...", end='')
+        print(f"Checking hash of '{name}'...", end='')
         sys.stdout.flush()
 
-        if (not check_hash(file, hash)):
+        if (not check_hash(file, hash, hash_type=hash_type)):
             print('does not match.')
-            download_file(file)
+            download_file(name)
         else:
             print('matches.')
     except Exception as e:
