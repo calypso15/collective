@@ -80,7 +80,7 @@ def check() -> str:
 
     return State(2**math.floor(math.log2(state)))
 
-if __name__ == '__main__':
+def check_requirements():
     print('Checking system requirements...')
     result = check()
     print('')
@@ -100,3 +100,6 @@ if __name__ == '__main__':
     else:
         print('This system does not meet the minimum requirements, aborting.')
         sys.exit(1)
+
+if __name__ == '__main__':
+    check_requirements()

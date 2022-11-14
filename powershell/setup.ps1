@@ -10,14 +10,11 @@ Invoke-Command -ScriptBlock {
 # Start python script
 Set-Location $HOME/Documents/go-nuclear/python
 pip install -r requirements.txt
-python check-requirements.py
-Write-Host('')
-
-python download-files.py
+python setup.py
 Write-Host('')
 
 if($LastExitCode -ne 0) {
-    throw 'System requirements check failed, aborting.'
+    throw 'setup.py failed, aborting.'
 }
 
 Write-Host('Creating VM directory...')
