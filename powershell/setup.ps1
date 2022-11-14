@@ -14,22 +14,8 @@ python setup.py
 Write-Host('')
 
 if($LastExitCode -ne 0) {
-    throw 'setup.py failed, aborting.'
+    throw 'Setup failed, aborting.'
 }
-
-Write-Host('Creating VM directory...')
-$null = New-Item -Path "$HOME/Documents/Virtual Machines/S1" -ItemType Directory -Force
-
-Write-Host('Creating malware directory...')
-$null = New-Item -Path $HOME/Desktop/Malware -ItemType Directory -Force
-
-Write-Host('Excluding malware directory from Windows Defender...')
-Set-MpPreference -ExclusionPath $HOME/Desktop/Malware
-
-# Set up vmnet8
-Set-Location "C:/Program Files (x86)/VMware/VMware Workstation"
-Write-Host('Configuring vmnet8...')
-./vnetlib64 -- set vnet vmnet8 addr 192.168.192.0
 
 # Delete existing VMs
 Write-Host('Deleting old VMs...')
