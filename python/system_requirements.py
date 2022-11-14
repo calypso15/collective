@@ -34,7 +34,7 @@ def get_free_diskspace() -> int:
 def get_total_memory() -> int:
     return psutil.virtual_memory().total
 
-def check_requirements() -> str:
+def check() -> str:
     state = State.PASS
 
     if is_windows():
@@ -80,23 +80,23 @@ def check_requirements() -> str:
 
     return State(2**math.floor(math.log2(state)))
 
-print('Checking system requirements...')
-result = check_requirements()
-print('')
+if __name__ == '__main__':
+    print('Checking system requirements...')
+    result = check()
+    print('')
 
-if(result == State.PASS):
-    print('This system meets all requirements.')
-    sys.exit(0)
-elif(result == State.WARN):
-    while(True):
-        print('This system may be insufficient, proceed at your own risk. ', end='')
-        answer = input('Proceed? [y/n] ')
-        if answer.lower() in ["y","yes"]:
-            sys.exit(0)
-        elif answer.lower() in ["n","no"]:
-            print('Aborting.')
-            sys.exit(1)
+    if(result == State.PASS):
+        print('This system meets all requirements.')
+    elif(result == State.WARN):
+        while(True):
+            print('This system may be insufficient, proceed at your own risk. ', end='')
+            answer = input('Proceed? [y/n] ')
+            if answer.lower() in ["y","yes"]:
+                break
+            elif answer.lower() in ["n","no"]:
+                print('Aborting.')
+                sys.exit(1)
 
-else:
-    print('This system does not meet the minimum requirements, aborting.')
-    sys.exit(1)
+    else:
+        print('This system does not meet the minimum requirements, aborting.')
+        sys.exit(1)
