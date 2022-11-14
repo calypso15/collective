@@ -88,10 +88,14 @@ def check_hash(filename, hash_value, hash_type='sha256'):
     if (not os.path.isfile(datafile)):
         return False
 
+    print(f"expected hash: {hash_value}")
+
     alg = hashlib.new(hash_type)
     with open(datafile, 'rb') as f:
         for byte_block in iter(lambda: f.read(4096), b""):
             alg.update(byte_block)
+
+    print(f"got hash: {alg.hexdigest()}")
 
     return (alg.hexdigest() == hash_value)
 
@@ -116,6 +120,7 @@ for file in manifest['files']:
 
         if (not check_hash(name, hash, hash_type=hash_type)):
             print('does not match.')
+            exit()
             download_file(name)
         else:
             print('matches.')
