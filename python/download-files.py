@@ -61,7 +61,7 @@ def download_file(filename):
     url = urllib.parse.urljoin(VCLOUD_URL, filename)
     datafile = os.path.join(DOWNLOAD_DIR, filename)
 
-    local_filename = requests.util.unquote(datafile)
+    local_filename = urllib.parse.unquote(datafile)
 
     with requests.get(url, auth=AUTH, stream=True) as r:
         r.raise_for_status()
