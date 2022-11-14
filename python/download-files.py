@@ -98,7 +98,10 @@ def check_hash(filename, hash_value, hash_type='sha256'):
 if not os.path.exists(DOWNLOAD_DIR):
    os.makedirs(DOWNLOAD_DIR)
 
-manifest = json.loads(requests.get(urllib.parse.urljoin(VCLOUD_URL, 'manifest.json'), auth=AUTH).text)
+manifest_file = download_file('manifest.json')
+manifest = {}
+with open(os.path.join(DOWNLOAD_DIR, manifest_file)) as f:
+    manifest = json.loads(f.read())
 
 print('Downloading OVAs...')
 
