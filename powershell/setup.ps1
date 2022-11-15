@@ -1,19 +1,38 @@
+param($Step=$null)
+$Run = $false
 
-# Install other chocolatey packages
-Set-Location $HOME/Documents/go-nuclear/choco
+if($Step -eq "Install-Packages" -or $Run -eq $true -or $Step -eq $null)
+{
+    $Run = $true
 
-Write-Host('Installing chocolatey packages...')
-Invoke-Command -ScriptBlock {
-    choco install packages.config --yes
+    # Install other chocolatey packages
+    Set-Location $HOME/Documents/go-nuclear/choco
+
+    Write-Host('Installing chocolatey packages...')
+    Invoke-Command -ScriptBlock {
+        choco install packages.config --yes
+    }
+
+    $env:Path = [System.Environment]::GetEnvironmentVariable("Path","Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path","User")
+
+    Register-ScheduledTask -TaskName "Resume-Setup" -Trigger (New-ScheduledTaskTrigger -AtLogon) -Action (New-ScheduledTaskAction -Execute "${Env:WinDir}\System32\WindowsPowerShell\v1.0\powershell.exe" -Argument ("-ExecutionPolicy Bypass -Command `"& '" + $PSCommandPath + " Start-Python'`"")) -RunLevel Highest -Force;
+    Restart-Computer
 }
 
-$env:Path = [System.Environment]::GetEnvironmentVariable("Path","Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path","User")
+if($Step -eq "Start-Python" -or $Run -eq $true)
+{
+    $Run = $true
+    Unregister-ScheduledTask -TaskName "Resume-Setup" -Confirm:$false
 
-# Start python script
-Set-Location $HOME/Documents/go-nuclear/python
-pip install -r requirements.txt
-python setup.py
-Write-Host('')
+    # Start python script
+    Set-Location $HOME/Documents/go-nuclear/python
+
+    Write-Host('Starting Python setup...')
+    pip install -r requirements.txt
+    exit
+    python setup.py
+    Write-Host('')
+}
 
 if($LastExitCode -ne 0) {
     throw 'Setup failed, aborting.'
