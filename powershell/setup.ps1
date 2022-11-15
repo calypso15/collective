@@ -7,6 +7,8 @@ Invoke-Command -ScriptBlock {
     choco install packages.config --yes
 }
 
+$env:Path = [System.Environment]::GetEnvironmentVariable("Path","Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path","User")
+
 # Start python script
 Set-Location $HOME/Documents/go-nuclear/python
 pip install -r requirements.txt
