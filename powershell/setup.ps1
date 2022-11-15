@@ -16,6 +16,7 @@ if($Step -eq "Install-Packages" -or $Run -eq $true -or $Step -eq $null)
     $env:Path = [System.Environment]::GetEnvironmentVariable("Path","Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path","User")
 
     Register-ScheduledTask -TaskName "Resume-Setup" -Principal (New-ScheduledTaskPrincipal -UserID $env:USERNAME -RunLevel Highest -LogonType Interactive) -Trigger (New-ScheduledTaskTrigger -AtLogon) -Action (New-ScheduledTaskAction -Execute "${Env:WinDir}\System32\WindowsPowerShell\v1.0\powershell.exe" -Argument ("-ExecutionPolicy Bypass -Command `"& '" + $PSCommandPath + " Start-Python'`"")) -Force;
+    Exit
     Restart-Computer
 }
 
