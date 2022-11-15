@@ -31,31 +31,31 @@ if __name__ == '__main__':
     run_powershell('Set-MpPreference -ExclusionPath $HOME/Desktop/Malware')
 
     print('Configuring vmnet...')
-    subprocess.run(['C:/Program Files (x86)/VMware/VMware Workstation/vnetlib64.exe', '--', 'set vnet vmnet8 addr 192.168.192.0'])
+    subprocess.run(f'C:/Program Files (x86)/VMware/VMware Workstation/vnetlib64.exe -- set vnet vmnet8 addr 192.168.192.0', shell=True)
 
     print('Deleting old VMs...')
     files = glob.glob(os.path.join(home, 'Documents/Virtual Machines/S1', '**/*.vmx'), recursive=True)
     for file in files:
         print(f'Stopping {file}...')
-        subprocess.run(['C:/Program Files (x86)/VMware/VMware Workstation/vmrun', '-T ws', f'stop {file}', 'hard'])
+        subprocess.run(f'C:/Program Files (x86)/VMware/VMware Workstation/vmrun.exe -T ws stop {file} hard', shell=True)
 
         print(f'Deleting {file}...')
-        subprocess.run(['C:/Program Files (x86)/VMware/VMware Workstation/vmrun', '-T ws', f'deleteVM {file}'])
+        subprocess.run(f'C:/Program Files (x86)/VMware/VMware Workstation/vmrun.exe -T ws deleteVM {file}', shell=True)
 
     print('Installing new VMs...')
     files = glob.glob(os.path.join(home, 'Documents/.vcloud', '**/*.ova'), recursive=True)
     for file in files:
         print(f'Installing {file}...')
-        subprocess.run(['C:/Program Files (x86)/VMware/VMware Workstation/OVFTool/ovftool', '--allowExtraConfig', '--net:"custom=vmnet8"', f'-o', file, os.path.join(home, 'Documents/Virtual Machines/S1')])
+        subprocess.run(f'C:/Program Files (x86)/VMware/VMware Workstation/OVFTool/ovftool.exe --allowExtraConfig --net:"custom=vmnet8" -o {file} {os.path.join(home, "Documents/Virtual Machines/S1")}', shell=True)
 
     print('Starting VMs...')
     files = glob.glob(os.path.join(home, 'Documents/Virtual Machines/S1', '**/*.vmx'), recursive=True)
     for file in files:
         print(f'Starting {file}...')
-        subprocess.run(['C:/Program Files (x86)/VMware/VMware Workstation/vmrun', '-T ws', f'start {file}'])
+        subprocess.run(f'C:/Program Files (x86)/VMware/VMware Workstation/vmrun.exe -T ws start {file}', shell=True)
 
-        p = subprocess.run(['C:/Program Files (x86)/VMware/VMware Workstation/vmrun', '-T ws', f'getGuestIPAddress {file} -wait'], capture_output=True)
+        p = subprocess.run(f'C:/Program Files (x86)/VMware/VMware Workstation/vmrun.exe -T ws getGuestIPAddress {file} -wait', shell=True, capture_output=True)
         print(f'...Machine is up with IP address {p.stdout}')
 
         print(f'Disabling shared folders for {file}...')
-        subprocess.run(['C:/Program Files (x86)/VMware/VMware Workstation/vmrun', '-T ws', f'disableSharedFolders {file}'])
+        subprocess.run(f'C:/Program Files (x86)/VMware/VMware Workstation/vmrun.exe -T ws disableSharedFolders {file}', shell=True)
