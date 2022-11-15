@@ -20,6 +20,8 @@ if ((Get-Command 'git.exe' -ErrorAction SilentlyContinue) -eq $null) {
         choco install git --yes
     }
 
+    $env:Path = [System.Environment]::GetEnvironmentVariable("Path","Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path","User")
+
     if ((Get-Command 'git.exe' -ErrorAction SilentlyContinue) -eq $null) {
         throw 'Failed to install git, aborting.'
     }
