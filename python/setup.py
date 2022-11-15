@@ -55,7 +55,7 @@ if __name__ == '__main__':
         subprocess.run(f'"C:/Program Files (x86)/VMware/VMware Workstation/vmrun.exe" -T ws start "{file}"', shell=True)
 
         p = subprocess.run(f'"C:/Program Files (x86)/VMware/VMware Workstation/vmrun.exe" -T ws getGuestIPAddress "{file}" -wait', shell=True, capture_output=True)
-        print(f'...Machine is up with IP address {p.stdout}')
+        print(f'...Machine is up with IP address {p.stdout.decode().rstrip()}')
 
         print(f'Disabling shared folders for {file}...')
         subprocess.run(f'"C:/Program Files (x86)/VMware/VMware Workstation/vmrun.exe" -T ws disableSharedFolders "{file}"', shell=True)
