@@ -8,6 +8,8 @@ if ((Get-Command 'choco.exe' -ErrorAction SilentlyContinue) -eq $null) {
     [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072
     iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
 
+    $env:Path = [System.Environment]::GetEnvironmentVariable("Path","Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path","User")
+
     if ((Get-Command 'choco.exe' -ErrorAction SilentlyContinue) -eq $null) {
         throw 'Failed to install chocolatey, aborting.'
     }
@@ -26,8 +28,6 @@ if ((Get-Command 'git.exe' -ErrorAction SilentlyContinue) -eq $null) {
         throw 'Failed to install git, aborting.'
     }
 }
-
-$env:Path = [System.Environment]::GetEnvironmentVariable("Path","Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path","User")
 
 # Clone the go-nuclear repo if it doesn't already exist
 if (-Not (Test-Path -Path $HOME/Documents/go-nuclear)) {
