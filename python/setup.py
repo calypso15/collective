@@ -23,7 +23,7 @@ if __name__ == '__main__':
     home = os.path.expanduser('~')
 
     system_requirements.check_requirements()
-    # vcloud_files.download_files()
+    vcloud_files.download_files()
 
     make_dirs()
 
