@@ -16,11 +16,11 @@ if(Should-Run "Enable-Autologon")
     if($enable -eq "y")
     {
         $Username = Read-Host 'Username: '
-        $Pass = Read-Host "Password: " -AsSecureString
+        $Password = Read-Host "Password: " -AsSecureString
         $RegistryPath = 'HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon'
         Set-ItemProperty $RegistryPath 'AutoAdminLogon' -Value "1" -Type String
         Set-ItemProperty $RegistryPath 'DefaultUsername' -Value "$Username" -type String
-        Set-ItemProperty $RegistryPath 'DefaultPassword' -Value "$Pass" -type String
+        [PInvoke.LSAUtil.LSAutil]::new("DefaultPassword").SetSecret($Password)
     }
 }
 
@@ -37,7 +37,7 @@ if(Should-Run "Install-Packages")
     $env:Path = [System.Environment]::GetEnvironmentVariable("Path","Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path","User")
 
     Register-ScheduledTask -TaskName "Resume-Setup" -Principal (New-ScheduledTaskPrincipal -UserID $env:USERNAME -RunLevel Highest -LogonType Interactive) -Trigger (New-ScheduledTaskTrigger -AtLogon) -Action (New-ScheduledTaskAction -Execute "${Env:WinDir}\System32\WindowsPowerShell\v1.0\powershell.exe" -Argument ("-NoExit -ExecutionPolicy Bypass -File `"" + $PSCommandPath + "`" Run-Python-Setup")) -Force;
-#    Restart-Computer
+    Restart-Computer
 }
 
 if(Should-Run "Run-Python-Setup")
