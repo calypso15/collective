@@ -1,10 +1,31 @@
 param($Step=$null)
-$Run = $false
+$Running = $false
 
-if($Step -eq "Install-Packages" -or $Run -eq $true -or $Step -eq $null)
+function Should-Run([string] $TargetStep)
 {
-    $Run = $true
+    if ($global:Step -eq $TargetStep -or $global:Step -eq $null) {
+        $global:Running = $true
+    }
 
+    return $global:Running
+}
+
+if(Should-Run "Enable-Autologon")
+{
+    $enable = Read-Host 'Enable autologin [y/n]? '
+    if($enable)
+    {
+        $Username = Read-Host 'Username: '
+        $Pass = Read-Host "Password: " -AsSecureString
+        $RegistryPath = 'HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon'
+        Set-ItemProperty $RegistryPath 'AutoAdminLogon' -Value "1" -Type String
+        Set-ItemProperty $RegistryPath 'DefaultUsername' -Value "$Username" -type String
+        Set-ItemProperty $RegistryPath 'DefaultPassword' -Value "$Pass" -type String
+    }
+}
+
+if(Should-Run "Install-Packages")
+{
     # Install other chocolatey packages
     Set-Location $HOME/Documents/go-nuclear/choco
 
@@ -15,13 +36,12 @@ if($Step -eq "Install-Packages" -or $Run -eq $true -or $Step -eq $null)
 
     $env:Path = [System.Environment]::GetEnvironmentVariable("Path","Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path","User")
 
-    Register-ScheduledTask -TaskName "Resume-Setup" -Principal (New-ScheduledTaskPrincipal -UserID $env:USERNAME -RunLevel Highest -LogonType Interactive) -Trigger (New-ScheduledTaskTrigger -AtLogon) -Action (New-ScheduledTaskAction -Execute "${Env:WinDir}\System32\WindowsPowerShell\v1.0\powershell.exe" -Argument ("-NoExit -ExecutionPolicy Bypass -File `"" + $PSCommandPath + "`" Start-Python")) -Force;
+    Register-ScheduledTask -TaskName "Resume-Setup" -Principal (New-ScheduledTaskPrincipal -UserID $env:USERNAME -RunLevel Highest -LogonType Interactive) -Trigger (New-ScheduledTaskTrigger -AtLogon) -Action (New-ScheduledTaskAction -Execute "${Env:WinDir}\System32\WindowsPowerShell\v1.0\powershell.exe" -Argument ("-NoExit -ExecutionPolicy Bypass -File `"" + $PSCommandPath + "`" Run-Python-Setup")) -Force;
     Restart-Computer
 }
 
-if($Step -eq "Start-Python" -or $Run -eq $true)
+if(Should-Run "Run-Python-Setup")
 {
-    $Run = $true
     Unregister-ScheduledTask -TaskName "Resume-Setup" -Confirm:$false
 
     # Start python script
