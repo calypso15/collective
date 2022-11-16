@@ -47,10 +47,10 @@ if __name__ == '__main__':
     files = glob.glob(os.path.join(VM_DIR, '**/*.vmx'), recursive=True)
     for file in files:
         print(f'Stopping {file}...')
-        subprocess.run(f'"{VMRUN_PATH}" -T ws stop "{file}" hard', shell=True)
+        subprocess.run(f'{VMRUN_PATH} -T ws stop "{file}" hard', shell=True)
 
         print(f'Deleting {file}...')
-        subprocess.run(f'"{VMRUN_PATH} -T ws deleteVM "{file}"', shell=True)
+        subprocess.run(f'{VMRUN_PATH} -T ws deleteVM "{file}"', shell=True)
 
     print('Installing new VMs...')
     for file in manifest['files']:
@@ -60,16 +60,16 @@ if __name__ == '__main__':
         if install:
             full_name = os.path.join(DOWNLOAD_DIR, name)
             print(f'Installing {file}...')
-            subprocess.run(f'"{OVFTOOL_PATH}" --allowExtraConfig --net:"custom=vmnet8" -o "{full_name}" "{VM_DIR}"', shell=True)
+            subprocess.run(f'{OVFTOOL_PATH} --allowExtraConfig --net:"custom=vmnet8" -o "{full_name}" "{VM_DIR}"', shell=True)
 
     print('Starting VMs...')
     files = glob.glob(os.path.join(VM_DIR, '**/*.vmx'), recursive=True)
     for file in files:
         print(f'Starting {file}...')
-        subprocess.run(f'"{VMRUN_PATH}" -T ws start "{file}"', shell=True)
+        subprocess.run(f'{VMRUN_PATH} -T ws start "{file}"', shell=True)
 
-        p = subprocess.run(f'"{VMRUN_PATH}" -T ws getGuestIPAddress "{file}" -wait', shell=True, capture_output=True)
+        p = subprocess.run(f'{VMRUN_PATH} -T ws getGuestIPAddress "{file}" -wait', shell=True, capture_output=True)
         print(f'...Machine is up with IP address {p.stdout.decode().rstrip()}')
 
         print(f'Disabling shared folders for {file}...')
-        subprocess.run(f'"{VMRUN_PATH}" -T ws disableSharedFolders "{file}"', shell=True)
+        subprocess.run(f'{VMRUN_PATH} -T ws disableSharedFolders "{file}"', shell=True)
