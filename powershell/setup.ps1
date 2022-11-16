@@ -15,6 +15,7 @@ if(Should-Run "Enable-Autologon")
     $enable = Read-Host 'Enable autologin [y/n]? '
     if($enable -eq "y")
     {
+        Import-Module ./powershell/LSAUtil
         $Username = Read-Host 'Username: '
         $Password = Read-Host "Password: " -AsSecureString
         $RegistryPath = 'HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon'
