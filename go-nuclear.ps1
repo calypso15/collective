@@ -57,4 +57,5 @@ if(Compare-Object -ReferenceObject $(Get-Content $HOME/Documents/go-nuclear/go-n
     exit
 }
 
-& "./powershell/setup.ps1"
+Set-Location $HOME/Documents/go-nuclear/powershell
+& "./setup.ps1"

@@ -17,10 +17,10 @@ function Install-SysInternalsTool
     #Download tools to target directory
     try{
         $wc = New-Object System.Net.WebClient
-        foreach($tool in $tools.Values){          
+        foreach($tool in $tools.Values){
             $filePath = Join-Path $targetDir ([IO.Path]::GetFileName($tool))
             Write-Verbose "Downloading $tool"
-            $wc.DownloadFile($tool,$filePath)  
+            $wc.DownloadFile($tool,$filePath)
         }
     }
     finally{
