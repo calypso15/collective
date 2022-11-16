@@ -22,6 +22,8 @@ if(Should-Run "Enable-Autologon")
         Enable-AutoLogon -UserName $Username -Password $Password
         Register-BGInfoStartup
     }
+
+    Exit
 }
 
 if(Should-Run "Install-Packages")
