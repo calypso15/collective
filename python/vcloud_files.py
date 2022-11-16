@@ -108,7 +108,7 @@ def download_files():
             retries += 1
         else:
             print('Exceeded max retries, moving on.')
-            break
+            return
 
     if new_url or new_user or new_pass:
         a = input('Save changes to VM Cloud environment variables [y/n]? ')
