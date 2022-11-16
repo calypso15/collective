@@ -16,7 +16,7 @@ if(Should-Run "Enable-Autologon")
     if($enable -eq "y")
     {
         . .\Install-SysInternalsTool.ps1
-        $Username = Read-Host 'Username: '
+        $Username = Read-Host 'Domain\Username: '
         $Password = Read-Host "Password: " -AsSecureString
         Install-SysInternalsTool
         Enable-AutoLogon -UserName $Username -Password $Password
