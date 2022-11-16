@@ -13,7 +13,7 @@ function Should-Run([string] $TargetStep)
 if(Should-Run "Enable-Autologon")
 {
     $enable = Read-Host 'Enable autologin [y/n]? '
-    if($enable)
+    if($enable -eq "y")
     {
         $Username = Read-Host 'Username: '
         $Pass = Read-Host "Password: " -AsSecureString
