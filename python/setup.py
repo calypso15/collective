@@ -59,7 +59,7 @@ if __name__ == '__main__':
 
         if install:
             full_name = os.path.join(DOWNLOAD_DIR, name)
-            print(f'Installing {file}...')
+            print(f'Installing {full_name}...')
             subprocess.run(f'"{OVFTOOL_PATH}" --allowExtraConfig --net:"custom=vmnet8" -o "{full_name}" "{VM_DIR}"', shell=True)
 
     print('Starting VMs...')
