@@ -15,7 +15,7 @@ if(Should-Run "Enable-Autologon")
     $enable = Read-Host 'Enable autologin [y/n]? '
     if($enable -eq "y")
     {
-        Import-Module .\powershell\Install-SysInternalsTool
+        . .\Install-SysInternalsTool.ps1
         $Username = Read-Host 'Username: '
         $Password = Read-Host "Password: " -AsSecureString
         Install-SysInternalsTool
