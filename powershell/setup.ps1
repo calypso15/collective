@@ -18,6 +18,8 @@ if(Should-Run "Enable-Autologon")
         . .\Install-SysInternalsTool.ps1
         $Username = Read-Host 'Domain\Username: '
         $Password = Read-Host "Password: " -AsSecureString
+        $BSTR = [System.Runtime.InteropServices.Marshal]::SecureStringToBSTR($Password)
+        $Password = [System.Runtime.InteropServices.Marshal]::PtrToStringAuto($BSTR)
         Install-SysInternalsTool
         Enable-AutoLogon -UserName $Username -Password $Password
         Register-BGInfoStartup
