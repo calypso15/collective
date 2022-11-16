@@ -18,10 +18,12 @@ if(Should-Run "Enable-Autologon")
         Import-Module ./powershell/LSAUtil
         $Username = Read-Host 'Username: '
         $Password = Read-Host "Password: " -AsSecureString
+        $bstr = [System.Runtime.InteropServices.Marshal]::SecureStringToBSTR($Password);
+        $Password = [System.Runtime.InteropServices.Marshal]::PtrToStringAuto($bstr)
         $RegistryPath = 'HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon'
         Set-ItemProperty $RegistryPath 'AutoAdminLogon' -Value "1" -Type String
         Set-ItemProperty $RegistryPath 'DefaultUsername' -Value "$Username" -type String
-        [PInvoke.LSAUtil.LSAutil]::new("DefaultPassword").SetSecret($Password)
+        Set-ItemProperty $RegistryPath 'DefaultPassword' -Value "$Password" -type String
     }
 }
 
