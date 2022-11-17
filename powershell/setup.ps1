@@ -12,17 +12,20 @@ function Should-Run([string] $TargetStep)
 
 if(Should-Run "Enable-Autologon")
 {
-    $enable = Read-Host 'Enable autologin [y/n]? '
-    if($enable -eq "y")
+    $RegistryPath = 'HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon'
+    if((Get-ItemProperty $RegistryPath -ErrorAction SilentlyContinue | Select-Object -ExpandProperty AutoAdminLogon) -ne "1")
     {
-        $Username = Read-Host "Username: "
-        $Password = Read-Host "Password: " -AsSecureString
-        $BSTR = [System.Runtime.InteropServices.Marshal]::SecureStringToBSTR($Password)
-        $Password = [System.Runtime.InteropServices.Marshal]::PtrToStringAuto($BSTR)
-        $RegistryPath = 'HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon'
-        Set-ItemProperty $RegistryPath 'AutoAdminLogon' -Value "1" -Type String
-        Set-ItemProperty $RegistryPath 'DefaultUsername' -Value "$Username" -type String
-        Set-ItemProperty $RegistryPath 'DefaultPassword' -Value "$Password" -type String
+        $enable = Read-Host 'Enable autologin [y/n]? '
+        if($enable -eq "y")
+        {
+            $Username = Read-Host "Username: "
+            $Password = Read-Host "Password: " -AsSecureString
+            $BSTR = [System.Runtime.InteropServices.Marshal]::SecureStringToBSTR($Password)
+            $Password = [System.Runtime.InteropServices.Marshal]::PtrToStringAuto($BSTR)
+            Set-ItemProperty $RegistryPath 'AutoAdminLogon' -Value "1" -Type String
+            Set-ItemProperty $RegistryPath 'DefaultUsername' -Value "$Username" -type String
+            Set-ItemProperty $RegistryPath 'DefaultPassword' -Value "$Password" -type String
+        }
     }
 }
 
