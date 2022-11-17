@@ -15,7 +15,7 @@ if(Should-Run "Enable-Autologon")
     $enable = Read-Host 'Enable autologin [y/n]? '
     if($enable -eq "y")
     {
-        $Username = Read-Host 'Domain\Username: '
+        $Username = Read-Host "Username: "
         $Password = Read-Host "Password: " -AsSecureString
         $BSTR = [System.Runtime.InteropServices.Marshal]::SecureStringToBSTR($Password)
         $Password = [System.Runtime.InteropServices.Marshal]::PtrToStringAuto($BSTR)
@@ -47,7 +47,7 @@ if(Should-Run "Install-Packages")
 
 if(Should-Run "Run-Python-Setup")
 {
-    Unregister-ScheduledTask -TaskName "Resume-Setup" -Confirm:$false
+    Unregister-ScheduledTask -TaskName "Resume-Setup" -Confirm:$false -ErrorAction SilentlyContinue
 
     # Start python script
     Set-Location $HOME/Documents/go-nuclear/python
