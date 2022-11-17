@@ -15,14 +15,14 @@ if(Should-Run "Enable-Autologon")
     $enable = Read-Host 'Enable autologin [y/n]? '
     if($enable -eq "y")
     {
-        . .\Install-SysInternalsTool.ps1
         $Username = Read-Host 'Domain\Username: '
         $Password = Read-Host "Password: " -AsSecureString
         $BSTR = [System.Runtime.InteropServices.Marshal]::SecureStringToBSTR($Password)
         $Password = [System.Runtime.InteropServices.Marshal]::PtrToStringAuto($BSTR)
-        Install-SysInternalsTool
-        Enable-AutoLogon -UserName $Username -Password $Password
-        Register-BGInfoStartup
+        $RegistryPath = 'HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon'
+        Set-ItemProperty $RegistryPath 'AutoAdminLogon' -Value "1" -Type String
+        Set-ItemProperty $RegistryPath 'DefaultUsername' -Value "$Username" -type String
+        Set-ItemProperty $RegistryPath 'DefaultPassword' -Value "$Password" -type String
     }
 }
 
