@@ -24,10 +24,10 @@ if __name__ == '__main__':
     HOME = os.path.expanduser('~')
     DOWNLOAD_DIR = os.path.join(HOME, 'Documents', '.vcloud')
     VM_DIR = os.path.join(HOME, 'Documents/Virtual Machines/S1')
-    VMNETLIB64_PATH = "C:/Program Files (x86)/VMware/VMware Workstation/vnetlib64.exe"
-    VMRUN_PATH = "C:/Program Files (x86)/VMware/VMware Workstation/vmrun.exe"
-    VMWARE_PATH = "C:/Program Files (x86)/VMware/VMware Workstation/vmware.exe"
-    OVFTOOL_PATH = "C:/Program Files (x86)/VMware/VMware Workstation/OVFTool/ovftool.exe"
+    VMNETLIB64_PATH = r"C:/Program Files (x86)/VMware/VMware Workstation/vnetlib64.exe"
+    VMRUN_PATH = r"C:/Program Files (x86)/VMware/VMware Workstation/vmrun.exe"
+    VMWARE_PATH = r"C:/Program Files (x86)/VMware/VMware Workstation/vmware.exe"
+    OVFTOOL_PATH = r"C:/Program Files (x86)/VMware/VMware Workstation/OVFTool/ovftool.exe"
 
     system_requirements.check_requirements()
     vcloud_files.download_files()
@@ -42,7 +42,7 @@ if __name__ == '__main__':
     run_powershell('Set-MpPreference -ExclusionPath $HOME/Desktop/Malware')
 
     print('Starting VMWare...')
-    subprocess.Popen([f'"{VMWARE_PATH}"'], shell=True)
+    subprocess.Popen(VMWARE_PATH, shell=True)
     input('VMWare should now be running. Please configure your license and then press Enter to continue...')
 
     print('Configuring vmnet...')
