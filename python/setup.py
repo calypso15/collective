@@ -26,6 +26,7 @@ if __name__ == '__main__':
     VM_DIR = os.path.join(HOME, 'Documents/Virtual Machines/S1')
     VMNETLIB64_PATH = "C:/Program Files (x86)/VMware/VMware Workstation/vnetlib64.exe"
     VMRUN_PATH = "C:/Program Files (x86)/VMware/VMware Workstation/vmrun.exe"
+    VMWARE_PATH = "C:/Program Files (x86)/VMware/VMware Workstation/vmware.exe"
     OVFTOOL_PATH = "C:/Program Files (x86)/VMware/VMware Workstation/OVFTool/ovftool.exe"
 
     system_requirements.check_requirements()
@@ -39,6 +40,10 @@ if __name__ == '__main__':
 
     print('Excluding malware directory from Windows Defender...')
     run_powershell('Set-MpPreference -ExclusionPath $HOME/Desktop/Malware')
+
+    print('Starting VMWare...')
+    subprocess.run(f'"{VMWARE_PATH}"')
+    input('VMWare should now be running. Please configure your license and then press any key.')
 
     print('Configuring vmnet...')
     subprocess.run(f'"{VMNETLIB64_PATH}" -- set vnet vmnet8 addr 192.168.192.0', shell=True)
