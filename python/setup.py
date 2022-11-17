@@ -42,8 +42,8 @@ if __name__ == '__main__':
     run_powershell('Set-MpPreference -ExclusionPath $HOME/Desktop/Malware')
 
     print('Starting VMWare...')
-    subprocess.run(f'"{VMWARE_PATH}"')
-    input('VMWare should now be running. Please configure your license and then press any key.')
+    subprocess.Popen([f'"{VMWARE_PATH}"'])
+    input('VMWare should now be running. Please configure your license and then press Enter to continue...')
 
     print('Configuring vmnet...')
     subprocess.run(f'"{VMNETLIB64_PATH}" -- set vnet vmnet8 addr 192.168.192.0', shell=True)
