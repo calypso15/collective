@@ -1,4 +1,53 @@
-param($Step=$null)
+[CmdletBinding()]
+param (
+    [Parameter()]
+    [string]
+    $Step,
+
+    [Parameter()]
+    [string]
+    $EnableAutologon,
+
+    [Parameter()]
+    [string]
+    $Username,
+
+    [Parameter()]
+    [string]
+    $Password,
+
+    [Parameter()]
+    [string]
+    $ConfigPath
+)
+
+if ($ConfigPath -in  $PSBoundParameters.Keys)
+{
+
+    $config = Get-Content $ConfigPath | ConvertFrom-Json
+
+    if ('Step' -notin  $PSBoundParameters.Keys)
+    {
+        $Step = $null
+    }
+
+    if ('EnableAutologon' -notin  $PSBoundParameters.Keys) {
+        $EnableAutologon = $null
+    }
+
+    if ('Username' -notin  $PSBoundParameters.Keys) {
+        $EnableAutologon = $null
+        $Username = $null
+        $Password = $null
+    }
+
+    if ('Password' -notin  $PSBoundParameters.Keys) {
+        $EnableAutologon = $null
+        $Username = $null
+        $Password = $null
+    }
+}
+
 $Running = $false
 
 function Should-Run([string] $TargetStep)
@@ -15,13 +64,16 @@ if(Should-Run "Enable-Autologon")
     $RegistryPath = 'HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon'
     if((Get-ItemProperty $RegistryPath -ErrorAction SilentlyContinue | Select-Object -ExpandProperty AutoAdminLogon) -ne "1")
     {
-        $enable = Read-Host 'Enable autologin [y/n]? '
-        if($enable -eq "y")
+        if($EnableAutologon -eq $null)
         {
-            $Username = Read-Host "Username: "
-            $Password = Read-Host "Password: " -AsSecureString
-            $BSTR = [System.Runtime.InteropServices.Marshal]::SecureStringToBSTR($Password)
-            $Password = [System.Runtime.InteropServices.Marshal]::PtrToStringAuto($BSTR)
+            $EnableAutologon = ((Read-Host 'Enable Windows Autologon [y/n]? ').ToLower() -eq "y")
+        }
+
+        if($EnableAutologon)
+        {
+            Write-Host('Enabling autologon...')
+            $Username = Read-Host "NUC Windows Username: "
+            $Password = Read-Host "NUC Windows Password: "
             Set-ItemProperty $RegistryPath 'AutoAdminLogon' -Value "1" -Type String
             Set-ItemProperty $RegistryPath 'DefaultUsername' -Value "$Username" -type String
             Set-ItemProperty $RegistryPath 'DefaultPassword' -Value "$Password" -type String
@@ -43,7 +95,7 @@ if(Should-Run "Install-Packages")
 
     if($LastExitCode -eq 3010) {
         Write-Host('Restarting system...')
-        Register-ScheduledTask -TaskName "Resume-Setup" -Principal (New-ScheduledTaskPrincipal -UserID $env:USERNAME -RunLevel Highest -LogonType Interactive) -Trigger (New-ScheduledTaskTrigger -AtLogon) -Action (New-ScheduledTaskAction -Execute "${Env:WinDir}\System32\WindowsPowerShell\v1.0\powershell.exe" -Argument ("-NoExit -ExecutionPolicy Bypass -File `"" + $PSCommandPath + "`" Run-Python-Setup")) -Force;
+        Register-ScheduledTask -TaskName "Resume-Setup" -Principal (New-ScheduledTaskPrincipal -UserID $env:USERNAME -RunLevel Highest -LogonType Interactive) -Trigger (New-ScheduledTaskTrigger -AtLogon) -Action (New-ScheduledTaskAction -Execute "${Env:WinDir}\System32\WindowsPowerShell\v1.0\powershell.exe" -Argument ("-NoExit -ExecutionPolicy Bypass -File `"" + $PSCommandPath + "`" "+@$PSBoundParameters+" -Step: Run-Python-Setup")) -Force;
         Restart-Computer
     }
 }
