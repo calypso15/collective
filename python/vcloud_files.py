@@ -1,5 +1,4 @@
-import dotenv
-import getpass
+import argparse
 import hashlib
 import json
 import os
@@ -49,74 +48,13 @@ def check_hash(filename, hash_value, hash_type='sha256'):
     return (alg.hexdigest() == hash_value)
 
 
-def download_files():
-    global VCLOUD_URL, VCLOUD_USER, VCLOUD_PASS
+def download_files(vcloud_url, vcloud_user, vcloud_pass):
     global AUTH
     global TEMP_DIR, DOWNLOAD_DIR
 
-    with open('.env', 'a') as f:
-        pass
-
-    dotenv_file = dotenv.find_dotenv()
-    dotenv.load_dotenv(dotenv_file)
-
-    VCLOUD_URL = os.environ.get('VCLOUD_URL')
-    VCLOUD_USER = os.environ.get('VCLOUD_USER')
-    VCLOUD_PASS = os.environ.get('VCLOUD_PASS')
-
-    new_url = False
-    new_user = False
-    new_pass = False
-
-    first_pass = True
-    max_retries = 3
-    retries = 0
-
-    while (first_pass or VCLOUD_URL == None or VCLOUD_USER == None or VCLOUD_PASS == None):
-        first_pass = False
-
-        if VCLOUD_URL == None:
-            VCLOUD_URL = input('VM Cloud Url: ')
-            new_url = True
-
-        if VCLOUD_USER == None:
-            VCLOUD_USER = input('VM Cloud User: ')
-            new_user = True
-
-        if VCLOUD_PASS == None:
-            VCLOUD_PASS = getpass.getpass('VM Cloud Password: ')
-            new_pass = True
-
-        try:
-            AUTH = requests.auth.HTTPBasicAuth(VCLOUD_USER, VCLOUD_PASS)
-            r = requests.get(VCLOUD_URL, auth=AUTH)
-            r.raise_for_status()
-        except requests.exceptions.ConnectionError as e:
-            print(e)
-            VCLOUD_URL = None
-        except requests.exceptions.HTTPError as e:
-            print(e)
-            code = e.response.status_code
-
-            if code == 401:
-                VCLOUD_USER = VCLOUD_PASS = None
-        else:
-            break
-
-        if (retries < max_retries):
-            print('There was a problem connecting to the server, trying again.')
-            retries += 1
-        else:
-            print('Exceeded max retries, moving on.')
-            return
-
-    if new_url or new_user or new_pass:
-        a = input('Save changes to VM Cloud environment variables [y/n]? ')
-
-        if (a.lower() == 'y'):
-            dotenv.set_key(dotenv_file, 'VCLOUD_URL', VCLOUD_URL)
-            dotenv.set_key(dotenv_file, 'VCLOUD_USER', VCLOUD_USER)
-            dotenv.set_key(dotenv_file, 'VCLOUD_PASS', VCLOUD_PASS)
+    AUTH = requests.auth.HTTPBasicAuth(vcloud_user, vcloud_pass)
+    r = requests.get(vcloud_url, auth=AUTH)
+    r.raise_for_status()
 
     TEMP_DIR = tempfile.gettempdir()
     DOWNLOAD_DIR = os.path.join(os.path.expanduser("~"), 'Documents', '.vcloud')
@@ -152,4 +90,13 @@ def download_files():
 
 
 if __name__ == '__main__':
-    download_files()
+    parser = argparse.ArgumentParser()
+    parser.add_argument('configfile')
+    args = parser.parse_args()
+
+    config = {}
+    config_file = args['config']
+    with open(config_file) as f:
+        config = json.loads(f.read())
+
+    download_files(config['Vcloud']['Url'], config['Vcloud']['Username'], config['Vcloud']['Password'])

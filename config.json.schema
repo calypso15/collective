@@ -1,0 +1,48 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "object",
+  "properties": {
+    "Windows": {
+      "type": "object",
+      "properties": {
+        "EnableAutologon": {
+          "type": "boolean"
+        },
+        "Username": {
+          "type": "string"
+        },
+        "Password": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "EnableAutologon",
+        "Username",
+        "Password"
+      ]
+    },
+    "Vcloud": {
+      "type": "object",
+      "properties": {
+        "Url": {
+          "type": "string"
+        },
+        "Username": {
+          "type": "string"
+        },
+        "Password": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "Url",
+        "Username",
+        "Password"
+      ]
+    }
+  },
+  "required": [
+    "Windows",
+    "Vcloud"
+  ]
+}

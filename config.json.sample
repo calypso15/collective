@@ -1,0 +1,12 @@
+{
+    "Windows": {
+        "EnableAutologon": true,
+        "Username": "user",
+        "Password": "pass"
+    },
+    "Vcloud": {
+        "Url": "https://example.com",
+        "Username": "user",
+        "Password": "pass"
+    }
+}

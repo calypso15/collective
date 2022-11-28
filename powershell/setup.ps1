@@ -2,87 +2,65 @@
 param (
     [Parameter()]
     [string]
-    $Step,
+    $ConfigFile,
 
     [Parameter()]
     [string]
-    $EnableAutologon,
-
-    [Parameter()]
-    [string]
-    $Username,
-
-    [Parameter()]
-    [string]
-    $Password,
-
-    [Parameter()]
-    [string]
-    $ConfigPath
+    $Step
 )
 
-if ($ConfigPath -in  $PSBoundParameters.Keys)
-{
-
-    $config = Get-Content $ConfigPath | ConvertFrom-Json
-
-    if ('Step' -notin  $PSBoundParameters.Keys)
-    {
-        $Step = $null
-    }
-
-    if ('EnableAutologon' -notin  $PSBoundParameters.Keys) {
-        $EnableAutologon = $null
-    }
-
-    if ('Username' -notin  $PSBoundParameters.Keys) {
-        $EnableAutologon = $null
-        $Username = $null
-        $Password = $null
-    }
-
-    if ('Password' -notin  $PSBoundParameters.Keys) {
-        $EnableAutologon = $null
-        $Username = $null
-        $Password = $null
-    }
+if ('ConfigFile' -NotIn $PSBoundParameters.Keys) {
+    Write-Host 'No config file specified with the -ConfigFile parameter, aborting.'
+    Exit
 }
+
+$ConfigFile = Resolve-Path $ConfigFile
+$Config = Get-Content $ConfigFile | ConvertFrom-Json
+
+# NEED PS v7 for Test-Json schema validation
+
+if ('Step' -NotIn $PSBoundParameters.Keys) {
+    $Step = $null
+}
+
+$EnableAutologon = $Config.Windows.EnableAutologon
+$Username = $Config.Windows.Username
+$Password = $Config.Windows.Password
 
 $Running = $false
 
-function Should-Run([string] $TargetStep)
-{
-    if ($global:Step -eq $TargetStep -or $global:Step -eq $null) {
+function Confirm-ShouldRun([string] $TargetStep) {
+    if ($global:Step -eq $TargetStep -or $null -eq $global:Step) {
         $global:Running = $true
     }
 
     return $global:Running
 }
 
-if(Should-Run "Enable-Autologon")
-{
+if (Confirm-ShouldRun "Enable-Autologon") {
     $RegistryPath = 'HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon'
-    if((Get-ItemProperty $RegistryPath -ErrorAction SilentlyContinue | Select-Object -ExpandProperty AutoAdminLogon) -ne "1")
-    {
-        if($EnableAutologon -eq $null)
-        {
-            $EnableAutologon = ((Read-Host 'Enable Windows Autologon [y/n]? ').ToLower() -eq "y")
-        }
-
-        if($EnableAutologon)
-        {
+    if ((Get-ItemProperty $RegistryPath -ErrorAction SilentlyContinue | Select-Object -ExpandProperty AutoAdminLogon) -ne "1") {
+        if ($EnableAutologon) {
             Write-Host('Enabling autologon...')
-            $Username = Read-Host "NUC Windows Username: "
-            $Password = Read-Host "NUC Windows Password: "
-            Set-ItemProperty $RegistryPath 'AutoAdminLogon' -Value "1" -Type String
-            Set-ItemProperty $RegistryPath 'DefaultUsername' -Value "$Username" -type String
-            Set-ItemProperty $RegistryPath 'DefaultPassword' -Value "$Password" -type String
+
+            $Computer = $env:COMPUTERNAME
+
+            Add-Type -AssemblyName System.DirectoryServices.AccountManagement
+            $obj = New-Object System.DirectoryServices.AccountManagement.PrincipalContext('machine', $Computer)
+
+            if ($true -eq $obj.ValidateCredentials($Username, $Password)) {
+                Set-ItemProperty $RegistryPath 'AutoAdminLogon' -Value "1" -Type String
+                Set-ItemProperty $RegistryPath 'DefaultUsername' -Value "$Username" -type String
+                Set-ItemProperty $RegistryPath 'DefaultPassword' -Value "$Password" -type String
+            }
+            else {
+                Write-Host 'Invalid credentials, moving on.'
+            }
         }
     }
 }
 
-if(Should-Run "Install-Packages")
-{
+if (Confirm-ShouldRun "Install-Packages") {
     # Install other chocolatey packages
     Set-Location $HOME/Documents/go-nuclear/choco
 
@@ -91,17 +69,16 @@ if(Should-Run "Install-Packages")
         choco install packages.config --yes
     }
 
-    $env:Path = [System.Environment]::GetEnvironmentVariable("Path","Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path","User")
+    $env:Path = [System.Environment]::GetEnvironmentVariable("Path", "Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path", "User")
 
-    if($LastExitCode -eq 3010) {
-        Write-Host('Restarting system...')
-        Register-ScheduledTask -TaskName "Resume-Setup" -Principal (New-ScheduledTaskPrincipal -UserID $env:USERNAME -RunLevel Highest -LogonType Interactive) -Trigger (New-ScheduledTaskTrigger -AtLogon) -Action (New-ScheduledTaskAction -Execute "${Env:WinDir}\System32\WindowsPowerShell\v1.0\powershell.exe" -Argument ("-NoExit -ExecutionPolicy Bypass -File `"" + $PSCommandPath + "`" "+@$PSBoundParameters+" -Step: Run-Python-Setup")) -Force;
+    if ($LastExitCode -eq 3010) {
+        Write-Host 'Restarting system...'
+        Register-ScheduledTask -TaskName "Resume-Setup" -Principal (New-ScheduledTaskPrincipal -UserID $env:USERNAME -RunLevel Highest -LogonType Interactive) -Trigger (New-ScheduledTaskTrigger -AtLogon) -Action (New-ScheduledTaskAction -Execute "${Env:WinDir}\System32\WindowsPowerShell\v1.0\powershell.exe" -Argument ("-NoExit -ExecutionPolicy Bypass -File `"" + $PSCommandPath + "`" -ConfigFile $ConfigFile -Step: Run-Python-Setup")) -Force;
         Restart-Computer
     }
 }
 
-if(Should-Run "Run-Python-Setup")
-{
+if (Confirm-ShouldRun "Run-Python-Setup") {
     Unregister-ScheduledTask -TaskName "Resume-Setup" -Confirm:$false -ErrorAction SilentlyContinue
 
     # Start python script
@@ -109,10 +86,10 @@ if(Should-Run "Run-Python-Setup")
 
     Write-Host('Starting Python setup...')
     pip install -r requirements.txt
-    python setup.py
+    python setup.py $ConfigFile
     Write-Host('')
 }
 
-if($LastExitCode -ne 0) {
+if ($LastExitCode -ne 0) {
     throw 'Setup failed, aborting.'
 }

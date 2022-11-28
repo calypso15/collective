@@ -1,3 +1,4 @@
+import argparse
 import glob
 import json
 import os
@@ -6,9 +7,11 @@ import subprocess
 import vcloud_files
 import system_requirements
 
+
 def make_dir(name):
     print(f'Creating directory {name}...')
     os.makedirs(name, exist_ok=True)
+
 
 def make_dirs():
     home = os.path.expanduser('~')
@@ -16,11 +19,22 @@ def make_dirs():
     make_dir(os.path.join(home, 'Documents/Virtual Machines/S1'))
     make_dir(os.path.join(home, 'Desktop/Malware'))
 
+
 def run_powershell(cmd):
     completed = subprocess.run(["powershell", "-Command", cmd], capture_output=True)
     return completed
 
+
 if __name__ == '__main__':
+    parser = argparse.ArgumentParser()
+    parser.add_argument('configfile')
+    args = parser.parse_args()
+
+    config = {}
+    config_file = args['config']
+    with open(config_file) as f:
+        config = json.loads(f.read())
+
     HOME = os.path.expanduser('~')
     DOWNLOAD_DIR = os.path.join(HOME, 'Documents', '.vcloud')
     VM_DIR = os.path.join(HOME, 'Documents/Virtual Machines/S1')
@@ -30,7 +44,7 @@ if __name__ == '__main__':
     OVFTOOL_PATH = r"C:/Program Files (x86)/VMware/VMware Workstation/OVFTool/ovftool.exe"
 
     system_requirements.check_requirements()
-    vcloud_files.download_files()
+    vcloud_files.download_files(config['Vcloud']['Url'], config['Vcloud']['Username'], config['Vcloud']['Password'])
 
     make_dirs()
 
@@ -67,7 +81,8 @@ if __name__ == '__main__':
         if install:
             full_name = os.path.join(DOWNLOAD_DIR, name)
             print(f'Installing {full_name}...')
-            subprocess.run(f'"{OVFTOOL_PATH}" --allowExtraConfig --net:"custom=vmnet8" -o "{full_name}" "{VM_DIR}"', shell=True)
+            subprocess.run(
+                f'"{OVFTOOL_PATH}" --allowExtraConfig --net:"custom=vmnet8" -o "{full_name}" "{VM_DIR}"', shell=True)
 
     print('Starting VMs...')
     files = glob.glob(os.path.join(VM_DIR, '**/*.vmx'), recursive=True)

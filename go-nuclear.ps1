@@ -1,22 +1,39 @@
+[CmdletBinding()]
+param (
+    [Parameter()]
+    [string]
+    $ConfigFile
+)
+
+if ('ConfigFile' -NotIn $PSBoundParameters.Keys)
+{
+    Write-Host 'No config file specified with the -ConfigFile parameter, aborting.'
+    Exit
+}
+
+# TURN OFF SLEEP
+
+$ConfigFile = Resolve-Path $ConfigFile
+
 # Update environment variables
 $env:Path = [System.Environment]::GetEnvironmentVariable("Path","Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path","User")
 
 # Install chocolatey
-if ((Get-Command 'choco.exe' -ErrorAction SilentlyContinue) -eq $null) {
+if ($null -eq (Get-Command 'choco.exe' -ErrorAction SilentlyContinue)) {
     Write-Host('Installing chocolatey...')
     Set-ExecutionPolicy Bypass -Scope Process -Force
     [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072
-    iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
+    Invoke-Expression ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
 
     $env:Path = [System.Environment]::GetEnvironmentVariable("Path","Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path","User")
 
-    if ((Get-Command 'choco.exe' -ErrorAction SilentlyContinue) -eq $null) {
+    if ($null -eq (Get-Command 'choco.exe' -ErrorAction SilentlyContinue)) {
         throw 'Failed to install chocolatey, aborting.'
     }
 }
 
 # Install git
-if ((Get-Command 'git.exe' -ErrorAction SilentlyContinue) -eq $null) {
+if ($null -eq (Get-Command 'git.exe' -ErrorAction SilentlyContinue)) {
     Write-Host('Installing git...')
     Invoke-Command -ScriptBlock {
         choco install git --yes
@@ -24,7 +41,7 @@ if ((Get-Command 'git.exe' -ErrorAction SilentlyContinue) -eq $null) {
 
     $env:Path = [System.Environment]::GetEnvironmentVariable("Path","Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path","User")
 
-    if ((Get-Command 'git.exe' -ErrorAction SilentlyContinue) -eq $null) {
+    if ($null -eq (Get-Command 'git.exe' -ErrorAction SilentlyContinue)) {
         throw 'Failed to install git, aborting.'
     }
 }
@@ -58,4 +75,4 @@ if(Compare-Object -ReferenceObject $(Get-Content $HOME/Documents/go-nuclear/go-n
 }
 
 Set-Location $HOME/Documents/go-nuclear/powershell
-& "./setup.ps1"
+Invoke-Expression "& ./setup.ps1 -ConfigFile `"$ConfigFile`""
