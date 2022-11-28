@@ -27,11 +27,11 @@ def run_powershell(cmd):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument('configfile')
+    parser.add_argument('config_file')
     args = parser.parse_args()
 
     config = {}
-    config_file = args['config']
+    config_file = args.config_file
     with open(config_file) as f:
         config = json.loads(f.read())
 
