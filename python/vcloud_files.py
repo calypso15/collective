@@ -51,6 +51,11 @@ def check_hash(filename, hash_value, hash_type='sha256'):
 def download_files(vcloud_url, vcloud_user, vcloud_pass):
     global AUTH
     global TEMP_DIR, DOWNLOAD_DIR
+    global VCLOUD_URL, VCLOUD_USER, VCLOUD_PASS
+
+    VCLOUD_URL = vcloud_url
+    VCLOUD_USER = vcloud_user
+    VCLOUD_PASS = vcloud_pass
 
     AUTH = requests.auth.HTTPBasicAuth(vcloud_user, vcloud_pass)
     r = requests.get(vcloud_url, auth=AUTH)
