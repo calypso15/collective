@@ -58,9 +58,11 @@ if __name__ == '__main__':
     subprocess.run(f'"{VMNETLIB64_PATH}" -- set nat vmnet8 dnsserver1 8.8.8.8', shell=True)
     subprocess.run(f'"{VMNETLIB64_PATH}" -- set nat vmnet8 dnsserver1 8.8.4.4', shell=True)
 
-    print('Deleting old VMs...')
-    shutil.rmtree(VM_DIR, ignore_errors=True)
-    make_dir(os.path.join(HOME, 'Documents/Virtual Machines/S1'))
+    if os.path.exists(VM_DIR):
+        print('Deleting old VMs...')
+        shutil.rmtree(VM_DIR)
+
+    make_dir(VM_DIR)
 
     print('Installing new VMs...')
     for file in manifest['files']:
