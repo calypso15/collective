@@ -23,7 +23,7 @@ if ($null -eq (Get-Command 'choco.exe' -ErrorAction SilentlyContinue)) {
     Write-Host('Installing chocolatey...')
     Set-ExecutionPolicy Bypass -Scope Process -Force
     [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072
-    Invoke-Expression ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1')) | Out-Host
+    Invoke-Expression ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
 
     $env:Path = [System.Environment]::GetEnvironmentVariable("Path","Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path","User")
 
@@ -37,7 +37,7 @@ if ($null -eq (Get-Command 'git.exe' -ErrorAction SilentlyContinue)) {
     Write-Host('Installing git...')
     Invoke-Command -ScriptBlock {
         choco install git --yes
-    } | Out-Host
+    }
 
     $env:Path = [System.Environment]::GetEnvironmentVariable("Path","Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path","User")
 
@@ -53,7 +53,7 @@ if (-Not (Test-Path -Path $HOME/Documents/go-nuclear)) {
     Write-Host('Cloning go-nuclear repo...')
     Invoke-Command -ScriptBlock {
         git clone https://github.com/calypso15/go-nuclear.git
-    } | Out-Host
+    }
 
     if (-Not (Test-Path -Path $HOME/Documents/go-nuclear)) {
         throw 'Failed to clone go-nuclear repo, aborting.'
@@ -64,15 +64,15 @@ if (-Not (Test-Path -Path $HOME/Documents/go-nuclear)) {
 Set-Location $HOME/Documents/go-nuclear
 
 Write-Host('Updating go-nuclear repo...')
-Invoke-Expression "git pull" | Out-Host
+git pull
 
 # Check for updated script
 if(Compare-Object -ReferenceObject $(Get-Content $HOME/Documents/go-nuclear/go-nuclear.ps1) -DifferenceObject $(Get-Content $MyInvocation.MyCommand.Path)) {
     Write-Host('Updating go-nuclear bootstrap script...')
     Copy-Item $HOME/Documents/go-nuclear/go-nuclear.ps1 $MyInvocation.MyCommand.Path
-    &$MyInvocation.MyCommand.Path -ConfigFile "$ConfigFile" | Out-Host
+    &$MyInvocation.MyCommand.Path -ConfigFile "$ConfigFile"
     exit
 }
 
 Set-Location $HOME/Documents/go-nuclear/powershell
-& ./setup.ps1 -ConfigFile "$ConfigFile" | Out-Host
+& ./setup.ps1 -ConfigFile "$ConfigFile"
