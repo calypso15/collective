@@ -29,6 +29,9 @@ $Password = $Config.Windows.Password
 
 $Running = $false
 
+Write-Host 'Disabling sleep...'
+powercfg /x -standby-timeout-ac 0
+
 function Confirm-ShouldRun([string] $TargetStep) {
     if ($global:Step -eq $TargetStep -or $null -eq $global:Step) {
         $global:Running = $true

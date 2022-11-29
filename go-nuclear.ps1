@@ -13,8 +13,6 @@ if ('ConfigFile' -NotIn $PSBoundParameters.Keys)
     Exit
 }
 
-# TURN OFF SLEEP
-
 $ConfigFile = Resolve-Path $ConfigFile
 
 # Update environment variables
