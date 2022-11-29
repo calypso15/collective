@@ -75,4 +75,4 @@ if(Compare-Object -ReferenceObject $(Get-Content $HOME/Documents/go-nuclear/go-n
 }
 
 Set-Location $HOME/Documents/go-nuclear/powershell
-Invoke-Expression "& ./setup.ps1 -ConfigFile `"$ConfigFile`"" | Out-Host
+& ./setup.ps1 -ConfigFile "$ConfigFile" | Out-Host
