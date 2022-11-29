@@ -40,7 +40,7 @@ if __name__ == '__main__':
     system_requirements.check_requirements()
     vcloud_files.download_files(config['Vcloud']['Url'], config['Vcloud']['Username'], config['Vcloud']['Password'])
 
-    make_dir(os.path.join(home, 'Desktop/Malware'))
+    make_dir(os.path.join(HOME, 'Desktop/Malware'))
     print('Excluding malware directory from Windows Defender...')
     run_powershell('Set-MpPreference -ExclusionPath $HOME/Desktop/Malware')
 
