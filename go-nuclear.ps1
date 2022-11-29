@@ -70,7 +70,7 @@ Invoke-Expression "git pull" | Out-Host
 if(Compare-Object -ReferenceObject $(Get-Content $HOME/Documents/go-nuclear/go-nuclear.ps1) -DifferenceObject $(Get-Content $MyInvocation.MyCommand.Path)) {
     Write-Host('Updating go-nuclear bootstrap script...')
     Copy-Item $HOME/Documents/go-nuclear/go-nuclear.ps1 $MyInvocation.MyCommand.Path
-    Invoke-Expression "&$MyInvocation.MyCommand.Path" | Out-Host
+    Invoke-Expression "&$MyInvocation.MyCommand.Path -ConfigFile `"$ConfigFile`"" | Out-Host
     exit
 }
 
