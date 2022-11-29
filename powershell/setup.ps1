@@ -30,7 +30,7 @@ $Password = $Config.Windows.Password
 $Running = $false
 
 Write-Host 'Disabling sleep...'
-powercfg /x -standby-timeout-ac 0
+Invoke-Expression "powercfg /x -standby-timeout-ac 0" | Out-Host
 
 function Confirm-ShouldRun([string] $TargetStep) {
     if ($global:Step -eq $TargetStep -or $null -eq $global:Step) {
@@ -70,7 +70,7 @@ if (Confirm-ShouldRun "Install-Packages") {
     Write-Host('Installing chocolatey packages...')
     Invoke-Command -ScriptBlock {
         choco install packages.config --yes
-    }
+    } | Out-Host
 
     $env:Path = [System.Environment]::GetEnvironmentVariable("Path", "Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path", "User")
 
@@ -88,8 +88,8 @@ if (Confirm-ShouldRun "Run-Python-Setup") {
     Set-Location $HOME/Documents/go-nuclear/python
 
     Write-Host('Starting Python setup...')
-    pip install -r requirements.txt
-    python setup.py $ConfigFile
+    Invoke-Expression "pip install -r requirements.txt" | Out-Host
+    Invoke-Expression "python setup.py $ConfigFile" | Out-Host
     Write-Host('')
 }
 
