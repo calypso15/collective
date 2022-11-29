@@ -5,6 +5,8 @@ param (
     $ConfigFile
 )
 
+Start-Transcript -Path log.txt -Append
+
 if ('ConfigFile' -NotIn $PSBoundParameters.Keys)
 {
     Write-Host 'No config file specified with the -ConfigFile parameter, aborting.'
