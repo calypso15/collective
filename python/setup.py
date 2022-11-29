@@ -59,6 +59,12 @@ if __name__ == '__main__':
     subprocess.run(f'"{VMNETLIB64_PATH}" -- set nat vmnet8 dnsserver1 8.8.4.4', shell=True)
 
     if os.path.exists(VM_DIR):
+        print('Stopping VMs...')
+        files = glob.glob(os.path.join(VM_DIR, '**/*.vmx'), recursive=True)
+        for file in files:
+            print(f'Stopping {file}...')
+            subprocess.run(f'"{VMRUN_PATH}" -T ws stop "{file}" hard', shell=True)
+
         print('Deleting old VMs...')
         shutil.rmtree(VM_DIR)
 
