@@ -64,6 +64,12 @@ if __name__ == '__main__':
     subprocess.run(f'"{VMNETLIB64_PATH}" -- set vnet vmnet8 dnsserver1 8.8.8.8', shell=True)
     subprocess.run(f'"{VMNETLIB64_PATH}" -- set vnet vmnet8 dnsserver1 8.8.4.4', shell=True)
 
+    print('Deleting .lck files...')
+    files = glob.glob(os.path.join(VM_DIR, '**/*.lck'), recursive=True)
+    for file in files:
+        print(f'Deleting {file}...')
+        os.remove(file)
+
     print('Deleting old VMs...')
     files = glob.glob(os.path.join(VM_DIR, '**/*.vmx'), recursive=True)
     for file in files:
