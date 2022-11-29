@@ -2,6 +2,7 @@ import argparse
 import glob
 import json
 import os
+import shutil
 import subprocess
 
 import vcloud_files
@@ -68,7 +69,7 @@ if __name__ == '__main__':
     files = glob.glob(os.path.join(VM_DIR, '**/*.lck'), recursive=True)
     for file in files:
         print(f'Deleting {file}...')
-        os.rmdir(file)
+        shutil.rmtree(file)
 
     print('Deleting old VMs...')
     files = glob.glob(os.path.join(VM_DIR, '**/*.vmx'), recursive=True)
