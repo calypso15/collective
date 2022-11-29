@@ -88,6 +88,7 @@ if (Confirm-ShouldRun "Run-Python-Setup") {
     Set-Location $HOME/Documents/go-nuclear/python
 
     Write-Host('Starting Python setup...')
+    python -m pip install --upgrade pip
     pip install -r requirements.txt
     python setup.py $ConfigFile
     Write-Host('')
