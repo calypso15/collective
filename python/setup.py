@@ -54,8 +54,9 @@ if __name__ == '__main__':
 
     print('Configuring vmnet...')
     subprocess.run(f'"{VMNETLIB64_PATH}" -- set vnet vmnet8 addr 192.168.192.0', shell=True)
-    subprocess.run(f'"{VMNETLIB64_PATH}" -- set vnet vmnet8 dnsserver1 8.8.8.8', shell=True)
-    subprocess.run(f'"{VMNETLIB64_PATH}" -- set vnet vmnet8 dnsserver1 8.8.4.4', shell=True)
+    subprocess.run(f'"{VMNETLIB64_PATH}" -- set nat vmnet8 dnsautodetect 0', shell=True)
+    subprocess.run(f'"{VMNETLIB64_PATH}" -- set nat vmnet8 dnsserver1 8.8.8.8', shell=True)
+    subprocess.run(f'"{VMNETLIB64_PATH}" -- set nat vmnet8 dnsserver1 8.8.4.4', shell=True)
 
     print('Deleting old VMs...')
     shutil.rmtree(VM_DIR, ignore_errors=True)
