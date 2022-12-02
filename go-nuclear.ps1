@@ -5,7 +5,7 @@ param (
     $ConfigFile
 )
 
-Start-Transcript -Path log.txt -Append
+Start-Transcript -Path $HOME/Documents/log-powershell.txt -Append
 
 if ('ConfigFile' -NotIn $PSBoundParameters.Keys)
 {
