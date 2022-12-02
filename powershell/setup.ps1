@@ -9,6 +9,14 @@ param (
     $Step
 )
 
+function Confirm-ShouldRun([string] $TargetStep) {
+    if ($global:Step -eq $TargetStep -or $null -eq $global:Step) {
+        $global:Running = $true
+    }
+
+    return $global:Running
+}
+
 if ('ConfigFile' -NotIn $PSBoundParameters.Keys) {
     Write-Host 'No config file specified with the -ConfigFile parameter, aborting.'
     Exit
@@ -31,14 +39,6 @@ $Running = $false
 
 Write-Host 'Disabling sleep...'
 powercfg /x -standby-timeout-ac 0
-
-function Confirm-ShouldRun([string] $TargetStep) {
-    if ($global:Step -eq $TargetStep -or $null -eq $global:Step) {
-        $global:Running = $true
-    }
-
-    return $global:Running
-}
 
 if (Confirm-ShouldRun "Enable-Autologon") {
     $RegistryPath = 'HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon'
