@@ -1,13 +1,26 @@
 import argparse
+import atexit
+import datetime
 import glob
 import json
 import os
 import shutil
 import subprocess
+import sys
 
 import vcloud_files
 import system_requirements
 
+class Tee(object):
+    def __init__(self, *files):
+        self.files = files
+    def write(self, obj):
+        for f in self.files:
+            f.write(obj)
+            f.flush()
+    def flush(self) :
+        for f in self.files:
+            f.flush()
 
 def make_dir(name):
     print(f'Creating directory {name}...')
@@ -18,8 +31,37 @@ def run_powershell(cmd):
     completed = subprocess.run(["powershell", "-Command", cmd], capture_output=True)
     return completed
 
+def print_header(file):
+    print('**********************', file=file)
+    print('Python transcript start', file=file)
+    print('Start time: '+datetime.datetime.today().strftime('%Y%m%d%H%M%S'), file=file)
+    print('Python version: '+sys.version, file=file)
+    print('**********************', file=file)
+
+def print_footer(file):
+    print('**********************', file=file)
+    print('Python transcript end', file=file)
+    print('End time: '+datetime.datetime.today().strftime('%Y%m%d%H%M%S'), file=file)
+    print('**********************', file=file)
+
 
 if __name__ == '__main__':
+    HOME = os.path.expanduser('~')
+    DOCUMENTS_DIR = os.path.join(HOME, 'Documents')
+    DOWNLOAD_DIR = os.path.join(DOCUMENTS_DIR, '.vcloud')
+    VM_DIR = os.path.join(HOME, 'Documents/Virtual Machines/S1')
+    VMNETLIB64_PATH = r"C:/Program Files (x86)/VMware/VMware Workstation/vnetlib64.exe"
+    VMRUN_PATH = r"C:/Program Files (x86)/VMware/VMware Workstation/vmrun.exe"
+    VMWARE_PATH = r"C:/Program Files (x86)/VMware/VMware Workstation/vmware.exe"
+    OVFTOOL_PATH = r"C:/Program Files (x86)/VMware/VMware Workstation/OVFTool/ovftool.exe"
+
+    f = open(os.path.join(DOCUMENTS_DIR, 'log-python.txt'), 'a')
+    sys.stdout = Tee(sys.stdout, f)
+    sys.stderr = Tee(sys.stderr, f)
+
+    print_header(f)
+    atexit.register(print_footer, f)
+
     parser = argparse.ArgumentParser()
     parser.add_argument('config_file')
     args = parser.parse_args()
@@ -28,14 +70,6 @@ if __name__ == '__main__':
     config_file = args.config_file
     with open(config_file) as f:
         config = json.loads(f.read())
-
-    HOME = os.path.expanduser('~')
-    DOWNLOAD_DIR = os.path.join(HOME, 'Documents', '.vcloud')
-    VM_DIR = os.path.join(HOME, 'Documents/Virtual Machines/S1')
-    VMNETLIB64_PATH = r"C:/Program Files (x86)/VMware/VMware Workstation/vnetlib64.exe"
-    VMRUN_PATH = r"C:/Program Files (x86)/VMware/VMware Workstation/vmrun.exe"
-    VMWARE_PATH = r"C:/Program Files (x86)/VMware/VMware Workstation/vmware.exe"
-    OVFTOOL_PATH = r"C:/Program Files (x86)/VMware/VMware Workstation/OVFTool/ovftool.exe"
 
     system_requirements.check_requirements()
     vcloud_files.download_files(config['Vcloud']['Url'], config['Vcloud']['Username'], config['Vcloud']['Password'])
