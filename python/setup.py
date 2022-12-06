@@ -1,5 +1,6 @@
 import argparse
 import atexit
+import ctypes
 import datetime
 import glob
 import json
@@ -84,7 +85,12 @@ if __name__ == '__main__':
 
     print('Starting VMWare...')
     subprocess.Popen(VMWARE_PATH, shell=True)
-    input('VMWare should now be running. Please configure your license and then press Enter to continue...')
+
+    rv = ctypes.windll.user32.MessageBoxW(0, "VMWare should now be running. Please configure your license and then click OK.')", "Starting VMWare Workstation", 17)
+
+    if(rv != 1):
+        print('Aborting setup.')
+        sys.exit()
 
     print('Configuring vmnet...')
     subprocess.run(f'"{VMNETLIB64_PATH}" -- set vnet vmnet8 addr 192.168.192.0', shell=True)
