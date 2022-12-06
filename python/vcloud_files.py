@@ -5,6 +5,7 @@ import os
 import requests
 import sys
 import tempfile
+import traceback
 import urllib
 
 
@@ -57,9 +58,14 @@ def download_files(vcloud_url, vcloud_user, vcloud_pass):
     VCLOUD_USER = vcloud_user
     VCLOUD_PASS = vcloud_pass
 
-    AUTH = requests.auth.HTTPBasicAuth(vcloud_user, vcloud_pass)
-    r = requests.get(vcloud_url, auth=AUTH)
-    r.raise_for_status()
+    try:
+        AUTH = requests.auth.HTTPBasicAuth(vcloud_user, vcloud_pass)
+        r = requests.get(vcloud_url, auth=AUTH)
+        r.raise_for_status()
+    except requests.HTTPError as x:
+        print(traceback.format_exc())
+        print(f"Received HTTP {x.response.status_code}, exiting. Please contact ryan.ogrady@sentinelone.com for additional support.")
+        sys.exit()
 
     TEMP_DIR = tempfile.gettempdir()
     DOWNLOAD_DIR = os.path.join(os.path.expanduser("~"), 'Documents', '.vcloud')
