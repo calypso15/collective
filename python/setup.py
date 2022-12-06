@@ -12,16 +12,20 @@ import sys
 import vcloud_files
 import system_requirements
 
+
 class Tee(object):
     def __init__(self, *files):
         self.files = files
+
     def write(self, obj):
         for f in self.files:
             f.write(obj)
             f.flush()
-    def flush(self) :
+
+    def flush(self):
         for f in self.files:
             f.flush()
+
 
 def make_dir(name):
     print(f'Creating directory {name}...')
@@ -32,12 +36,14 @@ def run_powershell(cmd):
     completed = subprocess.run(["powershell", "-Command", cmd], capture_output=True)
     return completed
 
+
 def print_header(file):
     print('**********************', file=file)
     print('Python transcript start', file=file)
     print('Start time: '+datetime.datetime.today().strftime('%Y%m%d%H%M%S'), file=file)
     print('Python version: '+sys.version, file=file)
     print('**********************', file=file)
+
 
 def print_footer(file):
     print('**********************', file=file)
@@ -86,9 +92,10 @@ if __name__ == '__main__':
     print('Starting VMWare...')
     subprocess.Popen(VMWARE_PATH, shell=True)
 
-    rv = ctypes.windll.user32.MessageBoxW(0, "VMWare should now be running. Please configure your license and then click OK.')", "Starting VMWare Workstation", 17)
+    rv = ctypes.windll.user32.MessageBoxW(
+        0, "VMWare should now be running. Please configure your license and then click OK.", "Starting VMWare Workstation", 0x1 ^ 0x40 ^ 0x40000)
 
-    if(rv != 1):
+    if (rv != 1):
         print('Aborting setup.')
         sys.exit()
 
