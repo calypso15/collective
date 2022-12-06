@@ -71,7 +71,7 @@ if __name__ == '__main__':
     with open(config_file) as f:
         config = json.loads(f.read())
 
-    system_requirements.check_requirements()
+    system_requirements.check_requirements(ignore_warnings=config['IgnoreWarnings'])
     vcloud_files.download_files(config['Vcloud']['Url'], config['Vcloud']['Username'], config['Vcloud']['Password'])
 
     make_dir(os.path.join(HOME, 'Desktop/Malware'))

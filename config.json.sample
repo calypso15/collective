@@ -1,4 +1,5 @@
 {
+    "IgnoreWarnings": false,
     "Windows": {
         "EnableAutologon": true,
         "Username": "user",

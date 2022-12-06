@@ -1,3 +1,5 @@
+import argparse
+import json
 import math
 import os
 import platform
@@ -80,26 +82,28 @@ def check() -> str:
 
     return State(2**math.floor(math.log2(state)))
 
-def check_requirements():
+def check_requirements(ignore_warnings=False):
     print('Checking system requirements...')
     result = check()
     print('')
 
     if(result == State.PASS):
         print('This system meets all requirements.')
-    elif(result == State.WARN):
-        while(True):
-            print('This system may be insufficient, proceed at your own risk. ', end='')
-            answer = input('Proceed? [y/n] ')
-            if answer.lower() in ["y","yes"]:
-                break
-            elif answer.lower() in ["n","no"]:
-                print('Aborting.')
-                sys.exit(1)
-
+    elif(result == State.WARN and ignore_warnings == False):
+        print('This system may be insufficient. To proceed anyway, change \'"IgnoreWarnings": false\' in the config file to \'"IgnoreWarnings": true\' and re-run setup.')
+        sys.exit(1)
     else:
         print('This system does not meet the minimum requirements, aborting.')
         sys.exit(1)
 
 if __name__ == '__main__':
-    check_requirements()
+    parser = argparse.ArgumentParser()
+    parser.add_argument('config_file')
+    args = parser.parse_args()
+
+    config = {}
+    config_file = args.config_file
+    with open(config_file) as f:
+        config = json.loads(f.read())
+
+    check_requirements(ignore_warnings=config['IgnoreWarnings'])
