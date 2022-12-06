@@ -62,6 +62,10 @@ def download_files(vcloud_url, vcloud_user, vcloud_pass):
         AUTH = requests.auth.HTTPBasicAuth(vcloud_user, vcloud_pass)
         r = requests.get(vcloud_url, auth=AUTH)
         r.raise_for_status()
+    except requests.ConnectionError as x:
+        print(traceback.format_exc())
+        print(f"Unable to connect to {vcloud_url}, exiting. Please contact ryan.ogrady@sentinelone.com for additional support.")
+        sys.exit()
     except requests.HTTPError as x:
         print(traceback.format_exc())
         print(f"Received HTTP {x.response.status_code}, exiting. Please contact ryan.ogrady@sentinelone.com for additional support.")
