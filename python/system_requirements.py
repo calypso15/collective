@@ -106,4 +106,4 @@ if __name__ == '__main__':
     with open(config_file) as f:
         config = json.loads(f.read())
 
-    check_requirements(ignore_warnings=config.get('IgnoreWarnings', false))
+    check_requirements(ignore_warnings=config.get('IgnoreWarnings', False))
