@@ -92,7 +92,8 @@ if __name__ == '__main__':
     print('Starting VMWare...')
     subprocess.Popen(VMWARE_PATH, shell=True)
 
-    rv = ctypes.windll.user32.MessageBoxW
+    user32 = ctypes.WinDLL('user32')
+    rv = user32.MessageBoxW
     (
         0,
         "VMWare should now be running. Please configure your license and then click OK.",
