@@ -92,8 +92,13 @@ if __name__ == '__main__':
     print('Starting VMWare...')
     subprocess.Popen(VMWARE_PATH, shell=True)
 
-    rv = ctypes.windll.user32.MessageBoxW(
-        0, "VMWare should now be running. Please configure your license and then click OK.", "Starting VMWare Workstation", 0x1 ^ 0x40 ^ 0x40000)
+    rv = ctypes.windll.user32.MessageBoxW
+    (
+        0,
+        "VMWare should now be running. Please configure your license and then click OK.",
+        "Starting VMWare Workstation",
+        0x1 ^ 0x40 ^ 0x40000
+    )
 
     if (rv != 1):
         print('Aborting setup.')
