@@ -6,37 +6,43 @@
             "name": "DS9 .23.ova",
             "hash_type": "sha256",
             "hash_value": "3c4742e2f5128afd2827382029b3f94fa96dd2838771b50652d2879e12740f5b",
-            "import": true
+            "import": true,
+            "order": 20
         },
         {
             "name": "Kratos (Kali) .250.ova",
             "hash_type": "sha256",
             "hash_value": "8d761c015630fac618d4944a6b97bfa35ac121b5fc1bdfb79917f2a2c9325879",
-            "import": true
+            "import": true,
+            "order": 30
         },
         {
             "name": "TheBorg .10.ova",
             "hash_type": "sha256",
             "hash_value": "86cb3038dacf60450ea4d5a3aaf490324f0f10c087d7c95bd489abe0791966d3",
-            "import": true
+            "import": true,
+            "order": 1
         },
         {
             "name": "TheEnterprise .20.ova",
             "hash_type": "sha256",
             "hash_value": "24c8cf12a692b393b59e63af25e7860df6f583c107b34dc6a09a9e3afac4b035",
-            "import": true
+            "import": true,
+            "order": 10
         },
         {
             "name": "TheMelbourne .21.ova",
             "hash_type": "sha256",
             "hash_value": "d08c25d766eefbedf59bbcd8f57d9bfdca2bb74116e32f3ca7ae40a26b6196ef",
-            "import": true
+            "import": true,
+            "order": 11
         },
         {
             "name": "TheSaratoga .22.ova",
             "hash_type": "sha256",
             "hash_value": "04176b6da471fc20a299d512bee53f928efd6d0be3ee0c514ae59d8960866ac4",
-            "import": true
+            "import": true,
+            "order": 12
         },
     ]
 }

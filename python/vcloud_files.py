@@ -84,7 +84,8 @@ def download_files(vcloud_url, vcloud_user, vcloud_pass):
 
     print('Downloading OVAs...')
 
-    for file in manifest['files']:
+    sorted_list = sorted(manifest['files'], key=lambda d: d.get('order', sys.maxsize))
+    for file in sorted_list:
         try:
             name = file['name']
             hash_type = file['hash_type']
