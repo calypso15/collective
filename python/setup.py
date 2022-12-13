@@ -92,14 +92,8 @@ if __name__ == '__main__':
     print('Starting VMWare...')
     subprocess.Popen(VMWARE_PATH, shell=True)
 
-    user32 = ctypes.WinDLL('user32')
-    rv = user32.MessageBoxW
-    (
-        0,
-        "VMWare should now be running. Please configure your license and then click OK.",
-        "Starting VMWare Workstation",
-        0x1 ^ 0x40 ^ 0x1000
-    )
+    rv = ctypes.windll.user32.MessageBoxW(0, "VMWare should now be running. Please configure your license and then click OK.", "Starting VMWare Workstation", 0x1 ^ 0x40 ^ 0x40000
+                                          )
 
     if (rv != 1):
         print('Aborting setup.')
@@ -143,7 +137,8 @@ if __name__ == '__main__':
         print(f'Starting {full_name}...')
         subprocess.run(f'"{VMRUN_PATH}" -T ws start "{full_name}"', shell=True)
 
-        p = subprocess.run(f'"{VMRUN_PATH}" -T ws getGuestIPAddress "{full_name}" -wait', shell=True, capture_output=True)
+        p = subprocess.run(f'"{VMRUN_PATH}" -T ws getGuestIPAddress "{full_name}" -wait',
+                           shell=True, capture_output=True)
         print(f'...Machine is up with IP address {p.stdout.decode().rstrip()}')
 
         print(f'Disabling shared folders for {full_name}...')
