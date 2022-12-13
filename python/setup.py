@@ -121,21 +121,23 @@ if __name__ == '__main__':
     print('Installing and starting new VMs...')
     for file in sorted_list:
         name = file['name']
+        base_name = os.path.splitext(name)[0]
         install = file['import']
 
-        full_name = os.path.join(VM_DIR, os.path.splitext(name)[0], name)
+        ova_path = os.path.join(DOWNLOAD_DIR, name)
+        vmx_path = os.path.join(VM_DIR, base_name, base_name+'.vmx')
 
         if install:
-            print(f'Installing {full_name}...')
+            print(f'Installing {ova_path}...')
             subprocess.run(
-                f'"{OVFTOOL_PATH}" --allowExtraConfig --net:"custom=vmnet8" -o "{full_name}" "{VM_DIR}"', shell=True)
+                f'"{OVFTOOL_PATH}" --allowExtraConfig --net:"custom=vmnet8" -o "{ova_path}" "{VM_DIR}"', shell=True)
 
-            print(f'Starting {full_name}...')
-            subprocess.run(f'"{VMRUN_PATH}" -T ws start "{full_name}"', shell=True)
+            print(f'Starting {vmx_path}...')
+            subprocess.run(f'"{VMRUN_PATH}" -T ws start "{vmx_path}"', shell=True)
 
-            p = subprocess.run(f'"{VMRUN_PATH}" -T ws getGuestIPAddress "{full_name}" -wait',
+            p = subprocess.run(f'"{VMRUN_PATH}" -T ws getGuestIPAddress "{vmx_path}" -wait',
                             shell=True, capture_output=True)
             print(f'...Machine is up with IP address {p.stdout.decode().rstrip()}')
 
-            print(f'Disabling shared folders for {full_name}...')
-            subprocess.run(f'"{VMRUN_PATH}" -T ws disableSharedFolders "{full_name}"', shell=True)
+            print(f'Disabling shared folders for {vmx_path}...')
+            subprocess.run(f'"{VMRUN_PATH}" -T ws disableSharedFolders "{vmx_path}"', shell=True)
