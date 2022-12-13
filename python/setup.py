@@ -97,7 +97,7 @@ if __name__ == '__main__':
         0,
         "VMWare should now be running. Please configure your license and then click OK.",
         "Starting VMWare Workstation",
-        0x1 ^ 0x40 ^ 0x40000
+        0x1 ^ 0x40 ^ 0x1000
     )
 
     if (rv != 1):
@@ -122,8 +122,10 @@ if __name__ == '__main__':
 
     make_dir(VM_DIR)
 
+    sorted_list = sorted(manifest['files'], key=lambda d: d.get('order', sys.maxsize))
+
     print('Installing new VMs...')
-    for file in manifest['files']:
+    for file in sorted_list:
         name = file['name']
         install = file['import']
 
@@ -134,13 +136,14 @@ if __name__ == '__main__':
                 f'"{OVFTOOL_PATH}" --allowExtraConfig --net:"custom=vmnet8" -o "{full_name}" "{VM_DIR}"', shell=True)
 
     print('Starting VMs...')
-    files = glob.glob(os.path.join(VM_DIR, '**/*.vmx'), recursive=True)
-    for file in files:
-        print(f'Starting {file}...')
-        subprocess.run(f'"{VMRUN_PATH}" -T ws start "{file}"', shell=True)
+    for file in sorted_list:
+        full_name = os.path.join(VM_DIR, os.path.splitext(file['name'])[0], file['name'])
 
-        p = subprocess.run(f'"{VMRUN_PATH}" -T ws getGuestIPAddress "{file}" -wait', shell=True, capture_output=True)
+        print(f'Starting {full_name}...')
+        subprocess.run(f'"{VMRUN_PATH}" -T ws start "{full_name}"', shell=True)
+
+        p = subprocess.run(f'"{VMRUN_PATH}" -T ws getGuestIPAddress "{full_name}" -wait', shell=True, capture_output=True)
         print(f'...Machine is up with IP address {p.stdout.decode().rstrip()}')
 
-        print(f'Disabling shared folders for {file}...')
-        subprocess.run(f'"{VMRUN_PATH}" -T ws disableSharedFolders "{file}"', shell=True)
+        print(f'Disabling shared folders for {full_name}...')
+        subprocess.run(f'"{VMRUN_PATH}" -T ws disableSharedFolders "{full_name}"', shell=True)
