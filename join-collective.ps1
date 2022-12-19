@@ -46,33 +46,33 @@ if ($null -eq (Get-Command 'git.exe' -ErrorAction SilentlyContinue)) {
     }
 }
 
-# Clone the go-nuclear repo if it doesn't already exist
-if (-Not (Test-Path -Path $HOME/Documents/go-nuclear)) {
+# Clone the collective repo if it doesn't already exist
+if (-Not (Test-Path -Path $HOME/Documents/collective)) {
     Set-Location $HOME/Documents
 
-    Write-Host('Cloning go-nuclear repo...')
+    Write-Host('Cloning collective repo...')
     Invoke-Command -ScriptBlock {
-        git clone https://github.com/calypso15/go-nuclear.git
+        git clone https://github.com/calypso15/collective.git
     }
 
-    if (-Not (Test-Path -Path $HOME/Documents/go-nuclear)) {
-        throw 'Failed to clone go-nuclear repo, aborting.'
+    if (-Not (Test-Path -Path $HOME/Documents/collective)) {
+        throw 'Failed to clone collective repo, aborting.'
     }
 }
 
 # Update repo
-Set-Location $HOME/Documents/go-nuclear
+Set-Location $HOME/Documents/collective
 
-Write-Host('Updating go-nuclear repo...')
+Write-Host('Updating collective repo...')
 git pull
 
 # Check for updated script
-if(Compare-Object -ReferenceObject $(Get-Content $HOME/Documents/go-nuclear/go-nuclear.ps1) -DifferenceObject $(Get-Content $MyInvocation.MyCommand.Path)) {
-    Write-Host('Updating go-nuclear bootstrap script...')
-    Copy-Item $HOME/Documents/go-nuclear/go-nuclear.ps1 $MyInvocation.MyCommand.Path
+if(Compare-Object -ReferenceObject $(Get-Content $HOME/Documents/collective/collective.ps1) -DifferenceObject $(Get-Content $MyInvocation.MyCommand.Path)) {
+    Write-Host('Updating collective bootstrap script...')
+    Copy-Item $HOME/Documents/collective/join-collective.ps1 $MyInvocation.MyCommand.Path
     &$MyInvocation.MyCommand.Path -ConfigFile "$ConfigFile"
     exit
 }
 
-Set-Location $HOME/Documents/go-nuclear/powershell
+Set-Location $HOME/Documents/collective/powershell
 & ./setup.ps1 -ConfigFile "$ConfigFile"

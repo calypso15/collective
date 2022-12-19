@@ -67,7 +67,7 @@ if (Confirm-ShouldRun "Enable-Autologon") {
 
 if (Confirm-ShouldRun "Install-Packages") {
     # Install other chocolatey packages
-    Set-Location $HOME/Documents/go-nuclear/choco
+    Set-Location $HOME/Documents/collective/choco
 
     Write-Host('Installing chocolatey packages...')
     Invoke-Command -ScriptBlock {
@@ -87,7 +87,7 @@ if (Confirm-ShouldRun "Run-Python-Setup") {
     Unregister-ScheduledTask -TaskName "Resume-Setup" -Confirm:$false -ErrorAction SilentlyContinue
 
     # Start python script
-    Set-Location $HOME/Documents/go-nuclear/python
+    Set-Location $HOME/Documents/collective/python
 
     Write-Host('Starting Python setup...')
     python -m pip install --upgrade pip
