@@ -41,10 +41,11 @@ $Running = $false
 
 Write-Host 'Disabling sleep...'
 powercfg /x -standby-timeout-ac 0
+powercfg /x -hibernate-timeout-ac 0
 
 if (Confirm-ShouldRun "Enable-Autologon") {
     $RegistryPath = 'HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon'
-    if ((Get-ItemProperty $RegistryPath -ErrorAction SilentlyContinue | Select-Object -ExpandProperty AutoAdminLogon) -ne "1") {
+    if ((Get-ItemProperty $RegistryPath -ErrorAction SilentlyContinue | Select-Object -ErrorAction SilentlyContinue -ExpandProperty AutoAdminLogon) -ne "1") {
         if ($EnableAutologon) {
             Write-Host('Enabling autologon...')
 
