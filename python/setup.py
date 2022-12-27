@@ -90,7 +90,8 @@ if __name__ == '__main__':
         sys.exit()
 
     print('Configuring vmnet...')
-    subprocess.run(f'"{VMNETLIB64_PATH}" -- set vnet vmnet8 addr 192.168.192.0', shell=True)
+    subprocess.run(f'"{VMNETLIB64_PATH}" -- set adapter vmnet8 192.168.192.0', shell=True)
+    subprocess.run(f'"{VMNETLIB64_PATH}" -- update adapter vmnet8', shell=True)
 
     vcloud_files.download_files(config['Vcloud']['Url'], config['Vcloud']['Username'], config['Vcloud']['Password'])
 
