@@ -79,15 +79,6 @@ if __name__ == '__main__':
         config = json.loads(f.read())
 
     system_requirements.check_requirements(ignore_warnings=config.get('IgnoreWarnings', False))
-    vcloud_files.download_files(config['Vcloud']['Url'], config['Vcloud']['Username'], config['Vcloud']['Password'])
-
-    make_dir(os.path.join(HOME, 'Desktop/Malware'))
-    print('Excluding malware directory from Windows Defender...')
-    run_powershell('Set-MpPreference -ExclusionPath $HOME/Desktop/Malware')
-
-    manifest = {}
-    with open(os.path.join(DOWNLOAD_DIR, 'manifest.json')) as f:
-        manifest = json.loads(f.read())
 
     print('Starting VMWare...')
     subprocess.Popen(VMWARE_PATH, shell=True)
@@ -100,6 +91,16 @@ if __name__ == '__main__':
 
     print('Configuring vmnet...')
     subprocess.run(f'"{VMNETLIB64_PATH}" -- set vnet vmnet8 addr 192.168.192.0', shell=True)
+
+    vcloud_files.download_files(config['Vcloud']['Url'], config['Vcloud']['Username'], config['Vcloud']['Password'])
+
+    make_dir(os.path.join(HOME, 'Desktop/Malware'))
+    print('Excluding malware directory from Windows Defender...')
+    run_powershell('Set-MpPreference -ExclusionPath $HOME/Desktop/Malware')
+
+    manifest = {}
+    with open(os.path.join(DOWNLOAD_DIR, 'manifest.json')) as f:
+        manifest = json.loads(f.read())
 
     if os.path.exists(VM_DIR):
         print('Stopping VMs...')
