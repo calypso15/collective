@@ -90,8 +90,17 @@ if __name__ == '__main__':
         sys.exit()
 
     print('Configuring vmnet...')
-    subprocess.run(f'"{VMNETLIB64_PATH}" -- set adapter vmnet8 192.168.192.0', shell=True)
+    subprocess.run(f'"{VMNETLIB64_PATH}" -- stop nat', shell=True)
+    subprocess.run(f'"{VMNETLIB64_PATH}" -- stop dhcp', shell=True)
+    subprocess.run(f'"{VMNETLIB64_PATH}" -- set vnet vmnet8 mask  255.255.255.0', shell=True)
+    subprocess.run(f'"{VMNETLIB64_PATH}" -- set vnet vmnet8 addr  192.168.192.0', shell=True)
+    subprocess.run(f'"{VMNETLIB64_PATH}" -- set adapter vmnet8 addr 192.168.192.2', shell=True)
+    subprocess.run(f'"{VMNETLIB64_PATH}" -- set nat vmnet8 internalipaddr 192.168.192.254', shell=True)
+    subprocess.run(f'"{VMNETLIB64_PATH}" -- update dhcp vmnet8', shell=True)
+    subprocess.run(f'"{VMNETLIB64_PATH}" -- update nat vmnet8', shell=True)
     subprocess.run(f'"{VMNETLIB64_PATH}" -- update adapter vmnet8', shell=True)
+    subprocess.run(f'"{VMNETLIB64_PATH}" -- start dhcp', shell=True)
+    subprocess.run(f'"{VMNETLIB64_PATH}" -- start nat', shell=True)
 
     vcloud_files.download_files(config['Vcloud']['Url'], config['Vcloud']['Username'], config['Vcloud']['Password'])
 
