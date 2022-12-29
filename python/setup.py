@@ -8,6 +8,7 @@ import os
 import shutil
 import subprocess
 import sys
+import winreg
 
 import vcloud_files
 import system_requirements
@@ -105,6 +106,9 @@ if __name__ == '__main__':
 
     with open(os.path.join(VMWARE_DATA_DIR, 'vmnetnat.conf'), 'w') as f:
         f.writelines(new_lines)
+
+    registry_key = winreg.OpenKey(winreg.HKEY_LOCAL_MACHINE, 'SOFTWARE\WOW6432Node\VMware, Inc.\VMnetLib\VMnetConfig\vmnet8', 0, winreg.KEY_WRITE)
+    winreg.SetValueEx(registry_key, 'IPSubnetAddress', 0, winreg.REG_SZ, '192.168.192.0')
 
     subprocess.run(f'"{VMNETLIB64_PATH}" -- stop nat', shell=True)
     subprocess.run(f'"{VMNETLIB64_PATH}" -- stop dhcp', shell=True)
