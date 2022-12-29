@@ -100,7 +100,7 @@ if __name__ == '__main__':
     new_lines = []
     for l in old_lines:
         if l.startswith('ip ='):
-            new_lines.append('ip = 192.168.192.2\n')
+            new_lines.append('ip = 192.168.192.2/24\n')
         else:
             new_lines.append(l)
 
