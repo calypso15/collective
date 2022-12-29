@@ -98,8 +98,8 @@ if __name__ == '__main__':
 
     new_lines = []
     for l in old_lines:
-        if '192.168.93.2' in l:
-            new_lines.append(l.replace('192.168.93.2', '192.168.192.2'))
+        if l.startswith('ip ='):
+            new_lines.append('ip = 192.168.192.2')
         else:
             new_lines.append(l)
 
