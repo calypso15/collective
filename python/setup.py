@@ -8,6 +8,7 @@ import os
 import shutil
 import subprocess
 import sys
+import winreg
 
 import vcloud_files
 import system_requirements
@@ -57,9 +58,11 @@ if __name__ == '__main__':
     DOCUMENTS_DIR = os.path.join(HOME, 'Documents')
     DOWNLOAD_DIR = os.path.join(DOCUMENTS_DIR, '.vcloud')
     VM_DIR = os.path.join(HOME, 'Documents/Virtual Machines/S1')
+    VMWARE_DATA_DIR = r"C:/ProgramData/VMware"
     VMNETLIB64_PATH = r"C:/Program Files (x86)/VMware/VMware Workstation/vnetlib64.exe"
     VMRUN_PATH = r"C:/Program Files (x86)/VMware/VMware Workstation/vmrun.exe"
     VMWARE_PATH = r"C:/Program Files (x86)/VMware/VMware Workstation/vmware.exe"
+
     OVFTOOL_PATH = r"C:/Program Files (x86)/VMware/VMware Workstation/OVFTool/ovftool.exe"
 
     f = open(os.path.join(DOCUMENTS_DIR, 'log-python.txt'), 'a')
@@ -89,16 +92,27 @@ if __name__ == '__main__':
         print('Aborting setup.')
         sys.exit()
 
-    print('Configuring vmnet...')
+    print('Configuring vmnet8...')
+    old_lines = []
+    with open(os.path.join(VMWARE_DATA_DIR, 'vmnetnat.conf'), 'r') as f:
+        old_lines = f.readlines()
+
+    new_lines = []
+    for l in old_lines:
+        if l.startswith('ip ='):
+            new_lines.append('ip = 192.168.192.2/24\n')
+        else:
+            new_lines.append(l)
+
+    with open(os.path.join(VMWARE_DATA_DIR, 'vmnetnat.conf'), 'w') as f:
+        f.writelines(new_lines)
+
+    registry_key = winreg.OpenKey(winreg.HKEY_LOCAL_MACHINE, r'SOFTWARE\\WOW6432Node\\VMware, Inc.\\VMnetLib\\VMnetConfig\\vmnet8', 0, winreg.KEY_ALL_ACCESS)
+    winreg.SetValueEx(registry_key, 'IPSubnetAddress', 0, winreg.REG_SZ, '192.168.192.0')
+    winreg.CloseKey(registry_key)
+
     subprocess.run(f'"{VMNETLIB64_PATH}" -- stop nat', shell=True)
     subprocess.run(f'"{VMNETLIB64_PATH}" -- stop dhcp', shell=True)
-    subprocess.run(f'"{VMNETLIB64_PATH}" -- set vnet vmnet8 mask  255.255.255.0', shell=True)
-    subprocess.run(f'"{VMNETLIB64_PATH}" -- set vnet vmnet8 addr  192.168.192.0', shell=True)
-    subprocess.run(f'"{VMNETLIB64_PATH}" -- set adapter vmnet8 addr 192.168.192.2', shell=True)
-    subprocess.run(f'"{VMNETLIB64_PATH}" -- set nat vmnet8 internalipaddr 192.168.192.254', shell=True)
-    subprocess.run(f'"{VMNETLIB64_PATH}" -- update dhcp vmnet8', shell=True)
-    subprocess.run(f'"{VMNETLIB64_PATH}" -- update nat vmnet8', shell=True)
-    subprocess.run(f'"{VMNETLIB64_PATH}" -- update adapter vmnet8', shell=True)
     subprocess.run(f'"{VMNETLIB64_PATH}" -- start dhcp', shell=True)
     subprocess.run(f'"{VMNETLIB64_PATH}" -- start nat', shell=True)
 
