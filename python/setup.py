@@ -81,7 +81,7 @@ if __name__ == '__main__':
     with open(config_file) as f:
         config = json.loads(f.read())
 
-    system_requirements.check_requirements(ignore_warnings=config.get('IgnoreWarnings', False))
+    system_requirements.check_requirements(ignore_warnings=config.get('IgnoreWarnings', False), ignore_errors=config.get('IgnoreErrors', False))
 
     print('Starting VMWare...')
     subprocess.Popen(VMWARE_PATH, shell=True)

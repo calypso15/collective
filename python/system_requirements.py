@@ -82,16 +82,25 @@ def check() -> str:
 
     return State(2**math.floor(math.log2(state)))
 
-def check_requirements(ignore_warnings=False):
+def check_requirements(ignore_warnings=False, ignore_errors=False):
     print('Checking system requirements...')
     result = check()
     print('')
 
     if(result == State.PASS):
         print('This system meets all requirements.')
-    elif(result == State.WARN and ignore_warnings == False):
-        print('This system may be insufficient. To proceed anyway, change \'"IgnoreWarnings": false\' in the config file to \'"IgnoreWarnings": true\' and re-run setup.')
-        sys.exit(1)
+    elif(result == State.WARN):
+        if(ignore_warnings):
+            print('This system may be insufficient, but IgnoreWarnings is set to true.')
+        else:
+            print('This system may be insufficient. To proceed anyway, change \'"IgnoreWarnings": false\' in the config file to \'"IgnoreWarnings": true\' and re-run setup.')
+            sys.exit(1)
+    elif(result == State.FAIL):
+        if(ignore_errors):
+            print('This system does not meet the minimum requirements, but IgnoreErrors is set to true.')
+        else:
+            print('This system does not meet the minimum requirements, aborting. To proceed anyway, change \'"IgnoreErrors": false\' in the config file to \'"IgnoreErrors": true\' and re-run setup.')
+            sys.exit(1)
     else:
         print('This system does not meet the minimum requirements, aborting.')
         sys.exit(1)
@@ -106,4 +115,4 @@ if __name__ == '__main__':
     with open(config_file) as f:
         config = json.loads(f.read())
 
-    check_requirements(ignore_warnings=config.get('IgnoreWarnings', False))
+    check_requirements(ignore_warnings=config.get('IgnoreWarnings', False), ignore_errors=config.get('IgnoreErrors', False))
