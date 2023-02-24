@@ -94,7 +94,10 @@ def download_files(vcloud_url, vcloud_user, vcloud_pass):
             print(f"Checking hash of '{name}'...", end='')
             sys.stdout.flush()
 
-            if (not check_hash(name, hash_value, hash_type=hash_type)):
+            if (not os.path.isfile(os.path.join(DOWNLOAD_DIR, name))):
+                print('file missing.')
+                download_file(name)
+            elif (not check_hash(name, hash_value, hash_type=hash_type)):
                 print('does not match.')
                 download_file(name)
             else:
