@@ -7,6 +7,9 @@ param (
 
 Start-Transcript -Path $HOME/Documents/log-powershell.txt -Append
 
+Write-Host $ConfigFile
+Exit
+
 if ('ConfigFile' -NotIn $PSBoundParameters.Keys)
 {
     Write-Host 'No config file specified with the -ConfigFile parameter, aborting.'
