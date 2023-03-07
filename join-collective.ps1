@@ -7,23 +7,21 @@ param (
 
 Start-Transcript -Path $HOME/Documents/log-powershell.txt -Append
 
-$ConfigFile = Resolve-Path $ConfigFile
-Write-Host $ConfigFile
-Exit
-
 if ('ConfigFile' -NotIn $PSBoundParameters.Keys)
 {
     Write-Host 'No config file specified with the -ConfigFile parameter, aborting.'
     Exit
 }
 
-if (-Not (Test-Path -Path $ConfigFile -PathType Leaf))
+try
+{
+    $ConfigFile = Resolve-Path $ConfigFile
+}
+catch
 {
     Write-Host 'Specified config file not found, aborting.'
     Exit
 }
-
-
 
 # Update environment variables
 $env:Path = [System.Environment]::GetEnvironmentVariable("Path","Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path","User")
