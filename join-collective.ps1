@@ -9,16 +9,14 @@ Start-Transcript -Path $HOME/Documents/log-powershell.txt -Append
 
 if ('ConfigFile' -NotIn $PSBoundParameters.Keys)
 {
-    Write-Host 'No config file specified with the -ConfigFile parameter, aborting.'
-    Exit
+    throw 'No config file specified with the -ConfigFile parameter, aborting.'
 }
 
 $ConfigFile = Resolve-Path $ConfigFile -ErrorAction SilentlyContinue -ErrorVariable PathError
 
 if ($PathError)
 {
-    Write-Host 'Specified config file not found, aborting.'
-    Exit
+    throw 'Specified config file not found, aborting.'
 }
 
 # Update environment variables
