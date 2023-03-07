@@ -116,11 +116,11 @@ if __name__ == '__main__':
     subprocess.run(f'"{VMNETLIB64_PATH}" -- start dhcp', shell=True)
     subprocess.run(f'"{VMNETLIB64_PATH}" -- start nat', shell=True)
 
-    download_succeeded = vcloud_files.download_files(config['Vcloud']['Url'], config['Vcloud']['Username'], config['Vcloud']['Password'])
-
     make_dir(os.path.join(HOME, 'Desktop/Malware'))
     print('Excluding malware directory from Windows Defender...')
     run_powershell('Set-MpPreference -ExclusionPath $HOME/Desktop/Malware')
+
+    download_succeeded = vcloud_files.download_files(config['Vcloud']['Url'], config['Vcloud']['Username'], config['Vcloud']['Password'])
 
     if download_succeeded:
         manifest = {}
