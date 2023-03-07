@@ -15,7 +15,7 @@ if ('ConfigFile' -NotIn $PSBoundParameters.Keys)
 
 try
 {
-    $ConfigFile = Resolve-Path $ConfigFile
+    $ConfigFile = Resolve-Path $ConfigFile -ErrorAction SilentlyContinue
 }
 catch
 {
