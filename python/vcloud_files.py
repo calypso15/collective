@@ -1,4 +1,5 @@
 import argparse
+import ctypes
 import hashlib
 import json
 import os
@@ -9,7 +10,10 @@ import traceback
 import urllib
 
 
-def download_file(filename):
+def download_file(filename, path = None):
+    if path == None:
+        path = DOWNLOAD_DIR
+
     url = urllib.parse.urljoin(VCLOUD_URL, filename)
     datafile = os.path.join(DOWNLOAD_DIR, filename)
 
@@ -77,6 +81,24 @@ def download_files(vcloud_url, vcloud_user, vcloud_pass):
     if not os.path.exists(DOWNLOAD_DIR):
         os.makedirs(DOWNLOAD_DIR)
 
+    if os.path.exists(os.path.join(DOWNLOAD_DIR, 'manifest.json')):
+        old_manifest = {}
+        with open(os.path.join(DOWNLOAD_DIR, 'manifest.json')) as f:
+            old_manifest = json.loads(f.read())
+
+        new_manifest = {}
+        with tempfile.TemporaryDirectory() as tmpdirname:
+            download_file('manifest.json', tmpdirname)
+            with open(os.path.join(tmpdirname, 'manifest.json')) as f:
+                new_manifest = json.loads(f.read())
+
+        if new_manifest['version'] > old_manifest['version']:
+            rv = ctypes.windll.user32.MessageBoxW(0, "There is a new version of the virtual environment. Do you want to download and setup the new environment? This will delete the old environment.", "Starting VMWare Workstation", 0x4 ^ 0x40 ^ 0x1000)
+
+            if (rv != 1):
+                print('Skipping download.')
+                return False
+
     manifest_file = download_file('manifest.json')
     manifest = {}
     with open(os.path.join(DOWNLOAD_DIR, manifest_file)) as f:
@@ -106,6 +128,7 @@ def download_files(vcloud_url, vcloud_user, vcloud_pass):
             print(e)
 
     print('Finished downloading OVAs.')
+    return True
 
 
 if __name__ == '__main__':
