@@ -93,16 +93,13 @@ def download_files(vcloud_url, vcloud_user, vcloud_pass):
                 new_manifest = json.loads(f.read())
 
         if new_manifest['version'] > old_manifest['version']:
-            rv = ctypes.windll.user32.MessageBoxW(0, "There is a new version of the virtual environment. Do you want to download and setup the new environment? This will delete the old environment.", "Environment Setup", 0x4 ^ 0x40 ^ 0x1000)
+            rv = ctypes.windll.user32.MessageBoxW(0, f"There is a new version (v{new_manifest['version']}) of the virtual environment. Do you want to download and install it? This will delete the old environment.", "Environment Setup", 0x4 ^ 0x40 ^ 0x1000)
 
             if (rv != 6):
                 print('Skipping download.')
                 return False
 
-    manifest_file = download_file('manifest.json')
-    manifest = {}
-    with open(os.path.join(DOWNLOAD_DIR, manifest_file)) as f:
-        manifest = json.loads(f.read())
+    manifest = new_manifest
 
     print('Downloading OVAs...')
 
@@ -126,6 +123,9 @@ def download_files(vcloud_url, vcloud_user, vcloud_pass):
                 print('matches.')
         except Exception as e:
             print(e)
+
+    with open(os.path.join(DOWNLOAD_DIR, 'manifest.json')) as f:
+        f.write(json.dumps(manifest))
 
     print('Finished downloading OVAs.')
     return True
