@@ -13,13 +13,13 @@ if ('ConfigFile' -NotIn $PSBoundParameters.Keys)
     Exit
 }
 
-$ConfigFile = Resolve-Path $ConfigFile
-
 if (-Not (Test-Path -Path $ConfigFile -PathType Leaf))
 {
     Write-Host 'Specified config file not found, aborting.'
     Exit
 }
+
+$ConfigFile = Resolve-Path $ConfigFile
 
 # Update environment variables
 $env:Path = [System.Environment]::GetEnvironmentVariable("Path","Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path","User")
