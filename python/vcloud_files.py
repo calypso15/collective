@@ -125,7 +125,7 @@ def download_files(vcloud_url, vcloud_user, vcloud_pass):
             print(e)
 
     with open(os.path.join(DOWNLOAD_DIR, 'manifest.json'), 'w') as f:
-        f.write(json.dumps(manifest))
+        f.write(json.dumps(manifest, indent=4))
 
     print('Finished downloading OVAs.')
     return True
