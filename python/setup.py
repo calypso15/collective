@@ -120,9 +120,11 @@ if __name__ == '__main__':
     print('Excluding malware directory from Windows Defender...')
     run_powershell('Set-MpPreference -ExclusionPath $HOME/Desktop/Malware')
 
-    download_succeeded = vcloud_files.download_files(config['Vcloud']['Url'], config['Vcloud']['Username'], config['Vcloud']['Password'])
+    vcloud_files.download_files(config['Vcloud']['Url'], config['Vcloud']['Username'], config['Vcloud']['Password'])
 
-    if download_succeeded:
+    rv = ctypes.windll.user32.MessageBoxW(0, "Do you want to install the virtual environment? This will delete the old environment (if any).", "VM Import", 0x4 ^ 0x40 ^ 0x1000)
+
+    if (rv == 6):
         manifest = {}
         with open(os.path.join(DOWNLOAD_DIR, 'manifest.json')) as f:
             manifest = json.loads(f.read())

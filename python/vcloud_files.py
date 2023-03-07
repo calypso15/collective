@@ -93,11 +93,13 @@ def download_files(vcloud_url, vcloud_user, vcloud_pass):
                 new_manifest = json.loads(f.read())
 
         if new_manifest['version'] > old_manifest['version']:
-            rv = ctypes.windll.user32.MessageBoxW(0, f"There is a new version (v{new_manifest['version']}) of the virtual environment. Do you want to download and install it? This will delete the old environment.", "Environment Setup", 0x4 ^ 0x40 ^ 0x1000)
+            rv = ctypes.windll.user32.MessageBoxW(0, f"There is a new version (v{new_manifest['version']}) of the virtual environment. Do you want to download it?", "VM Download", 0x4 ^ 0x40 ^ 0x1000)
 
             if (rv != 6):
-                print('Skipping download.')
-                return False
+                print('Skipping environment download.')
+                return
+        else:
+            return
 
     manifest = new_manifest
 
@@ -128,7 +130,6 @@ def download_files(vcloud_url, vcloud_user, vcloud_pass):
         f.write(json.dumps(manifest, indent=4))
 
     print('Finished downloading OVAs.')
-    return True
 
 
 if __name__ == '__main__':
