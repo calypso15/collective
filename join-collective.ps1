@@ -13,11 +13,9 @@ if ('ConfigFile' -NotIn $PSBoundParameters.Keys)
     Exit
 }
 
-try
-{
-    $ConfigFile = Resolve-Path $ConfigFile -ErrorAction SilentlyContinue
-}
-catch
+$ConfigFile = Resolve-Path $ConfigFile -ErrorAction SilentlyContinue -ErrorVariable PathError
+
+if ($PathError)
 {
     Write-Host 'Specified config file not found, aborting.'
     Exit
