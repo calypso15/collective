@@ -15,7 +15,7 @@ def download_file(filename, path = None):
         path = DOWNLOAD_DIR
 
     url = urllib.parse.urljoin(VCLOUD_URL, filename)
-    datafile = os.path.join(DOWNLOAD_DIR, filename)
+    datafile = os.path.join(path, filename)
 
     local_filename = urllib.parse.unquote(datafile)
 
