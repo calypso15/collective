@@ -47,7 +47,7 @@ def check_hash(filename, hash_value, hash_type='sha256'):
 
     alg = hashlib.new(hash_type)
     with open(datafile, 'rb') as f:
-        for byte_block in iter(lambda: f.read(4096), b""):
+        for byte_block in iter(lambda: f.read(65536), b""):
             alg.update(byte_block)
 
     return (alg.hexdigest() == hash_value)
@@ -124,7 +124,7 @@ def download_files(vcloud_url, vcloud_user, vcloud_pass):
         except Exception as e:
             print(e)
 
-    with open(os.path.join(DOWNLOAD_DIR, 'manifest.json')) as f:
+    with open(os.path.join(DOWNLOAD_DIR, 'manifest.json'), 'w') as f:
         f.write(json.dumps(manifest))
 
     print('Finished downloading OVAs.')
