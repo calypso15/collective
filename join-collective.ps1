@@ -7,6 +7,7 @@ param (
 
 Start-Transcript -Path $HOME/Documents/log-powershell.txt -Append
 
+$ConfigFile = Resolve-Path $ConfigFile
 Write-Host $ConfigFile
 Exit
 
@@ -22,7 +23,7 @@ if (-Not (Test-Path -Path $ConfigFile -PathType Leaf))
     Exit
 }
 
-$ConfigFile = Resolve-Path $ConfigFile
+
 
 # Update environment variables
 $env:Path = [System.Environment]::GetEnvironmentVariable("Path","Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path","User")
