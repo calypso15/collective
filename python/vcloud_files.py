@@ -6,6 +6,7 @@ import os
 import requests
 import sys
 import tempfile
+import timeit
 import traceback
 import urllib
 
@@ -123,6 +124,8 @@ def download_files(vcloud_url, vcloud_user, vcloud_pass):
                 download_file(name)
             else:
                 print('matches.')
+                result = timeit.timeit(stmt='check_hash(name, hash_value, hash_type=hash_type)', globals=globals(), number=1)
+                print(f'Execution time is {result} seconds.')
         except Exception as e:
             print(e)
 
