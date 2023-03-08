@@ -167,4 +167,4 @@ if __name__ == '__main__':
                 print(f'Disabling shared folders for {vmx_path}...')
                 subprocess.run(f'"{VMRUN_PATH}" -T ws disableSharedFolders "{vmx_path}"', shell=True)
     else:
-        print('Skipping environment setup.')
+        print('Skipping environment setup at user request.')

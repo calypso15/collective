@@ -97,9 +97,10 @@ def download_files(vcloud_url, vcloud_user, vcloud_pass):
             rv = ctypes.windll.user32.MessageBoxW(0, f"There is a newer version (v{new_manifest['version']}) of the virtual environment. Do you want to download it?", "Download virtual environment?", 0x4 ^ 0x40 ^ 0x1000)
 
             if (rv != 6):
-                print('Skipping environment download.')
+                print('Skipping environment download at user request.')
                 return
         else:
+            print('Skipping environment download, environment is up-to-date.')
             return
 
     manifest = new_manifest
