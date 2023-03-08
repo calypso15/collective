@@ -93,7 +93,7 @@ def download_files(vcloud_url, vcloud_user, vcloud_pass):
                 new_manifest = json.loads(f.read())
 
         if new_manifest['version'] > old_manifest['version']:
-            rv = ctypes.windll.user32.MessageBoxW(0, f"There is a new version (v{new_manifest['version']}) of the virtual environment. Do you want to download it?", "Download virtual environment?", 0x4 ^ 0x40 ^ 0x1000)
+            rv = ctypes.windll.user32.MessageBoxW(0, f"There is a newer version (v{new_manifest['version']}) of the virtual environment. Do you want to download it?", "Download virtual environment?", 0x4 ^ 0x40 ^ 0x1000)
 
             if (rv != 6):
                 print('Skipping environment download.')
