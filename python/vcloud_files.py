@@ -48,7 +48,7 @@ def check_hash(filename, hash_value, hash_type='sha256'):
 
     alg = hashlib.new(hash_type)
     with open(datafile, 'rb') as f:
-        for byte_block in iter(lambda: f.read(65536), b""):
+        for byte_block in iter(lambda: f.read(2**20), b""):
             alg.update(byte_block)
 
     return (alg.hexdigest() == hash_value)
