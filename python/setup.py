@@ -122,7 +122,7 @@ if __name__ == '__main__':
 
     vcloud_files.download_files(config['Vcloud']['Url'], config['Vcloud']['Username'], config['Vcloud']['Password'])
 
-    rv = ctypes.windll.user32.MessageBoxW(0, "Do you want to install the virtual environment? This will delete the old environment (if any).", "VM Import", 0x4 ^ 0x40 ^ 0x1000)
+    rv = ctypes.windll.user32.MessageBoxW(0, "Do you want to install the virtual environment? This will delete the old environment (if any), and you will need to re-install agents, snapshots, etc.", "Install virtual environment?", 0x4 ^ 0x40 ^ 0x1000)
 
     if (rv == 6):
         manifest = {}
