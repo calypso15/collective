@@ -92,30 +92,6 @@ if __name__ == '__main__':
         print('Aborting setup.')
         sys.exit()
 
-    print('Configuring vmnet8...')
-    old_lines = []
-    with open(os.path.join(VMWARE_DATA_DIR, 'vmnetnat.conf'), 'r') as f:
-        old_lines = f.readlines()
-
-    new_lines = []
-    for l in old_lines:
-        if l.startswith('ip ='):
-            new_lines.append('ip = 192.168.192.2/24\n')
-        else:
-            new_lines.append(l)
-
-    with open(os.path.join(VMWARE_DATA_DIR, 'vmnetnat.conf'), 'w') as f:
-        f.writelines(new_lines)
-
-    registry_key = winreg.OpenKey(winreg.HKEY_LOCAL_MACHINE, r'SOFTWARE\\WOW6432Node\\VMware, Inc.\\VMnetLib\\VMnetConfig\\vmnet8', 0, winreg.KEY_ALL_ACCESS)
-    winreg.SetValueEx(registry_key, 'IPSubnetAddress', 0, winreg.REG_SZ, '192.168.192.0')
-    winreg.CloseKey(registry_key)
-
-    subprocess.run(f'"{VMNETLIB64_PATH}" -- stop nat', shell=True)
-    subprocess.run(f'"{VMNETLIB64_PATH}" -- stop dhcp', shell=True)
-    subprocess.run(f'"{VMNETLIB64_PATH}" -- start dhcp', shell=True)
-    subprocess.run(f'"{VMNETLIB64_PATH}" -- start nat', shell=True)
-
     make_dir(os.path.join(HOME, 'Desktop/Malware'))
     print('Excluding malware directory from Windows Defender...')
     run_powershell('Set-MpPreference -ExclusionPath $HOME/Desktop/Malware')
@@ -125,6 +101,30 @@ if __name__ == '__main__':
     rv = ctypes.windll.user32.MessageBoxW(0, "Do you want to install the virtual environment? This will delete the old environment (if any), and you will need to re-install agents, snapshots, etc.", "Install virtual environment?", 0x4 ^ 0x40 ^ 0x1000)
 
     if (rv == 6):
+        print('Configuring vmnet8...')
+        old_lines = []
+        with open(os.path.join(VMWARE_DATA_DIR, 'vmnetnat.conf'), 'r') as f:
+            old_lines = f.readlines()
+
+        new_lines = []
+        for l in old_lines:
+            if l.startswith('ip ='):
+                new_lines.append('ip = 192.168.192.2/24\n')
+            else:
+                new_lines.append(l)
+
+        with open(os.path.join(VMWARE_DATA_DIR, 'vmnetnat.conf'), 'w') as f:
+            f.writelines(new_lines)
+
+        registry_key = winreg.OpenKey(winreg.HKEY_LOCAL_MACHINE, r'SOFTWARE\\WOW6432Node\\VMware, Inc.\\VMnetLib\\VMnetConfig\\vmnet8', 0, winreg.KEY_ALL_ACCESS)
+        winreg.SetValueEx(registry_key, 'IPSubnetAddress', 0, winreg.REG_SZ, '192.168.192.0')
+        winreg.CloseKey(registry_key)
+
+        subprocess.run(f'"{VMNETLIB64_PATH}" -- stop nat', shell=True)
+        subprocess.run(f'"{VMNETLIB64_PATH}" -- stop dhcp', shell=True)
+        subprocess.run(f'"{VMNETLIB64_PATH}" -- start dhcp', shell=True)
+        subprocess.run(f'"{VMNETLIB64_PATH}" -- start nat', shell=True)
+
         manifest = {}
         with open(os.path.join(DOWNLOAD_DIR, 'manifest.json')) as f:
             manifest = json.loads(f.read())
