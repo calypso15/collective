@@ -92,74 +92,79 @@ if __name__ == '__main__':
         print('Aborting setup.')
         sys.exit()
 
-    print('Configuring vmnet8...')
-    old_lines = []
-    with open(os.path.join(VMWARE_DATA_DIR, 'vmnetnat.conf'), 'r') as f:
-        old_lines = f.readlines()
-
-    new_lines = []
-    for l in old_lines:
-        if l.startswith('ip ='):
-            new_lines.append('ip = 192.168.192.2/24\n')
-        else:
-            new_lines.append(l)
-
-    with open(os.path.join(VMWARE_DATA_DIR, 'vmnetnat.conf'), 'w') as f:
-        f.writelines(new_lines)
-
-    registry_key = winreg.OpenKey(winreg.HKEY_LOCAL_MACHINE, r'SOFTWARE\\WOW6432Node\\VMware, Inc.\\VMnetLib\\VMnetConfig\\vmnet8', 0, winreg.KEY_ALL_ACCESS)
-    winreg.SetValueEx(registry_key, 'IPSubnetAddress', 0, winreg.REG_SZ, '192.168.192.0')
-    winreg.CloseKey(registry_key)
-
-    subprocess.run(f'"{VMNETLIB64_PATH}" -- stop nat', shell=True)
-    subprocess.run(f'"{VMNETLIB64_PATH}" -- stop dhcp', shell=True)
-    subprocess.run(f'"{VMNETLIB64_PATH}" -- start dhcp', shell=True)
-    subprocess.run(f'"{VMNETLIB64_PATH}" -- start nat', shell=True)
-
-    vcloud_files.download_files(config['Vcloud']['Url'], config['Vcloud']['Username'], config['Vcloud']['Password'])
-
     make_dir(os.path.join(HOME, 'Desktop/Malware'))
     print('Excluding malware directory from Windows Defender...')
     run_powershell('Set-MpPreference -ExclusionPath $HOME/Desktop/Malware')
 
-    manifest = {}
-    with open(os.path.join(DOWNLOAD_DIR, 'manifest.json')) as f:
-        manifest = json.loads(f.read())
+    vcloud_files.download_files(config['Vcloud']['Url'], config['Vcloud']['Username'], config['Vcloud']['Password'])
 
-    if os.path.exists(VM_DIR):
-        print('Stopping VMs...')
-        files = glob.glob(os.path.join(VM_DIR, '**/*.vmx'), recursive=True)
-        for file in files:
-            print(f'Stopping {file}...')
-            subprocess.run(f'"{VMRUN_PATH}" -T ws stop "{file}" hard', shell=True)
+    rv = ctypes.windll.user32.MessageBoxW(0, "Do you want to install the virtual environment? This will delete the old environment (if any), and you will need to re-install agents, snapshots, etc.", "Install virtual environment?", 0x4 ^ 0x40 ^ 0x1000)
 
-        print('Deleting old VMs...')
-        shutil.rmtree(VM_DIR)
+    if (rv == 6):
+        print('Configuring vmnet8...')
+        old_lines = []
+        with open(os.path.join(VMWARE_DATA_DIR, 'vmnetnat.conf'), 'r') as f:
+            old_lines = f.readlines()
 
-    make_dir(VM_DIR)
+        new_lines = []
+        for l in old_lines:
+            if l.startswith('ip ='):
+                new_lines.append('ip = 192.168.192.2/24\n')
+            else:
+                new_lines.append(l)
 
-    sorted_list = sorted(manifest['files'], key=lambda d: d.get('order', sys.maxsize))
+        with open(os.path.join(VMWARE_DATA_DIR, 'vmnetnat.conf'), 'w') as f:
+            f.writelines(new_lines)
 
-    print('Installing and starting new VMs...')
-    for file in sorted_list:
-        name = file['name']
-        base_name = os.path.splitext(name)[0]
-        install = file['import']
+        registry_key = winreg.OpenKey(winreg.HKEY_LOCAL_MACHINE, r'SOFTWARE\\WOW6432Node\\VMware, Inc.\\VMnetLib\\VMnetConfig\\vmnet8', 0, winreg.KEY_ALL_ACCESS)
+        winreg.SetValueEx(registry_key, 'IPSubnetAddress', 0, winreg.REG_SZ, '192.168.192.0')
+        winreg.CloseKey(registry_key)
 
-        ova_path = os.path.join(DOWNLOAD_DIR, name)
-        vmx_path = os.path.join(VM_DIR, base_name, base_name+'.vmx')
+        subprocess.run(f'"{VMNETLIB64_PATH}" -- stop nat', shell=True)
+        subprocess.run(f'"{VMNETLIB64_PATH}" -- stop dhcp', shell=True)
+        subprocess.run(f'"{VMNETLIB64_PATH}" -- start dhcp', shell=True)
+        subprocess.run(f'"{VMNETLIB64_PATH}" -- start nat', shell=True)
 
-        if install:
-            print(f'Installing {ova_path}...')
-            subprocess.run(
-                f'"{OVFTOOL_PATH}" --allowExtraConfig --net:"custom=vmnet8" -o "{ova_path}" "{VM_DIR}"', shell=True)
+        manifest = {}
+        with open(os.path.join(DOWNLOAD_DIR, 'manifest.json')) as f:
+            manifest = json.loads(f.read())
 
-            print(f'Starting {vmx_path}...')
-            subprocess.run(f'"{VMRUN_PATH}" -T ws start "{vmx_path}"', shell=True)
+        if os.path.exists(VM_DIR):
+            print('Stopping VMs...')
+            files = glob.glob(os.path.join(VM_DIR, '**/*.vmx'), recursive=True)
+            for file in files:
+                print(f'Stopping {file}...')
+                subprocess.run(f'"{VMRUN_PATH}" -T ws stop "{file}" hard', shell=True)
 
-            p = subprocess.run(f'"{VMRUN_PATH}" -T ws getGuestIPAddress "{vmx_path}" -wait',
-                            shell=True, capture_output=True)
-            print(f'...Machine is up with IP address {p.stdout.decode().rstrip()}')
+            print('Deleting old VMs...')
+            shutil.rmtree(VM_DIR)
 
-            print(f'Disabling shared folders for {vmx_path}...')
-            subprocess.run(f'"{VMRUN_PATH}" -T ws disableSharedFolders "{vmx_path}"', shell=True)
+        make_dir(VM_DIR)
+
+        sorted_list = sorted(manifest['files'], key=lambda d: d.get('order', sys.maxsize))
+
+        print('Installing and starting new VMs...')
+        for file in sorted_list:
+            name = file['name']
+            base_name = os.path.splitext(name)[0]
+            install = file['import']
+
+            ova_path = os.path.join(DOWNLOAD_DIR, name)
+            vmx_path = os.path.join(VM_DIR, base_name, base_name+'.vmx')
+
+            if install:
+                print(f'Installing {ova_path}...')
+                subprocess.run(
+                    f'"{OVFTOOL_PATH}" --allowExtraConfig --net:"custom=vmnet8" -o "{ova_path}" "{VM_DIR}"', shell=True)
+
+                print(f'Starting {vmx_path}...')
+                subprocess.run(f'"{VMRUN_PATH}" -T ws start "{vmx_path}"', shell=True)
+
+                p = subprocess.run(f'"{VMRUN_PATH}" -T ws getGuestIPAddress "{vmx_path}" -wait',
+                                shell=True, capture_output=True)
+                print(f'...Machine is up with IP address {p.stdout.decode().rstrip()}')
+
+                print(f'Disabling shared folders for {vmx_path}...')
+                subprocess.run(f'"{VMRUN_PATH}" -T ws disableSharedFolders "{vmx_path}"', shell=True)
+    else:
+        print('Skipping environment setup at user request.')

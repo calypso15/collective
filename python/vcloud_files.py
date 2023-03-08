@@ -1,17 +1,22 @@
 import argparse
+import ctypes
 import hashlib
 import json
 import os
 import requests
 import sys
 import tempfile
+import timeit
 import traceback
 import urllib
 
 
-def download_file(filename):
+def download_file(filename, path = None):
+    if path == None:
+        path = DOWNLOAD_DIR
+
     url = urllib.parse.urljoin(VCLOUD_URL, filename)
-    datafile = os.path.join(DOWNLOAD_DIR, filename)
+    datafile = os.path.join(path, filename)
 
     local_filename = urllib.parse.unquote(datafile)
 
@@ -43,7 +48,7 @@ def check_hash(filename, hash_value, hash_type='sha256'):
 
     alg = hashlib.new(hash_type)
     with open(datafile, 'rb') as f:
-        for byte_block in iter(lambda: f.read(4096), b""):
+        for byte_block in iter(lambda: f.read(2**16), b""):
             alg.update(byte_block)
 
     return (alg.hexdigest() == hash_value)
@@ -77,10 +82,28 @@ def download_files(vcloud_url, vcloud_user, vcloud_pass):
     if not os.path.exists(DOWNLOAD_DIR):
         os.makedirs(DOWNLOAD_DIR)
 
-    manifest_file = download_file('manifest.json')
-    manifest = {}
-    with open(os.path.join(DOWNLOAD_DIR, manifest_file)) as f:
-        manifest = json.loads(f.read())
+    if os.path.exists(os.path.join(DOWNLOAD_DIR, 'manifest.json')):
+        old_manifest = {}
+        with open(os.path.join(DOWNLOAD_DIR, 'manifest.json')) as f:
+            old_manifest = json.loads(f.read())
+
+        new_manifest = {}
+        with tempfile.TemporaryDirectory() as tmpdirname:
+            download_file('manifest.json', tmpdirname)
+            with open(os.path.join(tmpdirname, 'manifest.json')) as f:
+                new_manifest = json.loads(f.read())
+
+        if new_manifest['version'] > old_manifest['version']:
+            rv = ctypes.windll.user32.MessageBoxW(0, f"There is a newer version (v{new_manifest['version']}) of the virtual environment. Do you want to download it?", "Download virtual environment?", 0x4 ^ 0x40 ^ 0x1000)
+
+            if (rv != 6):
+                print('Skipping environment download at user request.')
+                return
+        else:
+            print('Skipping environment download, environment is up-to-date.')
+            return
+
+    manifest = new_manifest
 
     print('Downloading OVAs...')
 
@@ -104,6 +127,9 @@ def download_files(vcloud_url, vcloud_user, vcloud_pass):
                 print('matches.')
         except Exception as e:
             print(e)
+
+    with open(os.path.join(DOWNLOAD_DIR, 'manifest.json'), 'w') as f:
+        f.write(json.dumps(manifest, indent=4))
 
     print('Finished downloading OVAs.')
 
