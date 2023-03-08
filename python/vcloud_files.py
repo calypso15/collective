@@ -48,7 +48,7 @@ def check_hash(filename, hash_value, hash_type='sha256'):
 
     alg = hashlib.new(hash_type)
     with open(datafile, 'rb') as f:
-        for byte_block in iter(lambda: f.read(2**12), b""):
+        for byte_block in iter(lambda: f.read(2**16), b""):
             alg.update(byte_block)
 
     return (alg.hexdigest() == hash_value)
@@ -125,8 +125,6 @@ def download_files(vcloud_url, vcloud_user, vcloud_pass):
                 download_file(name)
             else:
                 print('matches.')
-                t = timeit.Timer(lambda: check_hash(name, hash_value, hash_type=hash_type))
-                print(t.timeit(1))
         except Exception as e:
             print(e)
 
