@@ -82,14 +82,14 @@ def download_files(vcloud_url, vcloud_user, vcloud_pass):
     if not os.path.exists(DOWNLOAD_DIR):
         os.makedirs(DOWNLOAD_DIR)
 
-    manifest = {}
+    manifest = None
     with tempfile.TemporaryDirectory() as tmpdirname:
         download_file('manifest.json', tmpdirname)
         with open(os.path.join(tmpdirname, 'manifest.json')) as f:
             manifest = json.loads(f.read())
 
     if os.path.exists(os.path.join(DOWNLOAD_DIR, 'manifest.json')):
-        old_manifest = {}
+        old_manifest = None
         with open(os.path.join(DOWNLOAD_DIR, 'manifest.json')) as f:
             old_manifest = json.loads(f.read())
 

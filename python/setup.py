@@ -125,11 +125,12 @@ if __name__ == '__main__':
         subprocess.run(f'"{VMNETLIB64_PATH}" -- start dhcp', shell=True)
         subprocess.run(f'"{VMNETLIB64_PATH}" -- start nat', shell=True)
 
-        manifest = {}
+        manifest = None
         if os.path.exists(os.path.join(DOWNLOAD_DIR, 'manifest.json')):
             with open(os.path.join(DOWNLOAD_DIR, 'manifest.json')) as f:
                 manifest = json.loads(f.read())
 
+        if manifest != None:
             if os.path.exists(VM_DIR):
                 print('Stopping VMs...')
                 files = glob.glob(os.path.join(VM_DIR, '**/*.vmx'), recursive=True)
