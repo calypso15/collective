@@ -82,6 +82,8 @@ def download_files(vcloud_url, vcloud_user, vcloud_pass):
     if not os.path.exists(DOWNLOAD_DIR):
         os.makedirs(DOWNLOAD_DIR)
 
+    manifest = None
+
     if os.path.exists(os.path.join(DOWNLOAD_DIR, 'manifest.json')):
         old_manifest = {}
         with open(os.path.join(DOWNLOAD_DIR, 'manifest.json')) as f:
@@ -99,39 +101,41 @@ def download_files(vcloud_url, vcloud_user, vcloud_pass):
             if (rv != 6):
                 print('Skipping environment download at user request.')
                 return
+            else:
+                manifest = new_manifest
         else:
             print('Skipping environment download, environment is up-to-date.')
             return
 
-    manifest = new_manifest
+    if manifest != None:
+        print('Downloading OVAs...')
+        sorted_list = sorted(manifest['files'], key=lambda d: d.get('order', sys.maxsize))
+        for file in sorted_list:
+            try:
+                name = file['name']
+                hash_type = file['hash_type']
+                hash_value = file['hash_value']
 
-    print('Downloading OVAs...')
+                print(f"Checking hash of '{name}'...", end='')
+                sys.stdout.flush()
 
-    sorted_list = sorted(manifest['files'], key=lambda d: d.get('order', sys.maxsize))
-    for file in sorted_list:
-        try:
-            name = file['name']
-            hash_type = file['hash_type']
-            hash_value = file['hash_value']
+                if (not os.path.isfile(os.path.join(DOWNLOAD_DIR, name))):
+                    print('file missing.')
+                    download_file(name)
+                elif (not check_hash(name, hash_value, hash_type=hash_type)):
+                    print('does not match.')
+                    download_file(name)
+                else:
+                    print('matches.')
+            except Exception as e:
+                print(e)
 
-            print(f"Checking hash of '{name}'...", end='')
-            sys.stdout.flush()
+        with open(os.path.join(DOWNLOAD_DIR, 'manifest.json'), 'w') as f:
+            f.write(json.dumps(manifest, indent=4))
 
-            if (not os.path.isfile(os.path.join(DOWNLOAD_DIR, name))):
-                print('file missing.')
-                download_file(name)
-            elif (not check_hash(name, hash_value, hash_type=hash_type)):
-                print('does not match.')
-                download_file(name)
-            else:
-                print('matches.')
-        except Exception as e:
-            print(e)
-
-    with open(os.path.join(DOWNLOAD_DIR, 'manifest.json'), 'w') as f:
-        f.write(json.dumps(manifest, indent=4))
-
-    print('Finished downloading OVAs.')
+        print('Finished downloading OVAs.')
+    else:
+        print('Skipping environment download, there was a problem with the manifest.')
 
 
 if __name__ == '__main__':
