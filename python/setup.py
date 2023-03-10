@@ -126,45 +126,48 @@ if __name__ == '__main__':
         subprocess.run(f'"{VMNETLIB64_PATH}" -- start nat', shell=True)
 
         manifest = {}
-        with open(os.path.join(DOWNLOAD_DIR, 'manifest.json')) as f:
-            manifest = json.loads(f.read())
+        if os.path.exists(os.path.join(DOWNLOAD_DIR, 'manifest.json')):
+            with open(os.path.join(DOWNLOAD_DIR, 'manifest.json')) as f:
+                manifest = json.loads(f.read())
 
-        if os.path.exists(VM_DIR):
-            print('Stopping VMs...')
-            files = glob.glob(os.path.join(VM_DIR, '**/*.vmx'), recursive=True)
-            for file in files:
-                print(f'Stopping {file}...')
-                subprocess.run(f'"{VMRUN_PATH}" -T ws stop "{file}" hard', shell=True)
+            if os.path.exists(VM_DIR):
+                print('Stopping VMs...')
+                files = glob.glob(os.path.join(VM_DIR, '**/*.vmx'), recursive=True)
+                for file in files:
+                    print(f'Stopping {file}...')
+                    subprocess.run(f'"{VMRUN_PATH}" -T ws stop "{file}" hard', shell=True)
 
-            print('Deleting old VMs...')
-            shutil.rmtree(VM_DIR)
+                print('Deleting old VMs...')
+                shutil.rmtree(VM_DIR)
 
-        make_dir(VM_DIR)
+            make_dir(VM_DIR)
 
-        sorted_list = sorted(manifest['files'], key=lambda d: d.get('order', sys.maxsize))
+            sorted_list = sorted(manifest['files'], key=lambda d: d.get('order', sys.maxsize))
 
-        print('Installing and starting new VMs...')
-        for file in sorted_list:
-            name = file['name']
-            base_name = os.path.splitext(name)[0]
-            install = file['import']
+            print('Installing and starting new VMs...')
+            for file in sorted_list:
+                name = file['name']
+                base_name = os.path.splitext(name)[0]
+                install = file['import']
 
-            ova_path = os.path.join(DOWNLOAD_DIR, name)
-            vmx_path = os.path.join(VM_DIR, base_name, base_name+'.vmx')
+                ova_path = os.path.join(DOWNLOAD_DIR, name)
+                vmx_path = os.path.join(VM_DIR, base_name, base_name+'.vmx')
 
-            if install:
-                print(f'Installing {ova_path}...')
-                subprocess.run(
-                    f'"{OVFTOOL_PATH}" --allowExtraConfig --net:"custom=vmnet8" -o "{ova_path}" "{VM_DIR}"', shell=True)
+                if install:
+                    print(f'Installing {ova_path}...')
+                    subprocess.run(
+                        f'"{OVFTOOL_PATH}" --allowExtraConfig --net:"custom=vmnet8" -o "{ova_path}" "{VM_DIR}"', shell=True)
 
-                print(f'Starting {vmx_path}...')
-                subprocess.run(f'"{VMRUN_PATH}" -T ws start "{vmx_path}"', shell=True)
+                    print(f'Starting {vmx_path}...')
+                    subprocess.run(f'"{VMRUN_PATH}" -T ws start "{vmx_path}"', shell=True)
 
-                p = subprocess.run(f'"{VMRUN_PATH}" -T ws getGuestIPAddress "{vmx_path}" -wait',
-                                shell=True, capture_output=True)
-                print(f'...Machine is up with IP address {p.stdout.decode().rstrip()}')
+                    p = subprocess.run(f'"{VMRUN_PATH}" -T ws getGuestIPAddress "{vmx_path}" -wait',
+                                    shell=True, capture_output=True)
+                    print(f'...Machine is up with IP address {p.stdout.decode().rstrip()}')
 
-                print(f'Disabling shared folders for {vmx_path}...')
-                subprocess.run(f'"{VMRUN_PATH}" -T ws disableSharedFolders "{vmx_path}"', shell=True)
+                    print(f'Disabling shared folders for {vmx_path}...')
+                    subprocess.run(f'"{VMRUN_PATH}" -T ws disableSharedFolders "{vmx_path}"', shell=True)
+        else:
+            print('Skipping environment setup, there was a problem with the manifest.')
     else:
         print('Skipping environment setup at user request.')

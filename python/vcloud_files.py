@@ -82,30 +82,26 @@ def download_files(vcloud_url, vcloud_user, vcloud_pass):
     if not os.path.exists(DOWNLOAD_DIR):
         os.makedirs(DOWNLOAD_DIR)
 
-    manifest = None
+    manifest = {}
+    with tempfile.TemporaryDirectory() as tmpdirname:
+        download_file('manifest.json', tmpdirname)
+        with open(os.path.join(tmpdirname, 'manifest.json')) as f:
+            manifest = json.loads(f.read())
 
     if os.path.exists(os.path.join(DOWNLOAD_DIR, 'manifest.json')):
         old_manifest = {}
         with open(os.path.join(DOWNLOAD_DIR, 'manifest.json')) as f:
             old_manifest = json.loads(f.read())
 
-        new_manifest = {}
-        with tempfile.TemporaryDirectory() as tmpdirname:
-            download_file('manifest.json', tmpdirname)
-            with open(os.path.join(tmpdirname, 'manifest.json')) as f:
-                new_manifest = json.loads(f.read())
-
-        if new_manifest['version'] > old_manifest['version']:
-            rv = ctypes.windll.user32.MessageBoxW(0, f"There is a newer version (v{new_manifest['version']}) of the virtual environment. Do you want to download it?", "Download virtual environment?", 0x4 ^ 0x40 ^ 0x1000)
+        if manifest['version'] > old_manifest['version']:
+            rv = ctypes.windll.user32.MessageBoxW(0, f"There is a newer version (v{manifest['version']}) of the virtual environment. Do you want to download it?", "Download virtual environment?", 0x4 ^ 0x40 ^ 0x1000)
 
             if (rv != 6):
                 print('Skipping environment download at user request.')
-                return
-            else:
-                manifest = new_manifest
+                manifest = None
         else:
             print('Skipping environment download, environment is up-to-date.')
-            return
+            manifest = None
 
     if manifest != None:
         print('Downloading OVAs...')
@@ -134,8 +130,6 @@ def download_files(vcloud_url, vcloud_user, vcloud_pass):
             f.write(json.dumps(manifest, indent=4))
 
         print('Finished downloading OVAs.')
-    else:
-        print('Skipping environment download, there was a problem with the manifest.')
 
 
 if __name__ == '__main__':
