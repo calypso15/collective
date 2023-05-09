@@ -172,7 +172,7 @@ if __name__ == '__main__':
 
                     if "192.168.192.10" == ip:
                         print(f'Installing DC rename scripts for {vmx_path}...')
-                        subprocess.run(f'"{VMRUN_PATH}" -T ws copyFileFromHostToGuest "{vmx_path}" ../bat/Rename-DC.bat C:/Rename-DC.bat', shell=True)
+                        subprocess.run(f'"{VMRUN_PATH}" -T ws -gu "{config["VM"]["Username"]}" -gp "{config["VM"]["Password"]}" copyFileFromHostToGuest "{vmx_path}" ../bat/Rename-DC.bat C:/Rename-DC.bat', shell=True)
         else:
             print('Skipping environment setup, there was a problem with the manifest.')
     else:
