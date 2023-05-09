@@ -164,10 +164,15 @@ if __name__ == '__main__':
 
                     p = subprocess.run(f'"{VMRUN_PATH}" -T ws getGuestIPAddress "{vmx_path}" -wait',
                                     shell=True, capture_output=True)
-                    print(f'...Machine is up with IP address {p.stdout.decode().rstrip()}')
+                    ip = p.stdout.decode().rstrip()
+                    print(f'...Machine is up with IP address {ip}')
 
                     print(f'Disabling shared folders for {vmx_path}...')
                     subprocess.run(f'"{VMRUN_PATH}" -T ws disableSharedFolders "{vmx_path}"', shell=True)
+
+                    if "192.168.192.10" == ip:
+                        print(f'Installing DC rename scripts for {vmx_path}...')
+                        subprocess.run(f'"{VMRUN_PATH}" -T ws copyFileFromHostToGuest "{vmx_path}" ../bat/Rename-DC.bat C:/Rename-DC.bat', shell=True)
         else:
             print('Skipping environment setup, there was a problem with the manifest.')
     else:
