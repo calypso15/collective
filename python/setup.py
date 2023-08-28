@@ -232,11 +232,11 @@ def setup_vm(vmx_path):
 
 
 def copy_file(vmx_path, username, password, filename, guest_path):
-    print(f"Downloading {filename}...")
     with tempfile.TemporaryDirectory() as tmpdirname:
+        print(f"Downloading {filename} to {tmpdirname}...")
         path = os.path.join(tmpdirname, filename)
         vcloud_files.download_file(
-            url=VCLOUD_URL, auth=AUTH, filename=filename, local_path=path
+            url=VCLOUD_URL, auth=AUTH, filename=filename, local_dir=tmpdirname
         )
 
     print(f"Copying {filename} to {vmx_path}...")

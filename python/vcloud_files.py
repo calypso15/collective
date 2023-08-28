@@ -11,12 +11,12 @@ import traceback
 import urllib
 
 
-def download_file(url, auth, filename, local_path=None):
-    if local_path == None:
-        local_path = DOWNLOAD_DIR
+def download_file(url, auth, filename, local_dir=None):
+    if local_dir == None:
+        local_dir = DOWNLOAD_DIR
 
     url = urllib.parse.urljoin(url, filename)
-    datafile = os.path.join(local_path, filename)
+    datafile = os.path.join(local_dir, filename)
 
     local_filename = urllib.parse.unquote(datafile)
 
@@ -67,7 +67,7 @@ def download_files(url, auth):
 
     manifest = None
     with tempfile.TemporaryDirectory() as tmpdirname:
-        download_file(url, auth, "manifest.json", tmpdirname)
+        download_file(url=url, auth=auth, file="manifest.json", local_dir=tmpdirname)
         with open(os.path.join(tmpdirname, "manifest.json")) as f:
             manifest = json.loads(f.read())
 
