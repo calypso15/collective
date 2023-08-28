@@ -234,17 +234,17 @@ def setup_vm(vmx_path):
 def copy_file(vmx_path, username, password, filename, guest_path):
     with tempfile.TemporaryDirectory() as tmpdirname:
         print(f"Downloading {filename} to {tmpdirname}...")
-        path = os.path.join(tmpdirname, filename)
         vcloud_files.download_file(
             url=VCLOUD_URL, auth=AUTH, filename=filename, local_dir=tmpdirname
         )
 
-    print(f"Copying {filename} to {vmx_path}...")
-    p = subprocess.run(
-        f'"{VMRUN_PATH}" -T ws -gu "{username}" -gp "{password}" copyFileFromHostToGuest "{vmx_path}" "{path}" "{guest_path}"',
-        shell=True,
-        capture_output=True,
-    )
+        print(f"Copying {filename} to {vmx_path}...")
+        path = os.path.join(tmpdirname, filename)
+        p = subprocess.run(
+            f'"{VMRUN_PATH}" -T ws -gu "{username}" -gp "{password}" copyFileFromHostToGuest "{vmx_path}" "{path}" "{guest_path}"',
+            shell=True,
+            capture_output=True,
+        )
 
 
 def make_dir(name):
