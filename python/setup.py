@@ -156,7 +156,7 @@ def main():
                 print("Stopping VMs...")
                 files = glob.glob(os.path.join(VM_DIR, "**/*.vmx"), recursive=True)
                 for file in files:
-                    print(f"Stopping {file}...")
+                    print(f"...Stopping {file}")
                     subprocess.run(
                         f'"{VMRUN_PATH}" -T ws stop "{file}" hard', shell=True
                     )
@@ -170,7 +170,7 @@ def main():
                 manifest["files"], key=lambda d: d.get("order", sys.maxsize)
             )
 
-            print("Installing and starting new VMs...")
+            print("Installing new environment...")
             for file in sorted_list:
                 name = file["name"]
                 base_name = os.path.splitext(name)[0]
@@ -180,6 +180,7 @@ def main():
                 vmx_path = os.path.join(VM_DIR, base_name, base_name + ".vmx")
 
                 if install:
+                    print(f"Setting up {vmx_path}...")
                     install_vm(ova_path=ova_path, vmx_path=vmx_path)
                     setup_vm(vmx_path=vmx_path)
 
@@ -190,13 +191,13 @@ def main():
 
 
 def install_vm(ova_path, vmx_path):
-    print(f"Installing {ova_path}...")
+    print(f"...Installing {ova_path}")
     subprocess.run(
         f'"{OVFTOOL_PATH}" --allowExtraConfig --net:"custom=vmnet8" -o "{ova_path}" "{VM_DIR}"',
         shell=True,
     )
 
-    print(f"Starting {vmx_path}...")
+    print(f"...Starting {vmx_path}")
     subprocess.run(f'"{VMRUN_PATH}" -T ws start "{vmx_path}"', shell=True)
 
     p = subprocess.run(
@@ -216,12 +217,13 @@ def setup_vm(vmx_path):
     )
     ip = p.stdout.decode().rstrip()
 
-    print(f"Disabling shared folders for {vmx_path}...")
+    print(f"...Disabling shared folders")
     subprocess.run(
         f'"{VMRUN_PATH}" -T ws disableSharedFolders "{vmx_path}"', shell=True
     )
 
     if ip == "192.168.192.250":
+        print(f"...Downloading and extracting ResistanceIsFutile.zip")
         run_script(
             vmx_path=vmx_path,
             username="kali",
@@ -234,9 +236,7 @@ def setup_vm(vmx_path):
 
 
 def run_script(vmx_path, username, password, script, interpreter=""):
-    print(
-        f"Running script in {vmx_path} with interpreter ({interpreter}) as {username}..."
-    )
+    print(f"...Running script with interpreter ({interpreter}) as {username}...")
     p = subprocess.run(
         f'"{VMRUN_PATH}" -T ws -gu "{username}" -gp "{password}" runScriptInGuest "{vmx_path}" "{interpreter}" "{script}"',
         shell=True,
@@ -247,7 +247,7 @@ def run_script(vmx_path, username, password, script, interpreter=""):
 
 
 def make_dir(name):
-    print(f"Creating directory {name}...")
+    print(f"...Creating directory {name}")
     os.makedirs(name, exist_ok=True)
 
 
