@@ -226,9 +226,9 @@ def setup_vm(vmx_path):
             vmx_path=vmx_path,
             username="kali",
             password="kali",
-            script="""curl -o '/home/kali/.msf4/local/ResistanceIsFutile.zip' 'https://vcloud.sentinelone.skytapdns.com/public/ResistanceIsFutile.zip'
-                && unzip -o -P 'infected' -d '/home/kali/.msf4/local/' '/home/kali/.msf4/local/ResistanceIsFutile.zip'
-                && rm -f '/home/kali/.msf4/local/ResistanceIsFutile.zip'""",
+            script="curl -o '/home/kali/.msf4/local/ResistanceIsFutile.zip' 'https://vcloud.sentinelone.skytapdns.com/public/ResistanceIsFutile.zip'"
+            "&& unzip -o -P 'infected' -d '/home/kali/.msf4/local/' '/home/kali/.msf4/local/ResistanceIsFutile.zip'"
+            "&& rm -f '/home/kali/.msf4/local/ResistanceIsFutile.zip'",
             interpreter="/bin/bash",
         )
 
