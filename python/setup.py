@@ -164,13 +164,13 @@ def main():
                 print("Deleting old VMs...")
                 shutil.rmtree(VM_DIR)
 
+            print("Installing new environment...")
             make_dir(VM_DIR)
 
             sorted_list = sorted(
                 manifest["files"], key=lambda d: d.get("order", sys.maxsize)
             )
 
-            print("Installing new environment...")
             for file in sorted_list:
                 name = file["name"]
                 base_name = os.path.splitext(name)[0]
