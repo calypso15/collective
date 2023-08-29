@@ -226,17 +226,19 @@ def setup_vm(vmx_path):
             vmx_path=vmx_path,
             username="kali",
             password="kali",
-            script="curl -o /home/kali/.msf4/local/ResistanceIsFutile.zip 'https://vcloud.sentinelone.skytapdns.com/public/ResistanceIsFutile.zip' && unzip -P 'infected' /home/kali/.msf4/local/ResistanceIsFutile.exe",
+            script="""curl -o '/home/kali/.msf4/local/ResistanceIsFutile.zip' 'https://vcloud.sentinelone.skytapdns.com/public/ResistanceIsFutile.zip'
+                && unzip -o -P 'infected' -d '/home/kali/.msf4/local/' '/home/kali/.msf4/local/ResistanceIsFutile.zip'
+                && rm -f '/home/kali/.msf4/local/ResistanceIsFutile.zip'""",
             interpreter="/bin/bash",
         )
 
 
 def run_script(vmx_path, username, password, script, interpreter=""):
     print(
-        f"Running {script} with interpreter ({interpreter}) as {username} in {vmx_path}..."
+        f"Running script in {vmx_path} with interpreter ({interpreter}) as {username}..."
     )
     p = subprocess.run(
-        f'"{VMRUN_PATH}" -T ws -gu "{username}" -gp "{password}" runScriptInGuest "{vmx_path}" "{interpreter}" "{vmx_path}"',
+        f'"{VMRUN_PATH}" -T ws -gu "{username}" -gp "{password}" runScriptInGuest "{vmx_path}" "{interpreter}" "{script}"',
         shell=True,
         capture_output=True,
     )
