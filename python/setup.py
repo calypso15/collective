@@ -193,7 +193,7 @@ def main():
 def install_vm(ova_path, vmx_path):
     print(f"...Installing {ova_path}")
     subprocess.run(
-        f'"{OVFTOOL_PATH}" --allowExtraConfig --net:"custom=vmnet8" -o "{ova_path}" "{VM_DIR}"',
+        f'"{OVFTOOL_PATH}" --allowExtraConfig --net:"custom=vmnet8" -q -o "{ova_path}" "{VM_DIR}"',
         shell=True,
     )
 
