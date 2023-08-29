@@ -11,7 +11,7 @@ import traceback
 import urllib
 
 
-def download_file(url, auth, filename, local_dir=None):
+def download_file(url, filename, local_dir=None, auth=None):
     if local_dir == None:
         local_dir = DOWNLOAD_DIR
 
@@ -68,7 +68,7 @@ def download_files(url, auth):
     manifest = None
     with tempfile.TemporaryDirectory() as tmpdirname:
         download_file(
-            url=url, auth=auth, filename="manifest.json", local_dir=tmpdirname
+            url=url, filename="manifest.json", local_dir=tmpdirname, auth=auth
         )
         with open(os.path.join(tmpdirname, "manifest.json")) as f:
             manifest = json.loads(f.read())
