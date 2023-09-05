@@ -203,9 +203,9 @@ def main():
 
 
 def install_vm(ova_path, vmx_path):
-    print(f"...Installing {ova_path}")
+    print(f"...Importing {ova_path}")
     subprocess.run(
-        f'"{OVFTOOL_PATH}" --allowExtraConfig --net:"custom=vmnet8" -q -o "{ova_path}" "{VM_DIR}"',
+        f'"{OVFTOOL_PATH}" --allowExtraConfig --net:"custom=vmnet8" -o "{ova_path}" "{VM_DIR}"',
         shell=True,
     )
 
@@ -237,11 +237,20 @@ def setup_vm(vmx_path):
         f'"{VMRUN_PATH}" -T ws disableSharedFolders "{vmx_path}"', shell=True
     )
 
+    if ip in ("192.168.192.10", "192.168.192.20", "192.168.192.21", "192.168.192.22"):
+        print(f"...Re-arming trial license")
+        run_script(
+            vmx_path=vmx_path,
+            username=username,
+            password=password,
+            script=(f"slmgr -rearm"),
+        )
+
     if ip == "192.168.192.10":
         identifier = get_identifier()
         identifier = convert_hex_to_base36(identifier)
-        print(f"...Renaming endpoints with suffix '-{identifier}'")
 
+        print(f"...Renaming TheBorg with suffix '-{identifier}'")
         run_script(
             vmx_path=vmx_path,
             username=username,
@@ -259,14 +268,15 @@ def setup_vm(vmx_path):
             capture_output=True,
         )
 
+        print(f"...Renaming endpoints with suffix '-{identifier}'")
         run_script(
             vmx_path=vmx_path,
             username=username,
             password=password,
             script=(
                 f'netdom renamecomputer 192.168.192.20 /newname:Enterprise-{identifier} /userd:"starfleet.corp\{username}" /passwordd:"{password}" /force /reboot 0'
-                f'netdom renamecomputer 192.168.192.21 /newname:Melbourne-{identifier} /userd:"starfleet.corp\{username}" /passwordd:"{password}" /force /reboot 0'
-                f'netdom renamecomputer 192.168.192.22 /newname:Saratoga-{identifier} /userd:"starfleet.corp\{username}" /passwordd:"{password}" /force /reboot 0'
+                f' && netdom renamecomputer 192.168.192.21 /newname:Melbourne-{identifier} /userd:"starfleet.corp\{username}" /passwordd:"{password}" /force /reboot 0'
+                f' && netdom renamecomputer 192.168.192.22 /newname:Saratoga-{identifier} /userd:"starfleet.corp\{username}" /passwordd:"{password}" /force /reboot 0'
             ),
         )
 
