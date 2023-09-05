@@ -9,7 +9,7 @@ import requests
 import shutil
 import subprocess
 import sys
-import tempfile
+import time
 import traceback
 import winreg
 import wmi
@@ -245,6 +245,7 @@ def setup_vm(vmx_path):
             password=password,
             script=(f"cscript slmgr.vbs -rearm && shutdown /r /t 0"),
         )
+        time.sleep(5)
 
         p = subprocess.run(
             f'"{VMRUN_PATH}" -T ws getGuestIPAddress "{vmx_path}" -wait',
@@ -267,6 +268,7 @@ def setup_vm(vmx_path):
                 f" && shutdown /r /t 0"
             ),
         )
+        time.sleep(5)
 
         p = subprocess.run(
             f'"{VMRUN_PATH}" -T ws getGuestIPAddress "{vmx_path}" -wait',
@@ -285,6 +287,7 @@ def setup_vm(vmx_path):
                 f' && netdom renamecomputer 192.168.192.22 /newname:Saratoga-{identifier} /userd:"starfleet.corp\{username}" /passwordd:"{password}" /force /reboot 0'
             ),
         )
+        time.sleep(5)
 
 
 def run_script(vmx_path, username, password, script, interpreter=""):
