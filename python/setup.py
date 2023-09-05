@@ -12,6 +12,7 @@ import sys
 import tempfile
 import traceback
 import winreg
+import wmi
 
 import vcloud_files
 import system_requirements
@@ -54,6 +55,7 @@ def main():
     parser.add_argument("config_file")
     args = parser.parse_args()
 
+    global config
     config = {}
     config_file = args.config_file
     with open(config_file) as f:
@@ -180,8 +182,18 @@ def main():
                 vmx_path = os.path.join(VM_DIR, base_name, base_name + ".vmx")
 
                 if install:
-                    print(f"Setting up {vmx_path}...")
+                    print(f"Installing {vmx_path}...")
                     install_vm(ova_path=ova_path, vmx_path=vmx_path)
+
+            for file in sorted_list:
+                name = file["name"]
+                base_name = os.path.splitext(name)[0]
+                install = file["import"]
+
+                vmx_path = os.path.join(VM_DIR, base_name, base_name + ".vmx")
+
+                if install:
+                    print(f"Setting up {vmx_path}...")
                     setup_vm(vmx_path=vmx_path)
 
         else:
@@ -210,6 +222,9 @@ def install_vm(ova_path, vmx_path):
 
 
 def setup_vm(vmx_path):
+    username = config["VM"]["Username"]
+    password = config["VM"]["Password"]
+
     p = subprocess.run(
         f'"{VMRUN_PATH}" -T ws getGuestIPAddress "{vmx_path}" -wait',
         shell=True,
@@ -222,16 +237,37 @@ def setup_vm(vmx_path):
         f'"{VMRUN_PATH}" -T ws disableSharedFolders "{vmx_path}"', shell=True
     )
 
-    if ip == "192.168.192.250":
-        print(f"...Downloading and extracting ResistanceIsFutile.zip")
+    if ip == "192.168.192.10":
+        identifier = get_identifier()
+        identifier = convert_hex_to_base36(identifier)
+        print(f"...Renaming endpoints with suffix '-{identifier}'")
+
         run_script(
             vmx_path=vmx_path,
-            username="kali",
-            password="kali",
-            script="curl -o '/home/kali/.msf4/local/ResistanceIsFutile.zip' 'https://vcloud.sentinelone.skytapdns.com/public/ResistanceIsFutile.zip'"
-            "&& unzip -o -P 'infected' -d '/home/kali/.msf4/local/' '/home/kali/.msf4/local/ResistanceIsFutile.zip'"
-            "&& rm -f '/home/kali/.msf4/local/ResistanceIsFutile.zip'",
-            interpreter="/bin/bash",
+            username=username,
+            password=password,
+            script=(
+                f"netdom computername 192.168.192.10 /add:TheBorg-{identifier}.starfleet.corp"
+                f" && netdom computername 192.168.192.10 /makeprimary:TheBorg-{identifier}.starfleet.corp"
+                f" && shutdown /r /t 0"
+            ),
+        )
+
+        p = subprocess.run(
+            f'"{VMRUN_PATH}" -T ws getGuestIPAddress "{vmx_path}" -wait',
+            shell=True,
+            capture_output=True,
+        )
+
+        run_script(
+            vmx_path=vmx_path,
+            username=username,
+            password=password,
+            script=(
+                f'netdom renamecomputer 192.168.192.20 /newname:Enterprise-{identifier} /userd:"starfleet.corp\{username}" /passwordd:"{password}" /force /reboot 0'
+                f'netdom renamecomputer 192.168.192.21 /newname:Melbourne-{identifier} /userd:"starfleet.corp\{username}" /passwordd:"{password}" /force /reboot 0'
+                f'netdom renamecomputer 192.168.192.22 /newname:Saratoga-{identifier} /userd:"starfleet.corp\{username}" /passwordd:"{password}" /force /reboot 0'
+            ),
         )
 
 
@@ -244,6 +280,32 @@ def run_script(vmx_path, username, password, script, interpreter=""):
     )
 
     return p.stdout.decode()
+
+
+def get_identifier():
+    try:
+        # Create a new WMI instance
+        c = wmi.WMI()
+        # Get the machine UUID
+        uuid = c.Win32_ComputerSystemProduct()[0].UUID
+        # Get the last 5 characters of the UUID
+        return uuid[-5:]
+    except Exception as e:
+        print(f"Failed to get the last 5 characters of the machine UUID. Error: {e}")
+        sys.exit(1)
+
+
+def convert_hex_to_base36(hex_string):
+    base36_chars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+    decimal = int(hex_string, 16)
+    base36_string = ""
+
+    while decimal > 0:
+        remainder = decimal % 36
+        base36_string = base36_chars[remainder] + base36_string
+        decimal = decimal // 36
+
+    return base36_string
 
 
 def make_dir(name):
