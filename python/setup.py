@@ -243,7 +243,7 @@ def setup_vm(vmx_path):
             vmx_path=vmx_path,
             username=username,
             password=password,
-            script=(f"slmgr -rearm"),
+            script=(f"cscript slmgr.vbs -rearm"),
         )
 
     if ip == "192.168.192.10":
