@@ -243,7 +243,13 @@ def setup_vm(vmx_path):
             vmx_path=vmx_path,
             username=username,
             password=password,
-            script=(f"cscript slmgr.vbs -rearm"),
+            script=(f"cscript slmgr.vbs -rearm && shutdown /r /t 0"),
+        )
+
+        p = subprocess.run(
+            f'"{VMRUN_PATH}" -T ws getGuestIPAddress "{vmx_path}" -wait',
+            shell=True,
+            capture_output=True,
         )
 
     if ip == "192.168.192.10":
@@ -282,7 +288,6 @@ def setup_vm(vmx_path):
 
 
 def run_script(vmx_path, username, password, script, interpreter=""):
-    print(f"...Running script with interpreter ({interpreter}) as {username}...")
     p = subprocess.run(
         f'"{VMRUN_PATH}" -T ws -gu "{username}" -gp "{password}" runScriptInGuest "{vmx_path}" "{interpreter}" "{script}"',
         shell=True,
