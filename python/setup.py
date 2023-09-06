@@ -72,9 +72,6 @@ def main():
 
     root = tkinter.Tk()
     root.withdraw()
-    u = tkinter.Toplevel(root)
-    u.wm_transient(root)
-    root.call("wm", "attributes", ".", "-topmost", "1")
 
     interactive = not config.get("NonInteractive", False)
     sitetoken = config.get("SiteToken", None)
@@ -132,11 +129,11 @@ def main():
 
     if install:
         if interactive:
-            sitetoken = simpledialog.askstring(
+            sitetoken = input_dialog(
                 title="Install EDR agent?",
                 prompt="Enter a site or group token to automatically install the EDR agent.",
                 initialvalue=sitetoken,
-                parent=u,
+                parent=root,
             )
 
         print(sitetoken)
@@ -386,6 +383,37 @@ def convert_hex_to_base36(hex_string):
 def make_dir(name):
     print(f"...Creating directory {name}")
     os.makedirs(name, exist_ok=True)
+
+
+def input_dialog(title, prompt, parent=None, initialvalue=None):
+    def on_ok():
+        dialog.result = entry.get()
+        dialog.destroy()
+
+    dialog = tkinter.Tk()
+    dialog.title(title)
+    dialog.geometry("400x150")
+    dialog.attributes("-topmost", True)
+
+    label = tkinter.Label(dialog, text=prompt)
+    label.pack(pady=20)
+
+    entry = tkinter.Entry(dialog)
+    entry.insert(0, initialvalue)
+    entry.pack(pady=10, padx=20, fill=tkinter.X)
+
+    button_frame = tkinter.Frame(dialog)
+    button_frame.pack(pady=10)
+
+    ok_button = tkinter.Button(button_frame, text="OK", command=on_ok)
+    ok_button.pack(side=tkinter.LEFT, padx=10)
+
+    cancel_button = tkinter.Button(button_frame, text="Cancel", command=dialog.destroy)
+    cancel_button.pack(side=tkinter.LEFT, padx=10)
+
+    dialog.mainloop()
+
+    return getattr(dialog, "result", None)
 
 
 def run_powershell(cmd):
