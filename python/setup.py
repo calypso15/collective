@@ -10,9 +10,12 @@ import shutil
 import subprocess
 import sys
 import time
+import tkinter
 import traceback
 import winreg
 import wmi
+
+from tkinter import messagebox
 
 import vcloud_files
 import system_requirements
@@ -66,6 +69,9 @@ def main():
         ignore_errors=config.get("IgnoreErrors", False),
     )
 
+    root = tkinter.Tk()
+    root.withdraw()
+
     interactive = not config.get("NonInteractive", False)
     sitetoken = config.get("SiteToken", None)
 
@@ -73,14 +79,13 @@ def main():
     subprocess.Popen(VMWARE_PATH, shell=True)
 
     if interactive:
-        rv = ctypes.windll.user32.MessageBoxW(
-            0,
-            "VMWare should now be running. Please configure your license and then click OK.",
-            "Starting VMWare Workstation",
-            0x1 ^ 0x40 ^ 0x1000,
+        ready = messagebox.askokcancel(
+            title="Starting VMWare Workstation",
+            message="VMWare should now be running. Please configure your license and then click OK.",
+            icon=messagebox.WARNING,
         )
 
-        if rv != 1:
+        if not ready:
             print("Aborting setup.")
             sys.exit()
 
@@ -115,14 +120,11 @@ def main():
 
     install = True
     if interactive:
-        rv = ctypes.windll.user32.MessageBoxW(
-            0,
-            "Do you want to install the virtual environment? This will delete the old environment (if any), and you will need to re-install agents, snapshots, etc.",
-            "Install virtual environment?",
-            0x4 ^ 0x40 ^ 0x1000,
+        install = messagebox.askyesno(
+            title="Install virtual environment?",
+            message="Do you want to install the virtual environment? This will delete the old environment (if any), and you will need to re-install agents, snapshots, etc.",
+            icon=messagebox.WARNING,
         )
-
-        install = rv == 6
 
     if install:
         if interactive and sitetoken == None:
@@ -218,6 +220,8 @@ def main():
             print("Skipping environment setup, there was a problem with the manifest.")
     else:
         print("Skipping environment setup at user request.")
+
+    root.destroy()
 
 
 def install_vm(ova_path, vmx_path):
