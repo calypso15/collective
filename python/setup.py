@@ -267,6 +267,8 @@ def setup_vm(vmx_path):
     if restart_required:
         restart(vmx_path)
         wait_until_online(vmx_path, username, password)
+
+        print(f"...Restarting explorer.exe.")
         run_script(
             vmx_path=vmx_path,
             username=username,
@@ -292,6 +294,7 @@ def wait_until_online(vmx_path, username, password):
         shell=True,
         capture_output=True,
     )
+    time.sleep(10)
 
     print(f"...Machine online.")
 
