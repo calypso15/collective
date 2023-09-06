@@ -71,8 +71,7 @@ def main():
     )
 
     root = tkinter.Tk()
-    root.call("wm", "attributes", ".", "-topmost", "true")
-    root.call("wm", "attributes", ".", "-toolwindow", "true")
+    root.attributes("-topmost", True)
     root.withdraw()
 
     interactive = not config.get("NonInteractive", False)
