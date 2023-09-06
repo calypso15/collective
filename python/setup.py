@@ -197,6 +197,17 @@ def main():
                 base_name = os.path.splitext(name)[0]
                 install = file["import"]
 
+                ova_path = os.path.join(DOWNLOAD_DIR, name)
+                vmx_path = os.path.join(VM_DIR, base_name, base_name + ".vmx")
+
+                if install:
+                    rearm_vm(vmx_path=vmx_path)
+
+            for file in sorted_list:
+                name = file["name"]
+                base_name = os.path.splitext(name)[0]
+                install = file["import"]
+
                 vmx_path = os.path.join(VM_DIR, base_name, base_name + ".vmx")
 
                 if install:
@@ -220,6 +231,25 @@ def install_vm(ova_path, vmx_path):
 
     ip = get_ip_address(vmx_path)
     print(f"...Machine is up with IP address {ip}.")
+
+
+def rearm_vm(vmx_path):
+    username = config["VM"]["Username"]
+    password = config["VM"]["Password"]
+
+    ip = get_ip_address(vmx_path)
+    wait_until_online(vmx_path, username, password)
+
+    if ip in ("192.168.192.10", "192.168.192.20", "192.168.192.21", "192.168.192.22"):
+        print(f"Re-arming {vmx_path}.")
+        run_script(
+            vmx_path=vmx_path,
+            username=username,
+            password=password,
+            script=(f"slmgr.vbs //b -rearm"),
+        )
+
+    restart(vmx_path)
 
 
 def setup_vm(vmx_path):
