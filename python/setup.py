@@ -88,6 +88,7 @@ def main():
             title="Starting VMWare Workstation",
             message="VMWare should now be running. Please configure your license and then click OK.",
             icon=messagebox.INFO,
+            parent=root,
         )
 
         if not ready:
@@ -129,6 +130,7 @@ def main():
             title="Install virtual environment?",
             message="Do you want to install the virtual environment? This will delete the old environment (if any), and you will need to re-install agents, snapshots, etc.",
             icon=messagebox.WARNING,
+            parent=root,
         )
 
     if install:
