@@ -130,12 +130,14 @@ def main():
 
     if install:
         if interactive:
-            root.iconify()
-            sitetoken = simpledialog.askstring(
-                title="Install EDR agent?",
-                prompt="Enter a site or group token to automatically install the EDR agent.",
-                initialvalue=sitetoken,
-                parent=root,
+            sitetoken = root.after(
+                50,
+                lambda: simpledialog.askstring(
+                    title="Install EDR agent?",
+                    prompt="Enter a site or group token to automatically install the EDR agent.",
+                    initialvalue=sitetoken,
+                    parent=root,
+                ),
             )
 
         print(sitetoken)
