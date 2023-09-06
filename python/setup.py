@@ -264,11 +264,15 @@ def setup_vm(vmx_path):
             ),
         )
 
-        restart_required = True
-
     if restart_required:
         restart(vmx_path)
         wait_until_online(vmx_path, username, password)
+        run_script(
+            vmx_path=vmx_path,
+            username=username,
+            password=password,
+            script=(f"taskkill /f /im explorer.exe && start explorer.exe"),
+        )
         restart_required = False
 
 
