@@ -242,7 +242,7 @@ def setup_vm(vmx_path):
             username=username,
             password=password,
             script=(
-                f'SCHTASKS /create /tn Rearm /sc once /tr "slmgr -rearm" /ru interactive /st 00:00 /f'
+                f'SCHTASKS /create /tn Rearm /sc once /tr "cscript.exe slmgr.vbs /rearm" /ru interactive /st 00:00 /f'
                 " && SCHTASKS /run /tn Rearm"
                 " && SCHTASKS /delete /tn Rearm /f"
             ),
