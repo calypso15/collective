@@ -73,7 +73,11 @@ def main():
     root = tkinter.Tk()
     root.attributes("-topmost", True)
     root.attributes("-toolwindow", True)
-    root.geometry("1x1")
+    screen_width = root.winfo_screenwidth()
+    screen_height = root.winfo_screenheight()
+    x = screen_width / 2
+    y = screen_height / 2
+    root.geometry("%dx%d+%d+%d" % (1, 1, x, y))
     root.eval("tk::PlaceWindow . center")
     root.overrideredirect(1)
 
