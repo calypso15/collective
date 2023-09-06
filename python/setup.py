@@ -67,6 +67,7 @@ def main():
     )
 
     interactive = not config.get("NonInteractive", False)
+    sitetoken = config.get("SiteToken", None)
 
     print("Starting VMWare...")
     subprocess.Popen(VMWARE_PATH, shell=True)
@@ -124,6 +125,15 @@ def main():
         install = rv == 6
 
     if install:
+        if interactive and sitetoken == None:
+            result_buffer = ctypes.create_unicode_buffer(1024)
+            ctypes.windll.user32.GetWindowTextW(
+                ctypes.windll.user32.GetForegroundWindow(), result_buffer, 1024
+            )
+            sitetoken = ctypes.windll.user32.MessageBoxW(
+                0, "Enter a site token:", result_buffer.value, 0x40
+            )
+
         print("Configuring vmnet8.")
         old_lines = []
         with open(os.path.join(VMWARE_DATA_DIR, "vmnetnat.conf"), "r") as f:
@@ -202,6 +212,7 @@ def main():
                 if install:
                     print(f"Setting up {vmx_path}...")
                     setup_vm(vmx_path)
+                    install_agent(vmx_path, sitetoken)
 
         else:
             print("Skipping environment setup, there was a problem with the manifest.")
@@ -228,7 +239,6 @@ def setup_vm(vmx_path):
     restart_required = False
 
     ip = get_ip_address(vmx_path)
-    wait_until_online(vmx_path, username, password)
 
     print(f"...Disabling shared folders.")
     subprocess.run(
@@ -236,6 +246,7 @@ def setup_vm(vmx_path):
     )
 
     if ip in ("192.168.192.10", "192.168.192.20", "192.168.192.21", "192.168.192.22"):
+        wait_until_online(vmx_path, username, password)
         print(f"...Re-arming license.")
         run_script(
             vmx_path=vmx_path,
@@ -250,6 +261,7 @@ def setup_vm(vmx_path):
         identifier = get_identifier()
         identifier = convert_hex_to_base36(identifier)
 
+        wait_until_online(vmx_path, username, password)
         print(f"...Renaming Windows VMs with suffix '-{identifier}'.")
         run_script(
             vmx_path=vmx_path,
@@ -278,6 +290,25 @@ def setup_vm(vmx_path):
         restart_required = False
 
 
+def install_agent(vmx_path, site_token):
+    username = "STARFLEET\jeanluc"
+    password = "Sentinelone!"
+
+    ip = get_ip_address(vmx_path)
+
+    if ip in ("192.168.192.10", "192.168.192.20", "192.168.192.21", "192.168.192.22"):
+        wait_until_online(vmx_path, username, password)
+        print(f"...Installing agent with site token '{site_token}'.")
+        run_script(
+            vmx_path=vmx_path,
+            username=username,
+            password=password,
+            script=(
+                f"%USERPROFILE%/Desktop/SentinelInstaller_windows_64bit.msi /Q SITE_TOKEN={site_token}"
+            ),
+        )
+
+
 def restart(vmx_path):
     print(f"...Issuing restart.")
     subprocess.run(
@@ -288,15 +319,13 @@ def restart(vmx_path):
 
 
 def wait_until_online(vmx_path, username, password):
-    print(f"...Waiting for machine to come online...")
+    print(f"...Waiting for machine to be ready...")
     subprocess.run(
         f'"{VMRUN_PATH}" -T ws -gu "{username}" -gp "{password}" runProgramInGuest "{vmx_path}" "C:\Windows\System32\whoami.exe"',
         shell=True,
         capture_output=True,
     )
     time.sleep(10)
-
-    print(f"...Machine online.")
 
 
 def get_ip_address(vmx_path):
