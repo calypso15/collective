@@ -56,7 +56,7 @@ def check_hash(filename, hash_value, hash_type="sha256"):
     return alg.hexdigest() == hash_value
 
 
-def download_files(url, auth):
+def download_files(url, auth, interactive=True):
     global TEMP_DIR, DOWNLOAD_DIR
 
     TEMP_DIR = tempfile.gettempdir()
@@ -79,16 +79,17 @@ def download_files(url, auth):
             old_manifest = json.loads(f.read())
 
         if manifest["version"] > old_manifest["version"]:
-            rv = ctypes.windll.user32.MessageBoxW(
-                0,
-                f"There is a newer version (v{manifest['version']}) of the virtual environment. Do you want to download it?",
-                "Download virtual environment?",
-                0x4 ^ 0x40 ^ 0x1000,
-            )
+            if interactive:
+                rv = ctypes.windll.user32.MessageBoxW(
+                    0,
+                    f"There is a newer version (v{manifest['version']}) of the virtual environment. Do you want to download it?",
+                    "Download virtual environment?",
+                    0x4 ^ 0x40 ^ 0x1000,
+                )
 
-            if rv != 6:
-                print("Skipping environment download at user request.")
-                manifest = None
+                if rv != 6:
+                    print("Skipping environment download at user request.")
+                    manifest = None
         else:
             print("Skipping environment download, environment is up-to-date.")
             manifest = None

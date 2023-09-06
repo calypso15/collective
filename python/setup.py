@@ -66,19 +66,22 @@ def main():
         ignore_errors=config.get("IgnoreErrors", False),
     )
 
+    interactive = not config.get("NonInteractive", False)
+
     print("Starting VMWare...")
     subprocess.Popen(VMWARE_PATH, shell=True)
 
-    rv = ctypes.windll.user32.MessageBoxW(
-        0,
-        "VMWare should now be running. Please configure your license and then click OK.",
-        "Starting VMWare Workstation",
-        0x1 ^ 0x40 ^ 0x1000,
-    )
+    if interactive:
+        rv = ctypes.windll.user32.MessageBoxW(
+            0,
+            "VMWare should now be running. Please configure your license and then click OK.",
+            "Starting VMWare Workstation",
+            0x1 ^ 0x40 ^ 0x1000,
+        )
 
-    if rv != 1:
-        print("Aborting setup.")
-        sys.exit()
+        if rv != 1:
+            print("Aborting setup.")
+            sys.exit()
 
     make_dir(os.path.join(HOME, "Desktop/Malware"))
     print("Excluding malware directory from Windows Defender.")
@@ -107,16 +110,20 @@ def main():
         )
         sys.exit()
 
-    vcloud_files.download_files(url=VCLOUD_URL, auth=AUTH)
+    vcloud_files.download_files(url=VCLOUD_URL, auth=AUTH, interactive=interactive)
 
-    rv = ctypes.windll.user32.MessageBoxW(
-        0,
-        "Do you want to install the virtual environment? This will delete the old environment (if any), and you will need to re-install agents, snapshots, etc.",
-        "Install virtual environment?",
-        0x4 ^ 0x40 ^ 0x1000,
-    )
+    install = True
+    if interactive:
+        rv = ctypes.windll.user32.MessageBoxW(
+            0,
+            "Do you want to install the virtual environment? This will delete the old environment (if any), and you will need to re-install agents, snapshots, etc.",
+            "Install virtual environment?",
+            0x4 ^ 0x40 ^ 0x1000,
+        )
 
-    if rv == 6:
+        install = rv == 6
+
+    if install:
         print("Configuring vmnet8.")
         old_lines = []
         with open(os.path.join(VMWARE_DATA_DIR, "vmnetnat.conf"), "r") as f:
@@ -221,6 +228,7 @@ def setup_vm(vmx_path):
     restart_required = False
 
     ip = get_ip_address(vmx_path)
+    wait_until_online(vmx_path)
 
     print(f"...Disabling shared folders.")
     subprocess.run(
@@ -259,20 +267,23 @@ def setup_vm(vmx_path):
         restart_required = True
 
     if restart_required:
-        wait_for_restart(vmx_path)
+        restart(vmx_path)
+        wait_until_online(vmx_path)
         restart_required = False
 
 
-def wait_for_restart(vmx_path):
+def restart(vmx_path):
     print(f"...Issuing restart.")
     subprocess.run(
         f'"{VMRUN_PATH}" -T ws reset "{vmx_path}" soft',
         shell=True,
         capture_output=True,
     )
-    time.sleep(10)
 
-    print(f"...Waiting for restart to complete...")
+
+def wait_until_online(vmx_path):
+    print(f"...Waiting for system ...")
+    time.sleep(10)
     subprocess.run(
         f'"{VMRUN_PATH}" -T ws getGuestIPAddress "{vmx_path}" -wait',
         shell=True,
@@ -280,7 +291,7 @@ def wait_for_restart(vmx_path):
     )
     time.sleep(10)
 
-    print(f"...Restart complete.")
+    print(f"...System online.")
 
 
 def get_ip_address(vmx_path):
