@@ -129,10 +129,11 @@ def main():
         )
 
     if install:
-        if interactive and sitetoken == None:
+        if interactive:
             sitetoken = simpledialog.askstring(
                 title="Install EDR agent?",
                 prompt="Enter a site or group token to automatically install the EDR agent.",
+                initialvalue=sitetoken,
             )
 
         print(sitetoken)
