@@ -275,10 +275,18 @@ def setup_vm(vmx_path):
 
 def wait_for_restart(vmx_path):
     print(f"...Issuing restart.")
-    subprocess.run(f'"{VMRUN_PATH}" -T ws getGuestIPAddress "{vmx_path}" -wait')
+    subprocess.run(
+        f'"{VMRUN_PATH}" -T ws reset "{vmx_path}" soft',
+        shell=True,
+        capture_output=True,
+    )
 
     print(f"...Waiting for restart to complete...")
-    p = subprocess.run(f'"{VMRUN_PATH}" -T ws reset "{vmx_path}" soft')
+    subprocess.run(
+        f'"{VMRUN_PATH}" -T ws getGuestIPAddress "{vmx_path}" -wait',
+        shell=True,
+        capture_output=True,
+    )
 
     print(f"...Restart complete.")
 
