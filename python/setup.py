@@ -138,6 +138,9 @@ def main():
                 parent=root,
             )
 
+            root.attributes("-topmost", True)
+            root.call("wm", "attributes", ".", "-topmost", "1")
+
         print(sitetoken)
         sys.exit()
 
