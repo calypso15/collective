@@ -73,11 +73,9 @@ def main():
     root = tkinter.Tk()
     root.attributes("-topmost", True)
     root.attributes("-toolwindow", True)
-    windowWidth = 1
-    windowHeight = 1
-    positionRight = int(root.winfo_screenwidth() / 2 - windowWidth / 2)
-    positionDown = int(root.winfo_screenheight() / 2 - windowHeight / 2)
-    root.geometry("+{}+{}".format(positionRight, positionDown))
+    positionRight = int(root.winfo_screenwidth() / 2)
+    positionDown = int(root.winfo_screenheight() / 2)
+    root.geometry("1x1+{}+{}".format(positionRight, positionDown))
     root.overrideredirect(1)
     root.update_idletasks()
 
