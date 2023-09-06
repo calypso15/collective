@@ -16,6 +16,7 @@ import winreg
 import wmi
 
 from tkinter import messagebox
+from tkinter import simpledialog
 
 import vcloud_files
 import system_requirements
@@ -129,9 +130,9 @@ def main():
 
     if install:
         if interactive and sitetoken == None:
-            sitetoken = messagebox.askquestion(
+            sitetoken = simpledialog.askstring(
                 title="Install EDR agent?",
-                message="Enter a site or group token to automatically install the EDR agent.",
+                prompt="Enter a site or group token to automatically install the EDR agent.",
             )
 
         print("Configuring vmnet8.")
