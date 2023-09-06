@@ -412,8 +412,6 @@ def input_dialog(title, prompt, parent=None, initialvalue=None):
     cancel_button = tkinter.Button(button_frame, text="Cancel", command=dialog.destroy)
     cancel_button.pack(side=tkinter.LEFT, padx=10)
 
-    dialog.mainloop()
-
     return getattr(dialog, "result", None)
 
 
