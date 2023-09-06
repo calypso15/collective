@@ -140,6 +140,8 @@ def main():
                 ),
             )
 
+            root.mainloop()
+
         print(sitetoken)
         sys.exit()
 
