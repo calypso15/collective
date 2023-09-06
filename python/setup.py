@@ -73,7 +73,6 @@ def main():
     root = tkinter.Tk()
     root.withdraw()
     root.call("wm", "attributes", ".", "-topmost", "1")
-    root.update_idletasks()
 
     interactive = not config.get("NonInteractive", False)
     sitetoken = config.get("SiteToken", None)
@@ -136,6 +135,7 @@ def main():
                 prompt="Enter a site or group token to automatically install the EDR agent.",
                 initialvalue=sitetoken,
                 parent=root,
+                show="*",
             )
 
         print(sitetoken)
