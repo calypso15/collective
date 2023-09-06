@@ -71,9 +71,9 @@ def main():
     )
 
     root = tkinter.Tk()
+    root.call("wm", "attributes", ".", "-topmost", "true")
+    root.call("wm", "attributes", ".", "-toolwindow", "true")
     root.withdraw()
-    root.wm_attributes("-topmost", True)
-    root.wm_attributes("-toolwindow", True)
 
     interactive = not config.get("NonInteractive", False)
     sitetoken = config.get("SiteToken", None)
