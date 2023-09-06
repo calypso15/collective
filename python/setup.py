@@ -201,7 +201,6 @@ def main():
 
                 if install:
                     print(f"Setting up {vmx_path}...")
-                    rearm_vm(vmx_path)
                     setup_vm(vmx_path)
 
         else:
@@ -223,26 +222,6 @@ def install_vm(ova_path, vmx_path):
     print(f"...Machine is up with IP address {ip}.")
 
 
-def rearm_vm(vmx_path):
-    username = "STARFLEET\jeanluc"
-    password = "Sentinelone!"
-
-    ip = get_ip_address(vmx_path)
-    wait_until_online(vmx_path, username, password)
-
-    if ip in ("192.168.192.10", "192.168.192.20", "192.168.192.21", "192.168.192.22"):
-        print(f"Re-arming {vmx_path}.")
-        run_script(
-            vmx_path=vmx_path,
-            username=username,
-            password=password,
-            script=(f"cscript.exe slmgr.vbs /rearm"),
-        )
-
-        time.sleep(5)
-        restart(vmx_path)
-
-
 def setup_vm(vmx_path):
     username = "STARFLEET\jeanluc"
     password = "Sentinelone!"
@@ -255,6 +234,17 @@ def setup_vm(vmx_path):
     subprocess.run(
         f'"{VMRUN_PATH}" -T ws disableSharedFolders "{vmx_path}"', shell=True
     )
+
+    if ip in ("192.168.192.10", "192.168.192.20", "192.168.192.21", "192.168.192.22"):
+        print(f"...Re-arming license.")
+        run_script(
+            vmx_path=vmx_path,
+            username=username,
+            password=password,
+            script=(f"cscript.exe C:\Windows\system32\wslmgr.vbs /rearm"),
+        )
+
+        restart_required = True
 
     if ip == "192.168.192.10":
         identifier = get_identifier()
@@ -298,7 +288,6 @@ def wait_until_online(vmx_path, username, password):
         shell=True,
         capture_output=True,
     )
-    time.sleep(5)
 
     print(f"...Machine online.")
 
