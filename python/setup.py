@@ -73,13 +73,13 @@ def main():
     root = tkinter.Tk()
     root.attributes("-topmost", True)
     root.attributes("-toolwindow", True)
-    screen_width = root.winfo_screenwidth()
-    screen_height = root.winfo_screenheight()
-    x = screen_width / 2
-    y = screen_height / 2
-    root.geometry("%dx%d+%d+%d" % (1, 1, x, y))
-    root.eval("tk::PlaceWindow . center")
+    windowWidth = 1
+    windowHeight = 1
+    positionRight = int(root.winfo_screenwidth() / 2 - windowWidth / 2)
+    positionDown = int(root.winfo_screenheight() / 2 - windowHeight / 2)
+    root.geometry("+{}+{}".format(positionRight, positionDown))
     root.overrideredirect(1)
+    root.update_idletasks()
 
     interactive = not config.get("NonInteractive", False)
     sitetoken = config.get("SiteToken", None)
