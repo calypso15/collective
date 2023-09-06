@@ -228,7 +228,7 @@ def setup_vm(vmx_path):
     restart_required = False
 
     ip = get_ip_address(vmx_path)
-    wait_until_online(vmx_path)
+    wait_until_online(vmx_path, username, password)
 
     print(f"...Disabling shared folders.")
     subprocess.run(
@@ -268,7 +268,7 @@ def setup_vm(vmx_path):
 
     if restart_required:
         restart(vmx_path)
-        wait_until_online(vmx_path)
+        wait_until_online(vmx_path, username, password)
         restart_required = False
 
 
