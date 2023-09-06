@@ -171,7 +171,7 @@ def main():
                     )
 
                 print("Deleting old VMs.")
-                shutil.rmtree(VM_DIR)
+                shutil.rmtree(VM_DIR, ignore_errors=True)
 
             print("Installing new environment...")
             make_dir(VM_DIR)
@@ -246,10 +246,11 @@ def rearm_vm(vmx_path):
             vmx_path=vmx_path,
             username=username,
             password=password,
-            script=(f"slmgr.vbs //b -rearm"),
+            script=(f"cscript.exe slmgr.vbs -rearm"),
         )
 
-    restart(vmx_path)
+        time.sleep(5)
+        restart(vmx_path)
 
 
 def setup_vm(vmx_path):
@@ -264,17 +265,6 @@ def setup_vm(vmx_path):
     subprocess.run(
         f'"{VMRUN_PATH}" -T ws disableSharedFolders "{vmx_path}"', shell=True
     )
-
-    if ip in ("192.168.192.10", "192.168.192.20", "192.168.192.21", "192.168.192.22"):
-        print(f"...Re-arming trial license.")
-        run_script(
-            vmx_path=vmx_path,
-            username=username,
-            password=password,
-            script=(f"slmgr.vbs //b -rearm"),
-        )
-
-        restart_required = True
 
     if ip == "192.168.192.10":
         identifier = get_identifier()
