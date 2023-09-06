@@ -134,6 +134,7 @@ def main():
                 title="Install EDR agent?",
                 prompt="Enter a site or group token to automatically install the EDR agent.",
                 initialvalue=sitetoken,
+                parent=root,
             )
 
         print(sitetoken)
