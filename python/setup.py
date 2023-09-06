@@ -310,7 +310,7 @@ def install_agent(vmx_path, site_token):
 
     ip = get_ip_address(vmx_path)
 
-    if ip in ("192.168.192.10", "192.168.192.20", "192.168.192.21", "192.168.192.22"):
+    if ip in ("192.168.192.10", "192.168.192.20", "192.168.192.21"):
         wait_until_online(vmx_path, username, password)
         print(f"...Installing agent with site token '{site_token}'.")
         run_script(
@@ -318,7 +318,23 @@ def install_agent(vmx_path, site_token):
             username=username,
             password=password,
             script=(
-                f"%USERPROFILE%/Desktop/SentinelInstaller_windows_64bit.msi /Q SITE_TOKEN={site_token}"
+                f'SCHTASKS /create /tn Agent /sc once /tr "%USERPROFILE%/Desktop/SentinelInstaller_windows_64bit.msi /Q SITE_TOKEN={site_token}" /ru interactive /rl highest /st 00:00 /f'
+                " && SCHTASKS /run /tn Agent"
+                " && SCHTASKS /delete /tn Agent /f"
+            ),
+        )
+
+    if ip in ("192.168.192.22"):
+        wait_until_online(vmx_path, username, password)
+        print(f"...Installing agent with site token '{site_token}'.")
+        run_script(
+            vmx_path=vmx_path,
+            username=username,
+            password=password,
+            script=(
+                f'SCHTASKS /create /tn Agent /sc once /tr "%USERPROFILE%/Desktop/SentinelInstaller_windows_32bit.msi /Q SITE_TOKEN={site_token}" /ru interactive /rl highest /st 00:00 /f'
+                " && SCHTASKS /run /tn Agent"
+                " && SCHTASKS /delete /tn Agent /f"
             ),
         )
 
