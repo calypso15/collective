@@ -70,6 +70,7 @@ def main():
     )
 
     root = tkinter.Tk()
+    root.call("wm", "attributes", ".", "-topmost", "1")
     root.withdraw()
 
     interactive = not config.get("NonInteractive", False)
