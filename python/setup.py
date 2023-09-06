@@ -190,18 +190,7 @@ def main():
 
                 if install:
                     print(f"Installing {vmx_path}...")
-                    install_vm(ova_path=ova_path, vmx_path=vmx_path)
-
-            for file in sorted_list:
-                name = file["name"]
-                base_name = os.path.splitext(name)[0]
-                install = file["import"]
-
-                ova_path = os.path.join(DOWNLOAD_DIR, name)
-                vmx_path = os.path.join(VM_DIR, base_name, base_name + ".vmx")
-
-                if install:
-                    rearm_vm(vmx_path=vmx_path)
+                    install_vm(ova_path, vmx_path)
 
             for file in sorted_list:
                 name = file["name"]
@@ -212,7 +201,8 @@ def main():
 
                 if install:
                     print(f"Setting up {vmx_path}...")
-                    setup_vm(vmx_path=vmx_path)
+                    rearm_vm(vmx_path)
+                    setup_vm(vmx_path)
 
         else:
             print("Skipping environment setup, there was a problem with the manifest.")
@@ -234,8 +224,8 @@ def install_vm(ova_path, vmx_path):
 
 
 def rearm_vm(vmx_path):
-    username = config["VM"]["Username"]
-    password = config["VM"]["Password"]
+    username = "STARFLEET\jeanluc"
+    password = "Sentinelone!"
 
     ip = get_ip_address(vmx_path)
     wait_until_online(vmx_path, username, password)
@@ -246,7 +236,7 @@ def rearm_vm(vmx_path):
             vmx_path=vmx_path,
             username=username,
             password=password,
-            script=(f"cscript.exe slmgr.vbs -rearm"),
+            script=(f"cscript.exe slmgr.vbs /rearm"),
         )
 
         time.sleep(5)
@@ -254,8 +244,8 @@ def rearm_vm(vmx_path):
 
 
 def setup_vm(vmx_path):
-    username = config["VM"]["Username"]
-    password = config["VM"]["Password"]
+    username = "STARFLEET\jeanluc"
+    password = "Sentinelone!"
     restart_required = False
 
     ip = get_ip_address(vmx_path)
@@ -277,9 +267,9 @@ def setup_vm(vmx_path):
             password=password,
             script=(
                 f"netdom computername 192.168.192.10 /add:TheBorg-{identifier}.starfleet.corp"
-                f' & netdom renamecomputer 192.168.192.20 /newname:Enterprise-{identifier} /userd:"starfleet.corp\{username}" /passwordd:"{password}" /force /reboot 0'
-                f' & netdom renamecomputer 192.168.192.21 /newname:Melbourne-{identifier} /userd:"starfleet.corp\{username}" /passwordd:"{password}" /force /reboot 0'
-                f' & netdom renamecomputer 192.168.192.22 /newname:Saratoga-{identifier} /userd:"starfleet.corp\{username}" /passwordd:"{password}" /force /reboot 0'
+                f' & netdom renamecomputer 192.168.192.20 /newname:Enterprise-{identifier} /userd:"{username}" /passwordd:"{password}" /force /reboot 0'
+                f' & netdom renamecomputer 192.168.192.21 /newname:Melbourne-{identifier} /userd:"{username}" /passwordd:"{password}" /force /reboot 0'
+                f' & netdom renamecomputer 192.168.192.22 /newname:Saratoga-{identifier} /userd:"{username}" /passwordd:"{password}" /force /reboot 0'
                 f" & netdom computername 192.168.192.10 /makeprimary:TheBorg-{identifier}.starfleet.corp"
             ),
         )
