@@ -135,6 +135,9 @@ def main():
                 prompt="Enter a site or group token to automatically install the EDR agent.",
             )
 
+        print(sitetoken)
+        sys.exit()
+
         print("Configuring vmnet8.")
         old_lines = []
         with open(os.path.join(VMWARE_DATA_DIR, "vmnetnat.conf"), "r") as f:
