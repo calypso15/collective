@@ -72,8 +72,6 @@ def main():
 
     root = tkinter.Tk()
     root.withdraw()
-    root.attributes("-topmost", True)
-    root.call("wm", "attributes", ".", "-topmost", "1")
 
     interactive = not config.get("NonInteractive", False)
     sitetoken = config.get("SiteToken", None)
@@ -82,6 +80,7 @@ def main():
     subprocess.Popen(VMWARE_PATH, shell=True)
 
     if interactive:
+        root.attributes("-topmost", True)
         ready = messagebox.askokcancel(
             title="Starting VMWare Workstation",
             message="VMWare should now be running. Please configure your license and then click OK.",
@@ -123,6 +122,7 @@ def main():
 
     install = True
     if interactive:
+        root.attributes("-topmost", True)
         install = messagebox.askyesno(
             title="Install virtual environment?",
             message="Do you want to install the virtual environment? This will delete the old environment (if any), and you will need to re-install agents, snapshots, etc.",
@@ -131,15 +131,13 @@ def main():
 
     if install:
         if interactive:
+            root.attributes("-topmost", True)
             sitetoken = simpledialog.askstring(
                 title="Install EDR agent?",
                 prompt="Enter a site or group token to automatically install the EDR agent.",
                 initialvalue=sitetoken,
                 parent=root,
             )
-
-            root.attributes("-topmost", True)
-            root.call("wm", "attributes", ".", "-topmost", "1")
 
         print(sitetoken)
         sys.exit()
