@@ -71,9 +71,9 @@ def main():
     )
 
     root = tkinter.Tk()
+    root.withdraw()
     root.attributes("-topmost", True)
     root.call("wm", "attributes", ".", "-topmost", "1")
-    root.withdraw()
 
     interactive = not config.get("NonInteractive", False)
     sitetoken = config.get("SiteToken", None)
@@ -137,8 +137,6 @@ def main():
                 initialvalue=sitetoken,
                 parent=root,
             )
-            root.after_idle(root.attributes, "-topmost", True)
-            root.after_idle(root.attributes, "-topmost", False)
 
         print(sitetoken)
         sys.exit()
