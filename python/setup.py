@@ -132,7 +132,6 @@ def main():
 
     if install:
         if interactive:
-            root.deiconify()
             sitetoken = simpledialog.askstring(
                 title="Install EDR agent?",
                 prompt="Enter a site or group token to automatically install the EDR agent.",
