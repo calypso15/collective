@@ -72,6 +72,7 @@ def main():
 
     root = tkinter.Tk()
     root.withdraw()
+    root.attributes("-topmost", True)
 
     interactive = not config.get("NonInteractive", False)
     sitetoken = config.get("SiteToken", None)
