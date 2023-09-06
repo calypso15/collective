@@ -282,11 +282,13 @@ def wait_for_restart(vmx_path):
     )
 
     print(f"...Waiting for restart to complete...")
+    time.sleep(10)
     subprocess.run(
         f'"{VMRUN_PATH}" -T ws getGuestIPAddress "{vmx_path}" -wait',
         shell=True,
         capture_output=True,
     )
+    time.sleep(10)
 
     print(f"...Restart complete.")
 
