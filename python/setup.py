@@ -241,7 +241,7 @@ def setup_vm(vmx_path):
             vmx_path=vmx_path,
             username=username,
             password=password,
-            script=(f"cscript.exe C:\Windows\system32\wslmgr.vbs /rearm"),
+            script=(f"cscript.exe C:\Windows\system32\slmgr.vbs /rearm"),
         )
 
         restart_required = True
