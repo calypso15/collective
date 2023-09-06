@@ -302,11 +302,8 @@ def run_script(vmx_path, username, password, script, interpreter="", timeout=Non
     p = subprocess.run(
         f'"{VMRUN_PATH}" -T ws -gu "{username}" -gp "{password}" runScriptInGuest "{vmx_path}" "{interpreter}" "{script}"',
         shell=True,
-        capture_output=True,
         timeout=timeout,
     )
-
-    return p.stdout.decode()
 
 
 def get_identifier():
