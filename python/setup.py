@@ -253,7 +253,7 @@ def setup_vm(vmx_path):
             ),
         )
 
-        wait_for_restart(vmx_path, username, password)
+        wait_for_restart(vmx_path)
         restart_required = False
 
         print(f"...Renaming endpoints with suffix '-{identifier}'.")
@@ -269,7 +269,7 @@ def setup_vm(vmx_path):
         )
 
     if restart_required:
-        wait_for_restart(vmx_path, username, password)
+        wait_for_restart(vmx_path)
         restart_required = False
 
 
