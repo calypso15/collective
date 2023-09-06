@@ -241,7 +241,8 @@ def setup_vm(vmx_path):
             vmx_path=vmx_path,
             username=username,
             password=password,
-            script=(f"slmgr.vbs //b -rearm"),
+            script=(f"slmgr.vbs -rearm"),
+            interpreter="cscript.exe",
         )
 
         restart_required = True
@@ -284,11 +285,11 @@ def restart(vmx_path):
 def wait_until_online(vmx_path, username, password):
     print(f"...Waiting for machine to come online...")
     subprocess.run(
-        f'"{VMRUN_PATH}" -T ws -gu "starfleet.corp\{username}" -gp "{password}" runProgramInGuest "{vmx_path}" "C:\Windows\System32\whoami.exe"',
+        f'"{VMRUN_PATH}" -T ws -gu "{username}" -gp "{password}" runProgramInGuest "{vmx_path}" "C:\Windows\System32\whoami.exe"',
         shell=True,
         capture_output=True,
     )
-    time.sleep(10)
+    time.sleep(5)
 
     print(f"...Machine online.")
 
@@ -302,11 +303,10 @@ def get_ip_address(vmx_path):
     return p.stdout.decode().rstrip()
 
 
-def run_script(vmx_path, username, password, script, interpreter="", timeout=None):
+def run_script(vmx_path, username, password, script, interpreter=""):
     p = subprocess.run(
         f'"{VMRUN_PATH}" -T ws -gu "{username}" -gp "{password}" runScriptInGuest "{vmx_path}" "{interpreter}" "{script}"',
         shell=True,
-        timeout=timeout,
         capture_output=True,
     )
 
