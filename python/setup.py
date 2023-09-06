@@ -75,6 +75,7 @@ def main():
     root.attributes("-toolwindow", True)
     root.eval("tk::PlaceWindow . center")
     root.geometry("1x1")
+    root.overrideredirect(1)
 
     interactive = not config.get("NonInteractive", False)
     sitetoken = config.get("SiteToken", None)
