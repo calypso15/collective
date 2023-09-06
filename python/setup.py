@@ -83,7 +83,7 @@ def main():
         ready = messagebox.askokcancel(
             title="Starting VMWare Workstation",
             message="VMWare should now be running. Please configure your license and then click OK.",
-            icon=messagebox.WARNING,
+            icon=messagebox.INFO,
         )
 
         if not ready:
@@ -129,12 +129,9 @@ def main():
 
     if install:
         if interactive and sitetoken == None:
-            result_buffer = ctypes.create_unicode_buffer(1024)
-            ctypes.windll.user32.GetWindowTextW(
-                ctypes.windll.user32.GetForegroundWindow(), result_buffer, 1024
-            )
-            sitetoken = ctypes.windll.user32.MessageBoxW(
-                0, "Enter a site token:", result_buffer.value, 0x40
+            sitetoken = messagebox.askquestion(
+                title="Install EDR agent?",
+                message="Enter a site or group token to automatically install the EDR agent.",
             )
 
         print("Configuring vmnet8.")
