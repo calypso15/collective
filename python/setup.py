@@ -73,9 +73,11 @@ def main():
     root = tkinter.Tk()
     root.attributes("-topmost", True)
     root.attributes("-toolwindow", True)
-    positionRight = int(root.winfo_screenwidth() / 2)
-    positionDown = int(root.winfo_screenheight() / 2)
-    root.geometry("1x1+{}+{}".format(positionRight, positionDown))
+    root.geometry(
+        "1x1+{}+{}".format(
+            int(root.winfo_screenwidth() / 2), int(root.winfo_screenheight() / 2)
+        )
+    )
     root.overrideredirect(1)
     root.update_idletasks()
 
@@ -143,9 +145,6 @@ def main():
                 initialvalue=sitetoken,
                 parent=root,
             )
-
-        print(sitetoken)
-        sys.exit()
 
         print("Configuring vmnet8.")
         old_lines = []
