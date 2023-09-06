@@ -73,6 +73,7 @@ def main():
     root = tkinter.Tk()
     root.call("wm", "attributes", ".", "-topmost", "true")
     root.call("wm", "attributes", ".", "-toolwindow", "true")
+    root.overrideredirect(1)
     root.withdraw()
 
     interactive = not config.get("NonInteractive", False)
@@ -131,11 +132,12 @@ def main():
 
     if install:
         if interactive:
-            root.deiconify()
+            root.iconify()
             sitetoken = simpledialog.askstring(
                 title="Install EDR agent?",
                 prompt="Enter a site or group token to automatically install the EDR agent.",
                 initialvalue=sitetoken,
+                parent=root,
             )
 
         print(sitetoken)
