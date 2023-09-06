@@ -72,7 +72,6 @@ def main():
 
     root = tkinter.Tk()
     root.attributes("-topmost", True)
-    root.withdraw()
 
     interactive = not config.get("NonInteractive", False)
     sitetoken = config.get("SiteToken", None)
@@ -130,17 +129,12 @@ def main():
 
     if install:
         if interactive:
-            sitetoken = root.after(
-                50,
-                lambda: simpledialog.askstring(
-                    title="Install EDR agent?",
-                    prompt="Enter a site or group token to automatically install the EDR agent.",
-                    initialvalue=sitetoken,
-                    parent=root,
-                ),
+            sitetoken = simpledialog.askstring(
+                title="Install EDR agent?",
+                prompt="Enter a site or group token to automatically install the EDR agent.",
+                initialvalue=sitetoken,
+                parent=root,
             )
-
-            root.mainloop()
 
         print(sitetoken)
         sys.exit()
