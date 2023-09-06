@@ -223,8 +223,8 @@ def install_vm(ova_path, vmx_path):
 
 
 def setup_vm(vmx_path):
-    username = "STARFLEET\jeanluc"
-    password = "Sentinelone!"
+    username = config["VM"]["Username"]
+    password = config["VM"]["Password"]
     restart_required = False
 
     ip = get_ip_address(vmx_path)
@@ -241,7 +241,11 @@ def setup_vm(vmx_path):
             vmx_path=vmx_path,
             username=username,
             password=password,
-            script=(f"cscript.exe C:\Windows\system32\slmgr.vbs /rearm"),
+            script=(
+                f'SCHTASKS /create /tn Rearm /sc once /tr "slmgr -rearm" /ru interactive /st 00:00 /f'
+                " && SCHTASKS /run /tn Rearm"
+                " && SCHTASKS /delete /tn Rearm /f"
+            ),
         )
 
         restart_required = True
