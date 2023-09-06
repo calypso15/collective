@@ -242,31 +242,21 @@ def setup_vm(vmx_path):
         identifier = get_identifier()
         identifier = convert_hex_to_base36(identifier)
 
-        print(f"...Renaming TheBorg with suffix '-{identifier}'.")
+        print(f"...Renaming Windows VMs with suffix '-{identifier}'.")
         run_script(
             vmx_path=vmx_path,
             username=username,
             password=password,
             script=(
                 f"netdom computername 192.168.192.10 /add:TheBorg-{identifier}.starfleet.corp"
-                f" && netdom computername 192.168.192.10 /makeprimary:TheBorg-{identifier}.starfleet.corp"
+                f' & netdom renamecomputer 192.168.192.20 /newname:Enterprise-{identifier} /userd:"starfleet.corp\{username}" /passwordd:"{password}" /force /reboot 0'
+                f' & netdom renamecomputer 192.168.192.21 /newname:Melbourne-{identifier} /userd:"starfleet.corp\{username}" /passwordd:"{password}" /force /reboot 0'
+                f' & netdom renamecomputer 192.168.192.22 /newname:Saratoga-{identifier} /userd:"starfleet.corp\{username}" /passwordd:"{password}" /force /reboot 0'
+                f" & netdom computername 192.168.192.10 /makeprimary:TheBorg-{identifier}.starfleet.corp"
             ),
         )
 
-        wait_for_restart(vmx_path)
-        restart_required = False
-
-        print(f"...Renaming endpoints with suffix '-{identifier}'.")
-        run_script(
-            vmx_path=vmx_path,
-            username=username,
-            password=password,
-            script=(
-                f'netdom renamecomputer 192.168.192.20 /newname:Enterprise-{identifier} /userd:"starfleet.corp\{username}" /passwordd:"{password}" /force /reboot 0'
-                f' && netdom renamecomputer 192.168.192.21 /newname:Melbourne-{identifier} /userd:"starfleet.corp\{username}" /passwordd:"{password}" /force /reboot 0'
-                f' && netdom renamecomputer 192.168.192.22 /newname:Saratoga-{identifier} /userd:"starfleet.corp\{username}" /passwordd:"{password}" /force /reboot 0'
-            ),
-        )
+        restart_required = True
 
     if restart_required:
         wait_for_restart(vmx_path)
@@ -280,9 +270,9 @@ def wait_for_restart(vmx_path):
         shell=True,
         capture_output=True,
     )
+    time.sleep(10)
 
     print(f"...Waiting for restart to complete...")
-    time.sleep(10)
     subprocess.run(
         f'"{VMRUN_PATH}" -T ws getGuestIPAddress "{vmx_path}" -wait',
         shell=True,
