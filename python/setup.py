@@ -211,12 +211,7 @@ def install_vm(ova_path, vmx_path):
     print(f"...Starting {vmx_path}.")
     subprocess.run(f'"{VMRUN_PATH}" -T ws start "{vmx_path}"', shell=True)
 
-    p = subprocess.run(
-        f'"{VMRUN_PATH}" -T ws getGuestIPAddress "{vmx_path}" -wait',
-        shell=True,
-        capture_output=True,
-    )
-    ip = p.stdout.decode().rstrip()
+    ip = get_ip_address(vmx_path)
     print(f"...Machine is up with IP address {ip}.")
 
 
@@ -225,12 +220,7 @@ def setup_vm(vmx_path):
     password = config["VM"]["Password"]
     restart_required = False
 
-    p = subprocess.run(
-        f'"{VMRUN_PATH}" -T ws getGuestIPAddress "{vmx_path}" -wait',
-        shell=True,
-        capture_output=True,
-    )
-    ip = p.stdout.decode().rstrip()
+    ip = get_ip_address(vmx_path)
 
     print(f"...Disabling shared folders.")
     subprocess.run(
@@ -243,8 +233,7 @@ def setup_vm(vmx_path):
             vmx_path=vmx_path,
             username=username,
             password=password,
-            script=(f"cscript slmgr.vbs -rearm && shutdown /r /t 0"),
-            timeout=5,
+            script=(f"cscript //B //H:CScript //NoLogo //T:5 slmgr.vbs -rearm && exit"),
         )
 
         restart_required = True
@@ -261,9 +250,7 @@ def setup_vm(vmx_path):
             script=(
                 f"netdom computername 192.168.192.10 /add:TheBorg-{identifier}.starfleet.corp"
                 f" && netdom computername 192.168.192.10 /makeprimary:TheBorg-{identifier}.starfleet.corp"
-                f" && shutdown /r /t 0"
             ),
-            timeout=5,
         )
 
         wait_for_restart(vmx_path, username, password)
@@ -279,7 +266,6 @@ def setup_vm(vmx_path):
                 f' && netdom renamecomputer 192.168.192.21 /newname:Melbourne-{identifier} /userd:"starfleet.corp\{username}" /passwordd:"{password}" /force /reboot 0'
                 f' && netdom renamecomputer 192.168.192.22 /newname:Saratoga-{identifier} /userd:"starfleet.corp\{username}" /passwordd:"{password}" /force /reboot 0'
             ),
-            timeout=5,
         )
 
     if restart_required:
@@ -287,15 +273,23 @@ def setup_vm(vmx_path):
         restart_required = False
 
 
-def wait_for_restart(vmx_path, username, password):
-    print(f"...Waiting for restart...")
-    run_script(
-        vmx_path=vmx_path,
-        username=username,
-        password=password,
-        script="whoami",
-    )
+def wait_for_restart(vmx_path):
+    print(f"...Issuing restart.")
+    subprocess.run(f'"{VMRUN_PATH}" -T ws getGuestIPAddress "{vmx_path}" -wait')
+
+    print(f"...Waiting for restart to complete...")
+    p = subprocess.run(f'"{VMRUN_PATH}" -T ws reset "{vmx_path}" soft')
+
     print(f"...Restart complete.")
+
+
+def get_ip_address(vmx_path):
+    p = subprocess.run(
+        f'"{VMRUN_PATH}" -T ws getGuestIPAddress "{vmx_path}" -wait',
+        shell=True,
+        capture_output=True,
+    )
+    return p.stdout.decode().rstrip()
 
 
 def run_script(vmx_path, username, password, script, interpreter="", timeout=None):
@@ -303,7 +297,10 @@ def run_script(vmx_path, username, password, script, interpreter="", timeout=Non
         f'"{VMRUN_PATH}" -T ws -gu "{username}" -gp "{password}" runScriptInGuest "{vmx_path}" "{interpreter}" "{script}"',
         shell=True,
         timeout=timeout,
+        capture_output=True,
     )
+
+    return p.stdout.decode().rstrip()
 
 
 def get_identifier():
