@@ -318,7 +318,7 @@ def install_agent(vmx_path, site_token):
             username=username,
             password=password,
             script=(
-                f"SCHTASKS /create /tn Agent /sc once /tr \"msiexec /i 'C:\\Users\\jeanluc\\Desktop\\SentinelInstaller_windows_64bit.msi' /Q SITE_TOKEN={site_token}\" /ru interactive /rl highest /st 00:00 /f && SCHTASKS /run /tn Agent && SCHTASKS /delete /tn Agent /f"
+                f"SCHTASKS /create /tn Agent /sc once /tr \"msiexec /i 'C:\\Users\\jeanluc\\Desktop\\SentinelInstaller_windows_64bit.msi' SITE_TOKEN={site_token}\" /ru interactive /rl highest /st 00:00 /f && SCHTASKS /run /tn Agent && SCHTASKS /delete /tn Agent /f"
             ),
         )
 
@@ -330,7 +330,7 @@ def install_agent(vmx_path, site_token):
             username=username,
             password=password,
             script=(
-                f"SCHTASKS /create /tn Agent /sc once /tr \"msiexec /i 'C:\\Users\\jeanluc\\Desktop\\SentinelInstaller_windows_64bit.msi' /Q SITE_TOKEN={site_token}\" /ru interactive /rl highest /st 00:00 /f && SCHTASKS /run /tn Agent && SCHTASKS /delete /tn Agent /f"
+                f"SCHTASKS /create /tn Agent /sc once /tr \"msiexec /i 'C:\\Users\\jeanluc\\Desktop\\SentinelInstaller_windows_64bit.msi' SITE_TOKEN={site_token}\" /ru interactive /rl highest /st 00:00 /f && SCHTASKS /run /tn Agent && SCHTASKS /delete /tn Agent /f"
             ),
         )
 
