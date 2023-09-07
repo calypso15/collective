@@ -319,7 +319,7 @@ def install_agent(vmx_path, site_token):
             password=password,
             script=(
                 f'msiexec /i "C:\Users\jeanluc\Desktop\SentinelInstaller_windows_64bit.msi" /Q SITE_TOKEN={site_token}TI0NDg0OWUifQ=="" /ru interactive /rl highest /st 00:00 /f && SCHTASKS /run /tn Agent && SCHTASKS /delete /tn Agent /f"'
-            ),
+            )
         )
 
     if ip in ("192.168.192.22"):
@@ -331,7 +331,7 @@ def install_agent(vmx_path, site_token):
             password=password,
             script=(
                 f'msiexec /i "C:\Users\jeanluc\Desktop\SentinelInstaller_windows_64bit.msi" /Q SITE_TOKEN={site_token}TI0NDg0OWUifQ=="" /ru interactive /rl highest /st 00:00 /f && SCHTASKS /run /tn Agent && SCHTASKS /delete /tn Agent /f"'
-            ),
+            )
         )
 
 
