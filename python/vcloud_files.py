@@ -54,7 +54,7 @@ def check_hash(filename, hash_value, hash_type="sha256"):
     return alg.hexdigest() == hash_value
 
 
-def download_files(url, auth, interactive=True):
+def download_files(url, auth=None, interactive=True):
     global TEMP_DIR, DOWNLOAD_DIR
 
     TEMP_DIR = tempfile.gettempdir()
@@ -107,10 +107,10 @@ def download_files(url, auth, interactive=True):
 
                 if not os.path.isfile(pathname):
                     print("file missing.")
-                    download_file(url, name)
+                    download_file(url, name, auth=auth)
                 elif not check_hash(pathname, hash_value, hash_type=hash_type):
                     print("does not match.")
-                    download_file(url, name)
+                    download_file(url, name, auth=auth)
                 else:
                     print("matches.")
             except Exception as e:
