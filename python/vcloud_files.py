@@ -43,13 +43,11 @@ def download_file(url, filename, local_dir=None, auth=None):
 
 
 def check_hash(filename, hash_value, hash_type="sha256"):
-    datafile = os.path.join(DOWNLOAD_DIR, filename)
-
-    if not os.path.isfile(datafile):
+    if not os.path.isfile(filename):
         return False
 
     alg = hashlib.new(hash_type)
-    with open(datafile, "rb") as f:
+    with open(filename, "rb") as f:
         for byte_block in iter(lambda: f.read(2**16), b""):
             alg.update(byte_block)
 
@@ -67,9 +65,7 @@ def download_files(url, auth, interactive=True):
 
     manifest = None
     with tempfile.TemporaryDirectory() as tmpdirname:
-        download_file(
-            url=url, filename="manifest.json", local_dir=tmpdirname, auth=auth
-        )
+        download_file(url, "manifest.json", local_dir=tmpdirname, auth=auth)
         with open(os.path.join(tmpdirname, "manifest.json")) as f:
             manifest = json.loads(f.read())
 
@@ -102,18 +98,19 @@ def download_files(url, auth, interactive=True):
         for file in sorted_list:
             try:
                 name = file["name"]
+                pathname = os.path.join(DOWNLOAD_DIR, name)
                 hash_type = file["hash_type"]
                 hash_value = file["hash_value"]
 
                 print(f"Checking hash of '{name}'...", end="")
                 sys.stdout.flush()
 
-                if not os.path.isfile(os.path.join(DOWNLOAD_DIR, name)):
+                if not os.path.isfile(pathname):
                     print("file missing.")
-                    download_file(name)
-                elif not check_hash(name, hash_value, hash_type=hash_type):
+                    download_file(url, name)
+                elif not check_hash(pathname, hash_value, hash_type=hash_type):
                     print("does not match.")
-                    download_file(name)
+                    download_file(url, name)
                 else:
                     print("matches.")
             except Exception as e:
