@@ -22,7 +22,7 @@ def download_file(url, filename, local_dir=None, auth=None):
 
     with requests.get(url, auth=auth, stream=True) as r:
         r.raise_for_status()
-        chunk_size = 1024 * 1024
+        chunk_size = 10 * 1024 * 1024
         total_size = int(r.headers.get("content-length", 0))
 
         with open(local_filename, "wb") as f:
