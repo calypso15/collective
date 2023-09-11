@@ -5,6 +5,7 @@ import datetime
 import glob
 import json
 import os
+import platform
 import requests
 import shutil
 import subprocess
@@ -36,15 +37,21 @@ class Tee(object):
             f.flush()
 
 
+PROGRAM_FILES_DIR = (
+    "C:/Program Files (x86)"
+    if platform.architecture()[0] == "64bit"
+    else "C:/Program Files"
+)
 HOME = os.path.expanduser("~")
 DOCUMENTS_DIR = os.path.join(HOME, "Documents")
 DOWNLOAD_DIR = os.path.join(DOCUMENTS_DIR, ".vcloud")
 VM_DIR = os.path.join(HOME, "Documents/Virtual Machines/S1")
-VMWARE_DATA_DIR = r"C:/ProgramData/VMware"
-VMNETLIB64_PATH = r"C:/Program Files (x86)/VMware/VMware Workstation/vnetlib64.exe"
-VMRUN_PATH = r"C:/Program Files (x86)/VMware/VMware Workstation/vmrun.exe"
-VMWARE_PATH = r"C:/Program Files (x86)/VMware/VMware Workstation/vmware.exe"
-OVFTOOL_PATH = r"C:/Program Files (x86)/VMware/VMware Workstation/OVFTool/ovftool.exe"
+VMWARE_DATA_DIR = os.path.join(PROGRAM_FILES_DIR, "VMware")
+VMWARE_WORKSTATION_DIR = os.path.join(VMWARE_DATA_DIR, "VMware Workstation")
+VMNETLIB64_PATH = os.path.join(VMWARE_WORKSTATION_DIR, "netlib64.exe")
+VMRUN_PATH = os.path.join(VMWARE_WORKSTATION_DIR, "vmrun.exe")
+VMWARE_PATH = os.path.join(VMWARE_WORKSTATION_DIR, "vmware.exe")
+OVFTOOL_PATH = os.path.join(VMWARE_WORKSTATION_DIR, "OVFTool/ovftool.exe")
 
 
 def main():
@@ -328,9 +335,9 @@ def install_agent(vmx_path, site_token):
         run_script(
             vmx_path=vmx_path,
             username=username,
-            password=password,
+            password=password,""v
             script=(
-                f"SCHTASKS /create /tn Agent /sc once /tr \"msiexec /i 'C:\\Users\\jeanluc\\Desktop\\SentinelInstaller_windows_64bit.msi' SITE_TOKEN={site_token}\" /ru interactive /rl highest /st 00:00 /f && SCHTASKS /run /tn Agent && SCHTASKS /delete /tn Agent /f"
+                f"SCHTASKS /create /tn Agent /sc once /tr \"msiexec /i \"C:\\Users\\jeanluc\\Desktop\\SentinelInstaller_windows_32bit.msi\" SITE_TOKEN={site_token}\" /ru interactive /rl highest /st 00:00 /f && SCHTASKS /run /tn Agent && SCHTASKS /delete /tn Agent /f"
             ),
         )
 
