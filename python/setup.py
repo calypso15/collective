@@ -371,8 +371,10 @@ def get_ip_address(vmx_path):
 
 
 def run_script(vmx_path, username, password, script, interpreter=""):
+    full_script = f'"{VMRUN_PATH}" -T ws -gu "{username}" -gp "{password}" runScriptInGuest "{vmx_path}" "{interpreter}" "{script}"'
+    print(f"...Running subprocess: {full_script}")
     p = subprocess.run(
-        f'"{VMRUN_PATH}" -T ws -gu "{username}" -gp "{password}" runScriptInGuest "{vmx_path}" "{interpreter}" "{script}"',
+        full_script,
         shell=True,
         capture_output=True,
     )
