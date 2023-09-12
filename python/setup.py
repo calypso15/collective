@@ -37,21 +37,17 @@ class Tee(object):
             f.flush()
 
 
-PROGRAM_FILES_DIR = (
-    "C:/Program Files (x86)"
-    if platform.architecture()[0] == "64bit"
-    else "C:/Program Files"
-)
 HOME = os.path.expanduser("~")
 DOCUMENTS_DIR = os.path.join(HOME, "Documents")
 DOWNLOAD_DIR = os.path.join(DOCUMENTS_DIR, ".vcloud")
-VM_DIR = os.path.join(HOME, "Documents/Virtual Machines/S1")
-VMWARE_DATA_DIR = r"C:/ProgramData/VMware"
-VMWARE_WORKSTATION_DIR = os.path.join(PROGRAM_FILES_DIR, "VMware/VMware Workstation")
+VM_DIR = os.path.join(HOME, "Documents\\Virtual Machines\\S1")
+PROGRAM_FILES_DIR = "C:\\Program Files (x86)"
+VMWARE_DATA_DIR = "C:\\ProgramData\\VMware"
+VMWARE_WORKSTATION_DIR = os.path.join(PROGRAM_FILES_DIR, "VMware\\VMware Workstation")
 VMNETLIB64_PATH = os.path.join(VMWARE_WORKSTATION_DIR, "netlib64.exe")
 VMRUN_PATH = os.path.join(VMWARE_WORKSTATION_DIR, "vmrun.exe")
 VMWARE_PATH = os.path.join(VMWARE_WORKSTATION_DIR, "vmware.exe")
-OVFTOOL_PATH = os.path.join(VMWARE_WORKSTATION_DIR, "OVFTool/ovftool.exe")
+OVFTOOL_PATH = os.path.join(VMWARE_WORKSTATION_DIR, "OVFTool\\ovftool.exe")
 
 
 def main():
@@ -325,7 +321,7 @@ def install_agent(vmx_path, site_token):
             username=username,
             password=password,
             script=(
-                f'SCHTASKS /create /tn Agent /sc once /tr ""msiexec /passive /i ""C:\\Users\\jeanluc\\Desktop\\SentinelInstaller_windows_32bit.msi"" SITE_TOKEN={site_token}"" /ru interactive /rl highest /st 00:00 /f && SCHTASKS /run /tn Agent && SCHTASKS /delete /tn Agent /f'
+                f'SCHTASKS /create /tn Agent /sc once /tr ""msiexec /passive /i ""C:\\Users\\jeanluc\\Desktop\\SentinelInstaller_windows_64bit.msi"" SITE_TOKEN={site_token}"" /ru interactive /rl highest /st 00:00 /f && SCHTASKS /run /tn Agent && SCHTASKS /delete /tn Agent /f'
             ),
         )
 
