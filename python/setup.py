@@ -243,6 +243,16 @@ def install_vm(ova_path, vmx_path):
         f'"{OVFTOOL_PATH}" --allowExtraConfig --net:"custom=vmnet8" -o "{ova_path}" "{VM_DIR}"'
     )
 
+    print(f"...Disabling sound card.")
+    subprocess.run(
+        f'"{VMRUN_PATH}" -T ws disconnectNamedDevice "{vmx_path}" "sound"', shell=True
+    )
+
+    print(f"...Disabling shared folders.")
+    subprocess.run(
+        f'"{VMRUN_PATH}" -T ws disableSharedFolders "{vmx_path}"', shell=True
+    )
+
     print(f"...Starting {vmx_path}.")
     subprocess.run(f'"{VMRUN_PATH}" -T ws start "{vmx_path}"', shell=True)
 
@@ -256,16 +266,6 @@ def setup_vm(vmx_path):
     restart_required = False
 
     ip = get_ip_address(vmx_path)
-
-    print(f"...Disabling sound card.")
-    subprocess.run(
-        f'"{VMRUN_PATH}" -T ws disconnectNamedDevice "{vmx_path}" "sound"', shell=True
-    )
-
-    print(f"...Disabling shared folders.")
-    subprocess.run(
-        f'"{VMRUN_PATH}" -T ws disableSharedFolders "{vmx_path}"', shell=True
-    )
 
     if ip in ("192.168.192.10", "192.168.192.20", "192.168.192.21", "192.168.192.22"):
         wait_until_online(vmx_path, username, password)
