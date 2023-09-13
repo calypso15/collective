@@ -201,44 +201,39 @@ def main():
             print("Installing new environment...")
             make_dir(VM_DIR)
 
-            sorted_list = sorted(
-                manifest["files"], key=lambda d: d.get("order", sys.maxsize)
-            )
+            install_list = []
+            for file in manifest["files"]:
+                if file["import"]:
+                    item = {}
+                    base_name = os.path.splitext(file["name"])[0]
+                    item["name"] = file["name"]
+                    item["order"] = file.get("order", sys.maxsize)
+                    item["ova_path"] = os.path.join(DOWNLOAD_DIR, name)
+                    item["vmx_path"] = os.path.join(
+                        VM_DIR, base_name, base_name + ".vmx"
+                    )
+                    install_list.append(item)
 
-            for file in sorted_list:
-                name = file["name"]
-                base_name = os.path.splitext(name)[0]
-                install = file["import"]
+            for file in sorted(install_list, key=lambda x: x["order"]):
+                vmx_path = file["vmx_path"]
+                ova_path = file["ova_path"]
+                print(f"Installing {vmx_path}...")
+                install_vm(ova_path, vmx_path)
 
-                ova_path = os.path.join(DOWNLOAD_DIR, name)
-                vmx_path = os.path.join(VM_DIR, base_name, base_name + ".vmx")
+            for file in sorted(install_list, key=lambda x: x["order"]):
+                vmx_path = file["vmx_path"]
+                print(f"Setting up {vmx_path}...")
+                setup_vm(vmx_path)
+                install_agent(vmx_path, sitetoken)
 
-                if install:
-                    print(f"Installing {vmx_path}...")
-                    install_vm(ova_path, vmx_path)
+            for file in sorted(install_list, key=lambda x: x["order"]):
+                vmx_path = file["vmx_path"]
+                wait_until_online(vmx_path)
 
-            for file in sorted_list:
-                name = file["name"]
-                base_name = os.path.splitext(name)[0]
-                install = file["import"]
-
-                vmx_path = os.path.join(VM_DIR, base_name, base_name + ".vmx")
-
-                if install:
-                    print(f"Setting up {vmx_path}...")
-                    setup_vm(vmx_path)
-                    install_agent(vmx_path, sitetoken)
-
-            for file in sorted_list:
-                name = file["name"]
-                base_name = os.path.splitext(name)[0]
-                install = file["import"]
-
-                vmx_path = os.path.join(VM_DIR, base_name, base_name + ".vmx")
-
-                if install:
-                    print(f"Creating snapshot 'Baseline' for {vmx_path}...")
-                    create_snapshot(vmx_path, "Baseline")
+            for file in sorted(install_list, key=lambda x: x["order"]):
+                vmx_path = file["vmx_path"]
+                print(f"Creating snapshot 'Baseline' for {vmx_path}...")
+                create_snapshot(vmx_path, "Baseline")
 
         else:
             print("Skipping environment setup, there was a problem with the manifest.")
@@ -269,7 +264,7 @@ def setup_vm(vmx_path):
     ip = get_ip_address(vmx_path)
 
     if ip in ("192.168.192.10", "192.168.192.20", "192.168.192.21", "192.168.192.22"):
-        wait_until_online(vmx_path, username, password)
+        wait_until_online(vmx_path)
         print(f"...Re-arming license.")
         run_script(
             vmx_path=vmx_path,
@@ -284,7 +279,7 @@ def setup_vm(vmx_path):
         identifier = get_identifier()
         identifier = convert_hex_to_base36(identifier)
 
-        wait_until_online(vmx_path, username, password)
+        wait_until_online(vmx_path)
         print(f"...Renaming Windows VMs with suffix '-{identifier}'.")
         run_script(
             vmx_path=vmx_path,
@@ -301,7 +296,7 @@ def setup_vm(vmx_path):
 
     if restart_required:
         restart(vmx_path)
-        wait_until_online(vmx_path, username, password)
+        wait_until_online(vmx_path)
 
         print(f"...Restarting explorer.exe.")
         run_script(
@@ -330,7 +325,7 @@ def install_agent(vmx_path, site_token):
     ip = get_ip_address(vmx_path)
 
     if ip in ("192.168.192.10", "192.168.192.20", "192.168.192.21"):
-        wait_until_online(vmx_path, username, password)
+        wait_until_online(vmx_path)
         print(f"...Installing agent with site token '{site_token}'.")
         run_script(
             vmx_path=vmx_path,
@@ -342,7 +337,7 @@ def install_agent(vmx_path, site_token):
         )
 
     if ip in ("192.168.192.22"):
-        wait_until_online(vmx_path, username, password)
+        wait_until_online(vmx_path)
         print(f"...Installing agent with site token '{site_token}'.")
         run_script(
             vmx_path=vmx_path,
@@ -355,10 +350,6 @@ def install_agent(vmx_path, site_token):
 
 
 def create_snapshot(vmx_path, name):
-    username = "STARFLEET\jeanluc"
-    password = "Sentinelone!"
-
-    wait_until_online(vmx_path, username, password)
     subprocess.run(f'"{VMRUN_PATH}" -T ws snapshot "{vmx_path}" "{name}"', shell=True)
 
 
@@ -371,14 +362,16 @@ def restart(vmx_path):
     )
 
 
-def wait_until_online(vmx_path, username, password):
+def wait_until_online(vmx_path):
+    username = "STARFLEET\jeanluc"
+    password = "Sentinelone!"
     print(f"...Waiting for machine to be ready...")
     subprocess.run(
         f'"{VMRUN_PATH}" -T ws -gu "{username}" -gp "{password}" runProgramInGuest "{vmx_path}" "C:\Windows\System32\whoami.exe"',
         shell=True,
         capture_output=True,
     )
-    time.sleep(10)
+    time.sleep(5)
 
 
 def get_ip_address(vmx_path):
