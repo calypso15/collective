@@ -228,6 +228,7 @@ def main():
                     print(f"Setting up {vmx_path}...")
                     setup_vm(vmx_path)
                     install_agent(vmx_path, sitetoken)
+                    create_snapshot(vmx_path, "Baseline")
 
         else:
             print("Skipping environment setup, there was a problem with the manifest.")
@@ -256,16 +257,6 @@ def setup_vm(vmx_path):
     restart_required = False
 
     ip = get_ip_address(vmx_path)
-
-    print(f"...Disabling sound card.")
-    subprocess.run(
-        f'"{VMRUN_PATH}" -T ws disconnectNamedDevice "{vmx_path}" "sound"', shell=True
-    )
-
-    print(f"...Disabling shared folders.")
-    subprocess.run(
-        f'"{VMRUN_PATH}" -T ws disableSharedFolders "{vmx_path}"', shell=True
-    )
 
     if ip in ("192.168.192.10", "192.168.192.20", "192.168.192.21", "192.168.192.22"):
         wait_until_online(vmx_path, username, password)
@@ -311,6 +302,16 @@ def setup_vm(vmx_path):
         )
         restart_required = False
 
+    print(f"...Disabling sound card.")
+    subprocess.run(
+        f'"{VMRUN_PATH}" -T ws disconnectNamedDevice "{vmx_path}" "sound"', shell=True
+    )
+
+    print(f"...Disabling shared folders.")
+    subprocess.run(
+        f'"{VMRUN_PATH}" -T ws disableSharedFolders "{vmx_path}"', shell=True
+    )
+
 
 def install_agent(vmx_path, site_token):
     username = "STARFLEET\jeanluc"
@@ -341,6 +342,11 @@ def install_agent(vmx_path, site_token):
                 f'SCHTASKS /create /tn Agent /sc once /tr ""msiexec /passive /i ""C:\\Users\\jeanluc\\Desktop\\SentinelInstaller_windows_32bit.msi"" SITE_TOKEN={site_token}"" /ru interactive /rl highest /st 00:00 /f && SCHTASKS /run /tn Agent && SCHTASKS /delete /tn Agent /f'
             ),
         )
+
+
+def create_snapshot(vmx_path, name):
+    print(f"Creating snapshot '{name}...")
+    subprocess.run(f'"{VMRUN_PATH}" -T ws snapshot "{vmx_path}" "{name}"', shell=True)
 
 
 def restart(vmx_path):
