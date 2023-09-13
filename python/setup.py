@@ -257,6 +257,11 @@ def setup_vm(vmx_path):
 
     ip = get_ip_address(vmx_path)
 
+    print(f"...Disabling sound card.")
+    subprocess.run(
+        f'"{VMRUN_PATH}" -T ws disconnectNamedDevice "{vmx_path}" "sound"', shell=True
+    )
+
     print(f"...Disabling shared folders.")
     subprocess.run(
         f'"{VMRUN_PATH}" -T ws disableSharedFolders "{vmx_path}"', shell=True
@@ -368,7 +373,7 @@ def get_ip_address(vmx_path):
 
 def run_script(vmx_path, username, password, script, interpreter=""):
     full_script = f'"{VMRUN_PATH}" -T ws -gu "{username}" -gp "{password}" runScriptInGuest "{vmx_path}" "{interpreter}" "{script}"'
-    print(f"...Running subprocess: {full_script}")
+    #   print(f"...Running subprocess: {full_script}")
     p = subprocess.run(
         full_script,
         shell=True,
