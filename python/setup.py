@@ -208,7 +208,7 @@ def main():
                     base_name = os.path.splitext(file["name"])[0]
                     item["name"] = file["name"]
                     item["order"] = file.get("order", sys.maxsize)
-                    item["ova_path"] = os.path.join(DOWNLOAD_DIR, name)
+                    item["ova_path"] = os.path.join(DOWNLOAD_DIR, file["name"])
                     item["vmx_path"] = os.path.join(
                         VM_DIR, base_name, base_name + ".vmx"
                     )
