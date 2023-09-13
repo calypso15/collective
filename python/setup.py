@@ -228,6 +228,16 @@ def main():
                     print(f"Setting up {vmx_path}...")
                     setup_vm(vmx_path)
                     install_agent(vmx_path, sitetoken)
+
+            for file in sorted_list:
+                name = file["name"]
+                base_name = os.path.splitext(name)[0]
+                install = file["import"]
+
+                vmx_path = os.path.join(VM_DIR, base_name, base_name + ".vmx")
+
+                if install:
+                    print(f"Creating snapshot 'Baseline' for {vmx_path}...")
                     create_snapshot(vmx_path, "Baseline")
 
         else:
@@ -345,7 +355,10 @@ def install_agent(vmx_path, site_token):
 
 
 def create_snapshot(vmx_path, name):
-    print(f"Creating snapshot '{name}...")
+    username = "STARFLEET\jeanluc"
+    password = "Sentinelone!"
+
+    wait_until_online(vmx_path, username, password)
     subprocess.run(f'"{VMRUN_PATH}" -T ws snapshot "{vmx_path}" "{name}"', shell=True)
 
 
