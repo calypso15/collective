@@ -228,6 +228,7 @@ def main():
 
             for file in sorted(install_list, key=lambda x: x["order"]):
                 vmx_path = file["vmx_path"]
+                print(f"Preparing to take snapshots...")
                 wait_until_online(vmx_path)
 
             for file in sorted(install_list, key=lambda x: x["order"]):
