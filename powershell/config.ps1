@@ -117,7 +117,6 @@ $SiteTokenLabel.width            = 25
 $SiteTokenLabel.height           = 10
 $SiteTokenLabel.location         = New-Object System.Drawing.Point(16,272)
 $SiteTokenLabel.Font             = New-Object System.Drawing.Font('Microsoft Sans Serif',10)
-$SiteTokenLabel.BackColor        = [System.Drawing.Color]::FromName("Transparent")
 
 $SiteToken                       = New-Object system.Windows.Forms.TextBox
 $SiteToken.multiline             = $false
@@ -168,6 +167,7 @@ $ConfigUI.controls.AddRange(@($NucGroup,$VcloudGroup,$SiteTokenLabel,$SiteToken,
 $NucGroup.controls.AddRange(@($Nuc_UsernameLabel,$Nuc_Username,$Nuc_PasswordLabel,$MaskedTextBox1,$Nuc_Autologon))
 $VcloudGroup.controls.AddRange(@($Vcloud_UrlLabel,$Vcloud_Url,$Vcloud_UsernameLabel,$Vcloud_Username,$Vcloud_PasswordLabel,$MaskedTextBox2))
 
+$SiteToken.BringToFront()
 
 #region Logic 
 
