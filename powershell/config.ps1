@@ -13,7 +13,8 @@ Add-Type -AssemblyName System.Windows.Forms
 $ConfigUI                        = New-Object system.Windows.Forms.Form
 $ConfigUI.ClientSize             = New-Object System.Drawing.Point(330,424)
 $ConfigUI.text                   = "Config Creator"
-$ConfigUI.TopMost                = $false
+$ConfigUI.FormBorderStyle        = 'FixedDialog'
+$ConfigUI.TopMost                = $true
 
 $Nuc_UsernameLabel               = New-Object system.Windows.Forms.Label
 $Nuc_UsernameLabel.text          = "Username"
