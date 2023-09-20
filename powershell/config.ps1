@@ -117,6 +117,7 @@ $SiteTokenLabel.width            = 25
 $SiteTokenLabel.height           = 10
 $SiteTokenLabel.location         = New-Object System.Drawing.Point(16,272)
 $SiteTokenLabel.Font             = New-Object System.Drawing.Font('Microsoft Sans Serif',10)
+$SiteTokenLabel.BackColor        = [System.Drawing.ColorTranslator]::FromHtml("transparent")
 
 $SiteToken                       = New-Object system.Windows.Forms.TextBox
 $SiteToken.multiline             = $false
