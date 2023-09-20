@@ -15,15 +15,6 @@ $ConfigUI.ClientSize             = New-Object System.Drawing.Point(330,424)
 $ConfigUI.text                   = "Config Creator"
 $ConfigUI.TopMost                = $false
 
-$SiteTokenLabel                  = New-Object system.Windows.Forms.Label
-$SiteTokenLabel.text             = "Site Token"
-$SiteTokenLabel.AutoSize         = $true
-$SiteTokenLabel.width            = 25
-$SiteTokenLabel.height           = 10
-$SiteTokenLabel.location         = New-Object System.Drawing.Point(16,272)
-$SiteTokenLabel.Font             = New-Object System.Drawing.Font('Microsoft Sans Serif',10)
-$SiteTokenLabel.BackColor        = [System.Drawing.ColorTranslator]::FromHtml("transparent")
-
 $NucGroup                        = New-Object system.Windows.Forms.Groupbox
 $NucGroup.height                 = 107
 $NucGroup.width                  = 306
@@ -112,12 +103,28 @@ $Vcloud_PasswordLabel.height     = 10
 $Vcloud_PasswordLabel.location   = New-Object System.Drawing.Point(17,82)
 $Vcloud_PasswordLabel.Font       = New-Object System.Drawing.Font('Microsoft Sans Serif',10)
 
-$MaskedTextBox2                  = New-Object system.Windows.Forms.MaskedTextBox
-$MaskedTextBox2.multiline        = $false
-$MaskedTextBox2.width            = 162
-$MaskedTextBox2.height           = 20
-$MaskedTextBox2.location         = New-Object System.Drawing.Point(123,79)
-$MaskedTextBox2.Font             = New-Object System.Drawing.Font('Microsoft Sans Serif',10)
+$Vcloud_Password                  = New-Object system.Windows.Forms.MaskedTextBox
+$Vcloud_Password.multiline        = $false
+$Vcloud_Password.width            = 162
+$Vcloud_Password.height           = 20
+$Vcloud_Password.location         = New-Object System.Drawing.Point(123,79)
+$Vcloud_Password.Font             = New-Object System.Drawing.Font('Microsoft Sans Serif',10)
+
+$SiteTokenLabel                  = New-Object system.Windows.Forms.Label
+$SiteTokenLabel.text             = "Site Token"
+$SiteTokenLabel.AutoSize         = $true
+$SiteTokenLabel.width            = 25
+$SiteTokenLabel.height           = 10
+$SiteTokenLabel.location         = New-Object System.Drawing.Point(16,272)
+$SiteTokenLabel.Font             = New-Object System.Drawing.Font('Microsoft Sans Serif',10)
+$SiteTokenLabel.BackColor        = [System.Drawing.ColorTranslator]::FromHtml("transparent")
+
+$SiteToken                       = New-Object system.Windows.Forms.TextBox
+$SiteToken.multiline             = $false
+$SiteToken.width                 = 301
+$SiteToken.height                = 20
+$SiteToken.location              = New-Object System.Drawing.Point(16,290)
+$SiteToken.Font                  = New-Object System.Drawing.Font('Microsoft Sans Serif',10)
 
 $NonInteractive                  = New-Object system.Windows.Forms.CheckBox
 $NonInteractive.text             = "Non-Interactive?"
@@ -157,16 +164,11 @@ $CancelButton.height             = 30
 $CancelButton.location           = New-Object System.Drawing.Point(173,379)
 $CancelButton.Font               = New-Object System.Drawing.Font('Microsoft Sans Serif',10)
 
-$SiteToken                       = New-Object system.Windows.Forms.TextBox
-$SiteToken.multiline             = $false
-$SiteToken.width                 = 301
-$SiteToken.height                = 20
-$SiteToken.location              = New-Object System.Drawing.Point(16,290)
-$SiteToken.Font                  = New-Object System.Drawing.Font('Microsoft Sans Serif',10)
-
 $ConfigUI.controls.AddRange(@($SiteTokenLabel,$NucGroup,$VcloudGroup,$NonInteractive,$IgnoreWarnings,$IgnoreErrors,$CreateButton,$CancelButton,$SiteToken))
 $NucGroup.controls.AddRange(@($Nuc_UsernameLabel,$Nuc_Username,$Nuc_PasswordLabel,$MaskedTextBox1,$Nuc_Autologon))
-$VcloudGroup.controls.AddRange(@($Vcloud_UrlLabel,$Vcloud_Url,$Vcloud_UsernameLabel,$Vcloud_Username,$Vcloud_PasswordLabel,$MaskedTextBox2))
+$VcloudGroup.controls.AddRange(@($Vcloud_UrlLabel,$Vcloud_Url,$Vcloud_UsernameLabel,$Vcloud_Username,$Vcloud_PasswordLabel,$Vcloud_Password))
+
+$SiteToken.BringToFront()
 
 #region Logic 
 
