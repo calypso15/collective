@@ -9,15 +9,19 @@ Start-Transcript -Path $HOME/Documents/log-powershell.txt -Append
 
 if ('ConfigFile' -NotIn $PSBoundParameters.Keys)
 {
-    throw 'No config file specified with the -ConfigFile parameter, aborting.'
+    $ConfigFile = "config.json"
 }
 
 $ConfigFile = Resolve-Path $ConfigFile -ErrorAction SilentlyContinue -ErrorVariable PathError
 
 if ($PathError)
 {
-    throw 'Specified config file not found, aborting.'
+    Write-Host("Config file '$ConfigFile' not found, attempting to create it.")
+    Push-Location $HOME/Documents/collective/powershell
+    & ./config.ps1 -ConfigFile "$ConfigFile"
+    Pop-Location
 }
+
 
 # Update environment variables
 $env:Path = [System.Environment]::GetEnvironmentVariable("Path","Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path","User")
