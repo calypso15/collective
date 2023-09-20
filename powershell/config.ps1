@@ -15,6 +15,15 @@ $ConfigUI.ClientSize             = New-Object System.Drawing.Point(330,424)
 $ConfigUI.text                   = "Config Creator"
 $ConfigUI.TopMost                = $false
 
+$SiteTokenLabel                  = New-Object system.Windows.Forms.Label
+$SiteTokenLabel.text             = "Site Token"
+$SiteTokenLabel.AutoSize         = $true
+$SiteTokenLabel.width            = 25
+$SiteTokenLabel.height           = 10
+$SiteTokenLabel.location         = New-Object System.Drawing.Point(16,272)
+$SiteTokenLabel.Font             = New-Object System.Drawing.Font('Microsoft Sans Serif',10)
+$SiteTokenLabel.BackColor        = [System.Drawing.ColorTranslator]::FromHtml("transparent")
+
 $NucGroup                        = New-Object system.Windows.Forms.Groupbox
 $NucGroup.height                 = 107
 $NucGroup.width                  = 306
@@ -110,33 +119,18 @@ $MaskedTextBox2.height           = 20
 $MaskedTextBox2.location         = New-Object System.Drawing.Point(123,79)
 $MaskedTextBox2.Font             = New-Object System.Drawing.Font('Microsoft Sans Serif',10)
 
-$SiteTokenLabel                  = New-Object system.Windows.Forms.Label
-$SiteTokenLabel.text             = "Site Token"
-$SiteTokenLabel.AutoSize         = $true
-$SiteTokenLabel.width            = 25
-$SiteTokenLabel.height           = 10
-$SiteTokenLabel.location         = New-Object System.Drawing.Point(16,272)
-$SiteTokenLabel.Font             = New-Object System.Drawing.Font('Microsoft Sans Serif',10)
-
-$SiteToken                       = New-Object system.Windows.Forms.TextBox
-$SiteToken.multiline             = $false
-$SiteToken.width                 = 301
-$SiteToken.height                = 20
-$SiteToken.location              = New-Object System.Drawing.Point(16,290)
-$SiteToken.Font                  = New-Object System.Drawing.Font('Microsoft Sans Serif',10)
-
 $NonInteractive                  = New-Object system.Windows.Forms.CheckBox
 $NonInteractive.text             = "Non-Interactive?"
 $NonInteractive.AutoSize         = $false
-$NonInteractive.width            = 95
+$NonInteractive.width            = 127
 $NonInteractive.height           = 20
-$NonInteractive.location         = New-Object System.Drawing.Point(198,321)
+$NonInteractive.location         = New-Object System.Drawing.Point(180,321)
 $NonInteractive.Font             = New-Object System.Drawing.Font('Microsoft Sans Serif',10)
 
 $IgnoreWarnings                  = New-Object system.Windows.Forms.CheckBox
 $IgnoreWarnings.text             = "Ignore Warnings?"
 $IgnoreWarnings.AutoSize         = $false
-$IgnoreWarnings.width            = 95
+$IgnoreWarnings.width            = 129
 $IgnoreWarnings.height           = 20
 $IgnoreWarnings.location         = New-Object System.Drawing.Point(28,321)
 $IgnoreWarnings.Font             = New-Object System.Drawing.Font('Microsoft Sans Serif',10)
@@ -144,7 +138,7 @@ $IgnoreWarnings.Font             = New-Object System.Drawing.Font('Microsoft San
 $IgnoreErrors                    = New-Object system.Windows.Forms.CheckBox
 $IgnoreErrors.text               = "Ignore Errors?"
 $IgnoreErrors.AutoSize           = $false
-$IgnoreErrors.width              = 95
+$IgnoreErrors.width              = 131
 $IgnoreErrors.height             = 20
 $IgnoreErrors.location           = New-Object System.Drawing.Point(28,346)
 $IgnoreErrors.Font               = New-Object System.Drawing.Font('Microsoft Sans Serif',10)
@@ -163,11 +157,16 @@ $CancelButton.height             = 30
 $CancelButton.location           = New-Object System.Drawing.Point(173,379)
 $CancelButton.Font               = New-Object System.Drawing.Font('Microsoft Sans Serif',10)
 
-$ConfigUI.controls.AddRange(@($NucGroup,$VcloudGroup,$SiteTokenLabel,$SiteToken,$NonInteractive,$IgnoreWarnings,$IgnoreErrors,$CreateButton,$CancelButton))
+$SiteToken                       = New-Object system.Windows.Forms.TextBox
+$SiteToken.multiline             = $false
+$SiteToken.width                 = 301
+$SiteToken.height                = 20
+$SiteToken.location              = New-Object System.Drawing.Point(16,290)
+$SiteToken.Font                  = New-Object System.Drawing.Font('Microsoft Sans Serif',10)
+
+$ConfigUI.controls.AddRange(@($SiteTokenLabel,$NucGroup,$VcloudGroup,$NonInteractive,$IgnoreWarnings,$IgnoreErrors,$CreateButton,$CancelButton,$SiteToken))
 $NucGroup.controls.AddRange(@($Nuc_UsernameLabel,$Nuc_Username,$Nuc_PasswordLabel,$MaskedTextBox1,$Nuc_Autologon))
 $VcloudGroup.controls.AddRange(@($Vcloud_UrlLabel,$Vcloud_Url,$Vcloud_UsernameLabel,$Vcloud_Username,$Vcloud_PasswordLabel,$MaskedTextBox2))
-
-$SiteToken.BringToFront()
 
 #region Logic 
 
