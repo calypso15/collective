@@ -7,11 +7,11 @@ param (
 
 Start-Transcript -Path $HOME/Documents/log-powershell.txt -Append
 
-$ConfigFile = Resolve-Path $ConfigFile -ErrorAction SilentlyContinue -ErrorVariable PathError
+$ResolvedConfigFile = Resolve-Path $ConfigFile -ErrorAction SilentlyContinue -ErrorVariable PathError
 
 if ($PathError)
 {
-    Write-Host("Config file '$ConfigFile' not found, attempting to create it.")
+    Write-Host("Config file '$ResolvedConfigFile' not found, attempting to create it.")
 }
 
 
@@ -70,9 +70,9 @@ git pull
 if(Compare-Object -ReferenceObject $(Get-Content $HOME/Documents/collective/join-collective.ps1) -DifferenceObject $(Get-Content $MyInvocation.MyCommand.Path)) {
     Write-Host('Updating collective bootstrap script...')
     Copy-Item $HOME/Documents/collective/join-collective.ps1 $MyInvocation.MyCommand.Path
-    &$MyInvocation.MyCommand.Path -ConfigFile "$ConfigFile"
+    &$MyInvocation.MyCommand.Path -ConfigFile "$ResolvedConfigFile"
     exit
 }
 
 Set-Location $HOME/Documents/collective/powershell
-& ./setup.ps1 -ConfigFile "$ConfigFile"
+& ./setup.ps1 -ConfigFile "$ResolvedConfigFile"
