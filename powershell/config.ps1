@@ -15,12 +15,6 @@ $ConfigUI.ClientSize             = New-Object System.Drawing.Point(330,424)
 $ConfigUI.text                   = "Config Creator"
 $ConfigUI.TopMost                = $false
 
-$NucGroup                        = New-Object system.Windows.Forms.Groupbox
-$NucGroup.height                 = 107
-$NucGroup.width                  = 306
-$NucGroup.text                   = "NUC"
-$NucGroup.location               = New-Object System.Drawing.Point(13,18)
-
 $Nuc_UsernameLabel               = New-Object system.Windows.Forms.Label
 $Nuc_UsernameLabel.text          = "Username"
 $Nuc_UsernameLabel.AutoSize      = $true
@@ -53,17 +47,11 @@ $MaskedTextBox1.Font             = New-Object System.Drawing.Font('Microsoft San
 
 $Nuc_Autologon                   = New-Object system.Windows.Forms.CheckBox
 $Nuc_Autologon.text              = "Autologon?"
-$Nuc_Autologon.AutoSize          = $false
+$Nuc_Autologon.AutoSize          = $true
 $Nuc_Autologon.width             = 95
 $Nuc_Autologon.height            = 20
 $Nuc_Autologon.location          = New-Object System.Drawing.Point(15,79)
 $Nuc_Autologon.Font              = New-Object System.Drawing.Font('Microsoft Sans Serif',10)
-
-$VcloudGroup                     = New-Object system.Windows.Forms.Groupbox
-$VcloudGroup.height              = 113
-$VcloudGroup.width               = 306
-$VcloudGroup.text                = "VCloud"
-$VcloudGroup.location            = New-Object System.Drawing.Point(13,146)
 
 $Vcloud_UrlLabel                 = New-Object system.Windows.Forms.Label
 $Vcloud_UrlLabel.text            = "Url"
@@ -103,12 +91,38 @@ $Vcloud_PasswordLabel.height     = 10
 $Vcloud_PasswordLabel.location   = New-Object System.Drawing.Point(17,82)
 $Vcloud_PasswordLabel.Font       = New-Object System.Drawing.Font('Microsoft Sans Serif',10)
 
-$Vcloud_Password                  = New-Object system.Windows.Forms.MaskedTextBox
-$Vcloud_Password.multiline        = $false
-$Vcloud_Password.width            = 162
-$Vcloud_Password.height           = 20
-$Vcloud_Password.location         = New-Object System.Drawing.Point(123,79)
-$Vcloud_Password.Font             = New-Object System.Drawing.Font('Microsoft Sans Serif',10)
+$MaskedTextBox2                  = New-Object system.Windows.Forms.MaskedTextBox
+$MaskedTextBox2.multiline        = $false
+$MaskedTextBox2.width            = 162
+$MaskedTextBox2.height           = 20
+$MaskedTextBox2.location         = New-Object System.Drawing.Point(123,79)
+$MaskedTextBox2.Font             = New-Object System.Drawing.Font('Microsoft Sans Serif',10)
+
+$CreateButton                    = New-Object system.Windows.Forms.Button
+$CreateButton.text               = "Create"
+$CreateButton.width              = 60
+$CreateButton.height             = 30
+$CreateButton.location           = New-Object System.Drawing.Point(104,379)
+$CreateButton.Font               = New-Object System.Drawing.Font('Microsoft Sans Serif',10)
+
+$CancelButton                    = New-Object system.Windows.Forms.Button
+$CancelButton.text               = "Cancel"
+$CancelButton.width              = 60
+$CancelButton.height             = 30
+$CancelButton.location           = New-Object System.Drawing.Point(173,379)
+$CancelButton.Font               = New-Object System.Drawing.Font('Microsoft Sans Serif',10)
+
+$NucGroup                        = New-Object system.Windows.Forms.Groupbox
+$NucGroup.height                 = 107
+$NucGroup.width                  = 306
+$NucGroup.text                   = "NUC"
+$NucGroup.location               = New-Object System.Drawing.Point(13,18)
+
+$VcloudGroup                     = New-Object system.Windows.Forms.Groupbox
+$VcloudGroup.height              = 113
+$VcloudGroup.width               = 306
+$VcloudGroup.text                = "VCloud"
+$VcloudGroup.location            = New-Object System.Drawing.Point(13,146)
 
 $SiteTokenLabel                  = New-Object system.Windows.Forms.Label
 $SiteTokenLabel.text             = "Site Token"
@@ -126,47 +140,33 @@ $SiteToken.height                = 20
 $SiteToken.location              = New-Object System.Drawing.Point(16,290)
 $SiteToken.Font                  = New-Object System.Drawing.Font('Microsoft Sans Serif',10)
 
-$NonInteractive                  = New-Object system.Windows.Forms.CheckBox
-$NonInteractive.text             = "Non-Interactive?"
-$NonInteractive.AutoSize         = $false
-$NonInteractive.width            = 127
-$NonInteractive.height           = 20
-$NonInteractive.location         = New-Object System.Drawing.Point(180,321)
-$NonInteractive.Font             = New-Object System.Drawing.Font('Microsoft Sans Serif',10)
-
 $IgnoreWarnings                  = New-Object system.Windows.Forms.CheckBox
 $IgnoreWarnings.text             = "Ignore Warnings?"
-$IgnoreWarnings.AutoSize         = $false
-$IgnoreWarnings.width            = 129
+$IgnoreWarnings.AutoSize         = $true
+$IgnoreWarnings.width            = 137
 $IgnoreWarnings.height           = 20
 $IgnoreWarnings.location         = New-Object System.Drawing.Point(28,321)
 $IgnoreWarnings.Font             = New-Object System.Drawing.Font('Microsoft Sans Serif',10)
 
 $IgnoreErrors                    = New-Object system.Windows.Forms.CheckBox
 $IgnoreErrors.text               = "Ignore Errors?"
-$IgnoreErrors.AutoSize           = $false
+$IgnoreErrors.AutoSize           = $true
 $IgnoreErrors.width              = 131
 $IgnoreErrors.height             = 20
 $IgnoreErrors.location           = New-Object System.Drawing.Point(28,346)
 $IgnoreErrors.Font               = New-Object System.Drawing.Font('Microsoft Sans Serif',10)
 
-$CreateButton                    = New-Object system.Windows.Forms.Button
-$CreateButton.text               = "Create"
-$CreateButton.width              = 60
-$CreateButton.height             = 30
-$CreateButton.location           = New-Object System.Drawing.Point(104,379)
-$CreateButton.Font               = New-Object System.Drawing.Font('Microsoft Sans Serif',10)
+$NonInteractive                  = New-Object system.Windows.Forms.CheckBox
+$NonInteractive.text             = "Non-Interactive?"
+$NonInteractive.AutoSize         = $true
+$NonInteractive.width            = 127
+$NonInteractive.height           = 20
+$NonInteractive.location         = New-Object System.Drawing.Point(180,321)
+$NonInteractive.Font             = New-Object System.Drawing.Font('Microsoft Sans Serif',10)
 
-$CancelButton                    = New-Object system.Windows.Forms.Button
-$CancelButton.text               = "Cancel"
-$CancelButton.width              = 60
-$CancelButton.height             = 30
-$CancelButton.location           = New-Object System.Drawing.Point(173,379)
-$CancelButton.Font               = New-Object System.Drawing.Font('Microsoft Sans Serif',10)
-
-$ConfigUI.controls.AddRange(@($SiteTokenLabel,$NucGroup,$VcloudGroup,$NonInteractive,$IgnoreWarnings,$IgnoreErrors,$CreateButton,$CancelButton,$SiteToken))
 $NucGroup.controls.AddRange(@($Nuc_UsernameLabel,$Nuc_Username,$Nuc_PasswordLabel,$MaskedTextBox1,$Nuc_Autologon))
-$VcloudGroup.controls.AddRange(@($Vcloud_UrlLabel,$Vcloud_Url,$Vcloud_UsernameLabel,$Vcloud_Username,$Vcloud_PasswordLabel,$Vcloud_Password))
+$VcloudGroup.controls.AddRange(@($Vcloud_UrlLabel,$Vcloud_Url,$Vcloud_UsernameLabel,$Vcloud_Username,$Vcloud_PasswordLabel,$MaskedTextBox2))
+$ConfigUI.controls.AddRange(@($CreateButton,$CancelButton,$NucGroup,$VcloudGroup,$SiteTokenLabel,$SiteToken,$IgnoreWarnings,$IgnoreErrors,$NonInteractive))
 
 $SiteToken.BringToFront()
 
