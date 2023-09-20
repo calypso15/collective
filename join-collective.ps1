@@ -2,15 +2,10 @@
 param (
     [Parameter()]
     [string]
-    $ConfigFile
+    $ConfigFile='config.json'
 )
 
 Start-Transcript -Path $HOME/Documents/log-powershell.txt -Append
-
-if ('ConfigFile' -NotIn $PSBoundParameters.Keys)
-{
-    $ConfigFile = "config.json"
-}
 
 $ConfigFile = Resolve-Path $ConfigFile -ErrorAction SilentlyContinue -ErrorVariable PathError
 
