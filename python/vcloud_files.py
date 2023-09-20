@@ -101,6 +101,7 @@ def download_files(url, auth=None, interactive=True):
                 pathname = os.path.join(DOWNLOAD_DIR, name)
                 hash_type = file["hash_type"]
                 hash_value = file["hash_value"]
+                recheck_hash = False
 
                 print(f"Checking hash of '{name}'...", end="")
                 sys.stdout.flush()
@@ -108,11 +109,24 @@ def download_files(url, auth=None, interactive=True):
                 if not os.path.isfile(pathname):
                     print("file missing.")
                     download_file(url, name, auth=auth)
+                    recheck_hash = True
                 elif not check_hash(pathname, hash_value, hash_type=hash_type):
                     print("does not match.")
                     download_file(url, name, auth=auth)
+                    recheck_hash = True
                 else:
                     print("matches.")
+
+                if recheck_hash:
+                    print(f"Verifying hash of '{name}'...", end="")
+                    sys.stdout.flush()
+
+                    if check_hash(pathname, hash_value, hash_type=hash_type):
+                        print("matches.")
+                    else:
+                        print("does not match. Aborting setup.")
+                        sys.exit()
+
             except Exception as e:
                 print(e)
 
