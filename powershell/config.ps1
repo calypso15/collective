@@ -39,11 +39,11 @@ $Nuc_PasswordLabel.height        = 10
 $Nuc_PasswordLabel.location      = New-Object System.Drawing.Point(15,51)
 $Nuc_PasswordLabel.Font          = New-Object System.Drawing.Font('Microsoft Sans Serif',10)
 
-$Nuc_Password                  = New-Object system.Windows.Forms.MaskedTextBox
+$Nuc_Password                  = New-Object system.Windows.Forms.TextBox
 $Nuc_Password.multiline        = $false
 $Nuc_Password.width            = 162
 $Nuc_Password.height           = 20
-$Nuc_Password.mask             = "*"
+$Nuc_Password.passwordchar     = "*"
 $Nuc_Password.location         = New-Object System.Drawing.Point(123,48)
 $Nuc_Password.Font             = New-Object System.Drawing.Font('Microsoft Sans Serif',10)
 
@@ -93,11 +93,11 @@ $Vcloud_PasswordLabel.height     = 10
 $Vcloud_PasswordLabel.location   = New-Object System.Drawing.Point(17,82)
 $Vcloud_PasswordLabel.Font       = New-Object System.Drawing.Font('Microsoft Sans Serif',10)
 
-$Vcloud_Password                  = New-Object system.Windows.Forms.MaskedTextBox
+$Vcloud_Password                  = New-Object system.Windows.Forms.TextBox
 $Vcloud_Password.multiline        = $false
 $Vcloud_Password.width            = 162
 $Vcloud_Password.height           = 20
-$Vcloud_Password.mask             = "*"
+$Vcloud_Password.passwordchar     = "*"
 $Vcloud_Password.location         = New-Object System.Drawing.Point(123,79)
 $Vcloud_Password.Font             = New-Object System.Drawing.Font('Microsoft Sans Serif',10)
 
