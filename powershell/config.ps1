@@ -39,12 +39,13 @@ $Nuc_PasswordLabel.height        = 10
 $Nuc_PasswordLabel.location      = New-Object System.Drawing.Point(15,51)
 $Nuc_PasswordLabel.Font          = New-Object System.Drawing.Font('Microsoft Sans Serif',10)
 
-$MaskedTextBox1                  = New-Object system.Windows.Forms.MaskedTextBox
-$MaskedTextBox1.multiline        = $false
-$MaskedTextBox1.width            = 162
-$MaskedTextBox1.height           = 20
-$MaskedTextBox1.location         = New-Object System.Drawing.Point(123,48)
-$MaskedTextBox1.Font             = New-Object System.Drawing.Font('Microsoft Sans Serif',10)
+$Nuc_Password                  = New-Object system.Windows.Forms.MaskedTextBox
+$Nuc_Password.multiline        = $false
+$Nuc_Password.width            = 162
+$Nuc_Password.height           = 20
+$Nuc_Password.mask             = "*"
+$Nuc_Password.location         = New-Object System.Drawing.Point(123,48)
+$Nuc_Password.Font             = New-Object System.Drawing.Font('Microsoft Sans Serif',10)
 
 $Nuc_Autologon                   = New-Object system.Windows.Forms.CheckBox
 $Nuc_Autologon.text              = "Autologon?"
@@ -92,12 +93,13 @@ $Vcloud_PasswordLabel.height     = 10
 $Vcloud_PasswordLabel.location   = New-Object System.Drawing.Point(17,82)
 $Vcloud_PasswordLabel.Font       = New-Object System.Drawing.Font('Microsoft Sans Serif',10)
 
-$MaskedTextBox2                  = New-Object system.Windows.Forms.MaskedTextBox
-$MaskedTextBox2.multiline        = $false
-$MaskedTextBox2.width            = 162
-$MaskedTextBox2.height           = 20
-$MaskedTextBox2.location         = New-Object System.Drawing.Point(123,79)
-$MaskedTextBox2.Font             = New-Object System.Drawing.Font('Microsoft Sans Serif',10)
+$Vcloud_Password                  = New-Object system.Windows.Forms.MaskedTextBox
+$Vcloud_Password.multiline        = $false
+$Vcloud_Password.width            = 162
+$Vcloud_Password.height           = 20
+$Vcloud_Password.mask             = "*"
+$Vcloud_Password.location         = New-Object System.Drawing.Point(123,79)
+$Vcloud_Password.Font             = New-Object System.Drawing.Font('Microsoft Sans Serif',10)
 
 $CreateButton                    = New-Object system.Windows.Forms.Button
 $CreateButton.text               = "Create"
@@ -162,8 +164,8 @@ $NonInteractive.height           = 20
 $NonInteractive.location         = New-Object System.Drawing.Point(180,321)
 $NonInteractive.Font             = New-Object System.Drawing.Font('Microsoft Sans Serif',10)
 
-$NucGroup.controls.AddRange(@($Nuc_UsernameLabel,$Nuc_Username,$Nuc_PasswordLabel,$MaskedTextBox1,$Nuc_Autologon))
-$VcloudGroup.controls.AddRange(@($Vcloud_UrlLabel,$Vcloud_Url,$Vcloud_UsernameLabel,$Vcloud_Username,$Vcloud_PasswordLabel,$MaskedTextBox2))
+$NucGroup.controls.AddRange(@($Nuc_UsernameLabel,$Nuc_Username,$Nuc_PasswordLabel,$Nuc_Password,$Nuc_Autologon))
+$VcloudGroup.controls.AddRange(@($Vcloud_UrlLabel,$Vcloud_Url,$Vcloud_UsernameLabel,$Vcloud_Username,$Vcloud_PasswordLabel,$Vcloud_Password))
 $ConfigUI.controls.AddRange(@($CreateButton,$CancelButton,$NucGroup,$VcloudGroup,$SiteTokenLabel,$SiteToken,$IgnoreWarnings,$IgnoreErrors,$NonInteractive))
 
 $SiteToken.BringToFront()
