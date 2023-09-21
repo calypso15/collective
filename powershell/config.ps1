@@ -185,42 +185,48 @@ function ShowDialog($FilePath)
     $CreateButton.Add_Click(
     {
         $result = [ordered]@{}
+
+        $valid = $true
         
         if ($Vcloud_Url.Text -eq "") {
             $Vcloud_Url.BackColor = [System.Drawing.Color]::LightPink
-            return
+            $valid = $false
         } else {
-            $Vcloud_Url.BackColor = [System.Windows.Forms.Control]::DefaultBackColor
+            $Vcloud_Url.BackColor = [System.Windows.Forms.Control]::Control
         }
 
         if ($Vcloud_Username.Text -eq "") {
             $Vcloud_Username.BackColor = [System.Drawing.Color]::LightPink
-            return
+            $valid = $false
         } else {
-            $Vcloud_Username.BackColor = [System.Windows.Forms.Control]::DefaultBackColor
+            $Vcloud_Username.BackColor = [System.Windows.Forms.Control]::Control
         }
 
         if ($Vcloud_Password.Text -eq "") {
             $Vcloud_Password.BackColor = [System.Drawing.Color]::LightPink
-            return
+            $valid = $false
         } else {
-            $Vcloud_Password.BackColor = [System.Windows.Forms.Control]::DefaultBackColor
+            $Vcloud_Password.BackColor = [System.Windows.Forms.Control]::Control
         }
 
         if ($Nuc_Autologon.Checked -eq $true) {
             if ($Nuc_Username.Text -eq "") {
                 $Nuc_Username.BackColor = [System.Drawing.Color]::LightPink
-                return
+                $valid = $false
             } else {
-                $Nuc_Username.BackColor = [System.Windows.Forms.Control]::DefaultBackColor
+                $Nuc_Username.BackColor = [System.Windows.Forms.Control]::Control
             }
 
             if ($Nuc_Password.Text -eq "") {
                 $Nuc_Password.BackColor = [System.Drawing.Color]::LightPink
-                return
+                $valid = $false
             } else {
-                $Nuc_Password.BackColor = [System.Windows.Forms.Control]::DefaultBackColor
+                $Nuc_Password.BackColor = [System.Windows.Forms.Control]::Control
             }
+        }
+
+        if (!($valid)) {
+            return
         }
 
         Write-Host("Attempting to create '$FilePath'.")
