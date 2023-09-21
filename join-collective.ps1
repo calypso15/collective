@@ -23,7 +23,7 @@ if ($PathError)
     Write-Host("Returned $result")
     Pop-Location
 
-    if ($result == "Cancel") {
+    if ($result -eq [System.Windows.Forms.DialogResult]::Cancel) {
         throw 'User canceled confg file creation, aborting.'
     }
 }
