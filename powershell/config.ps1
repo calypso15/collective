@@ -184,29 +184,27 @@ function ShowDialog($FilePath)
 
     $CreateButton.Add_Click(
     {
-        Write-Host("Attempting to create '$FilePath'.")
-
         $result = [ordered]@{}
         
         if ($Vcloud_Url.Text -eq "") {
             $Vcloud_Url.BackColor = [System.Drawing.Color]::LightPink
             return
         } else {
-            $Vcloud_Url.BackColor = [System.Drawing.Color]::Empty
+            $Vcloud_Url.BackColor = [System.Windows.Forms.Control]::DefaultBackColor
         }
 
         if ($Vcloud_Username.Text -eq "") {
             $Vcloud_Username.BackColor = [System.Drawing.Color]::LightPink
             return
         } else {
-            $Vcloud_Username.BackColor = [System.Drawing.Color]::Empty
+            $Vcloud_Username.BackColor = [System.Windows.Forms.Control]::DefaultBackColor
         }
 
         if ($Vcloud_Password.Text -eq "") {
             $Vcloud_Password.BackColor = [System.Drawing.Color]::LightPink
             return
         } else {
-            $Vcloud_Password.BackColor = [System.Drawing.Color]::Empty
+            $Vcloud_Password.BackColor = [System.Windows.Forms.Control]::DefaultBackColor
         }
 
         if ($Nuc_Autologon.Checked -eq $true) {
@@ -214,16 +212,18 @@ function ShowDialog($FilePath)
                 $Nuc_Username.BackColor = [System.Drawing.Color]::LightPink
                 return
             } else {
-                $Nuc_Username.BackColor = [System.Drawing.Color]::Empty
+                $Nuc_Username.BackColor = [System.Windows.Forms.Control]::DefaultBackColor
             }
 
             if ($Nuc_Password.Text -eq "") {
                 $Nuc_Password.BackColor = [System.Drawing.Color]::LightPink
                 return
             } else {
-                $Nuc_Password.BackColor = [System.Drawing.Color]::Empty
+                $Nuc_Password.BackColor = [System.Windows.Forms.Control]::DefaultBackColor
             }
         }
+
+        Write-Host("Attempting to create '$FilePath'.")
 
         $result["Vcloud"] = [ordered]@{}
         $result["Vcloud"]["Url"] = $Vcloud_Url.Text
