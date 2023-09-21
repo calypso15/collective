@@ -189,10 +189,10 @@ function ShowDialog($FilePath)
         $result = [ordered]@{}
         
         if ($Vcloud_Url.Text -eq "") {
-            $Vcloud_Url.BackColor = [System.Windows.Forms.Color]::Red
+            $Vcloud_Url.BackColor = [System.Drawing.Color]::Red
             return
         } else {
-            $Vcloud_Url.BackColor = [System.Windows.Forms.Color]::Empty
+            $Vcloud_Url.BackColor = [System.Drawing.Color]::Empty
         }
 
         $result["Vcloud"] = [ordered]@{}
