@@ -189,10 +189,40 @@ function ShowDialog($FilePath)
         $result = [ordered]@{}
         
         if ($Vcloud_Url.Text -eq "") {
-            $Vcloud_Url.BackColor = [System.Drawing.Color]::Red
+            $Vcloud_Url.BackColor = [System.Drawing.Color]::LightPink
             return
         } else {
             $Vcloud_Url.BackColor = [System.Drawing.Color]::Empty
+        }
+
+        if ($Vcloud_Username.Text -eq "") {
+            $Vcloud_Username.BackColor = [System.Drawing.Color]::LightPink
+            return
+        } else {
+            $Vcloud_Username.BackColor = [System.Drawing.Color]::Empty
+        }
+
+        if ($Vcloud_Password.Text -eq "") {
+            $Vcloud_Password.BackColor = [System.Drawing.Color]::LightPink
+            return
+        } else {
+            $Vcloud_Password.BackColor = [System.Drawing.Color]::Empty
+        }
+
+        if ($Nuc_Autologon.Checked -eq $true) {
+            if ($Nuc_Username.Text -eq "") {
+                $Nuc_Username.BackColor = [System.Drawing.Color]::LightPink
+                return
+            } else {
+                $Nuc_Username.BackColor = [System.Drawing.Color]::Empty
+            }
+
+            if ($Nuc_Password.Text -eq "") {
+                $Nuc_Password.BackColor = [System.Drawing.Color]::LightPink
+                return
+            } else {
+                $Nuc_Password.BackColor = [System.Drawing.Color]::Empty
+            }
         }
 
         $result["Vcloud"] = [ordered]@{}
