@@ -97,9 +97,9 @@ function ShowDialog($FilePath)
     $Vcloud_LinkLabel                = New-Object system.Windows.Forms.LinkLabel
     $Vcloud_LinkLabel.text           = "Click here to copy the URL for a Google Doc containing setup information. Open in an S1-linked browser."
     $Vcloud_LinkLabel.AutoSize       = $true
-    $Vcloud_LinkLabel.height         = 10
+    $Vcloud_LinkLabel.MaximumSize    = New-Object System.Drawing.Size(280,0)
     $Vcloud_LinkLabel.location       = New-Object System.Drawing.Point(15,110)
-    $Vcloud_LinkLabel.Font           = New-Object System.Drawing.Font('Microsoft Sans Serif',10)
+    $Vcloud_LinkLabel.Font           = New-Object System.Drawing.Font('Microsoft Sans Serif',8)
     $Vcloud_LinkLabel.LinkArea       = New-Object System.Windows.Forms.LinkArea(0, 10);
 
     $CreateButton                    = New-Object system.Windows.Forms.Button
