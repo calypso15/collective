@@ -18,8 +18,7 @@ if ($PathError)
 
     Write-Host("Config file '$ConfigFile' not found, attempting to create it.")
     Push-Location $HOME/Documents/collective/powershell
-    . "config.ps1"
-
+    . ".\config.ps1"
     $result = ShowDialog($ConfigFile)
     Write-Host("Returned $result")
     Pop-Location
