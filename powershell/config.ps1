@@ -109,13 +109,13 @@ function ShowDialog($FilePath)
     $CancelButton.Font               = New-Object System.Drawing.Font('Microsoft Sans Serif',10)
 
     $VcloudGroup                     = New-Object system.Windows.Forms.Groupbox
-    $VcloudGroup.height              = 110
+    $VcloudGroup.height              = 113
     $VcloudGroup.width               = 306
     $VcloudGroup.text                = "VCloud"
     $VcloudGroup.location            = New-Object System.Drawing.Point(13,18)
 
     $NucGroup                        = New-Object system.Windows.Forms.Groupbox
-    $NucGroup.height                 = 110
+    $NucGroup.height                 = 107
     $NucGroup.width                  = 306
     $NucGroup.text                   = "NUC"
     $NucGroup.location               = New-Object System.Drawing.Point(13,146)

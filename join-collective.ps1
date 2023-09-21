@@ -22,6 +22,10 @@ if ($PathError)
     $result = ShowDialog($ConfigFile)
     Write-Host("Returned $result")
     Pop-Location
+
+    if ($result == [System.Windows.Forms.DialogResult]::Cancel) {
+        throw 'User canceled confg file creation, aborting.'
+    }
 }
 
 
