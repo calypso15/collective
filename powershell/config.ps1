@@ -174,12 +174,12 @@ $ConfigUI.AcceptButton = $CreateButton
 $ConfigUI.CancelButton = $CancelButton
 
 $CreateButton.Add_Click({ createConfig })
-$CancelButton.Add_Click({ $ConfigUI.DialogResult = DialogResult.Cancel })
+$CancelButton.Add_Click({ $ConfigUI.DialogResult = [System.Windows.Forms.DialogResult]::Cancel })
 
 #region Logic 
 function createConfig
 {
-    $ConfigUI.DialogResult = DialogResult.OK
+    $ConfigUI.DialogResult = [System.Windows.Forms.DialogResult]::OK
 }
 
 [void]$ConfigUI.ShowDialog()
