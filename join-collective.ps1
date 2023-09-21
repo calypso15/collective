@@ -20,11 +20,10 @@ if ($PathError)
     Push-Location $HOME/Documents/collective/powershell
     . ".\config.ps1"
     $result = ShowDialog($ConfigFile)
-    Write-Host("Returned $result")
     Pop-Location
 
     if ($result -eq [System.Windows.Forms.DialogResult]::Cancel) {
-        throw 'User canceled confg file creation, aborting.'
+        throw 'User canceled config file creation, aborting.'
     }
 }
 
