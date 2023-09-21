@@ -179,6 +179,7 @@ function ShowDialog($FilePath)
         $result["Windows"]["EnableAutologon"] = $Nuc_Autologon.Checked
         $result["Windows"]["Username"] = $Nuc_Username.Text
         $result["Windows"]["Password"] = $Nuc_Password.Text
+        $result["Vcloud"] = @{}
         $result["Vcloud"]["Username"] = $Vcloud_Username.Text
         $result["Vcloud"]["Password"] = $Vcloud_Password.Text
         $result["Vcloud"]["Url"] = $Vcloud_Url.Text
