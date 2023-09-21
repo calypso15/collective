@@ -170,16 +170,16 @@ function ShowDialog($FilePath)
     {
         Write-Host("Attempting to create '$FilePath'.")
 
-        $result = @{}
+        $result = [ordered]@{}
         $result["SiteToken"] = $SiteToken.Text
         $result["IgnoreWarnings"] = $IgnoreWarnings.Checked
         $result["IgnoreErrors"] = $IgnoreErrors.Checked
         $result["NonInteractive"] = $NonInteractive.Checked
-        $result["Windows"] = @{}
+        $result["Windows"] = [ordered]@{}
         $result["Windows"]["EnableAutologon"] = $Nuc_Autologon.Checked
         $result["Windows"]["Username"] = $Nuc_Username.Text
         $result["Windows"]["Password"] = $Nuc_Password.Text
-        $result["Vcloud"] = @{}
+        $result["Vcloud"] = [ordered]@{}
         $result["Vcloud"]["Username"] = $Vcloud_Username.Text
         $result["Vcloud"]["Password"] = $Vcloud_Password.Text
         $result["Vcloud"]["Url"] = $Vcloud_Url.Text
