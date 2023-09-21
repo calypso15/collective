@@ -1,15 +1,5 @@
-$ConfigFile = $null
-
-function CreateConfig
-{
-    Write-Host("Attempting to create '$ConfigFile'.")
-    $ConfigUI.DialogResult = [System.Windows.Forms.DialogResult]::OK
-}
-
 function ShowDialog($FilePath)
 {
-    $ConfigFile = $FilePath
-
     Add-Type -AssemblyName System.Windows.Forms
     [System.Windows.Forms.Application]::EnableVisualStyles()
 
@@ -176,7 +166,27 @@ function ShowDialog($FilePath)
     $ConfigUI.AcceptButton = $CreateButton
     $ConfigUI.CancelButton = $CancelButton
 
-    $CreateButton.Add_Click({ CreateConfig })
+    $CreateButton.Add_Click(
+    {
+        Write-Host("Attempting to create '$FilePath'.")
+
+        $result = @{}
+        $result["SiteToken"] = $SiteToken.Text
+        $result["IgnoreWarnings"] = $IgnoreWarnings.Checked
+        $result["IgnoreErrors"] = $IgnoreErrors.Checked
+        $result["NonInteractive"] = $NonInteractive.Checked
+        $result["Windows"] = @{}
+        $result["Windows"]["EnableAutologon"] = $Nuc_Autologon.Checked
+        $result["Windows"]["Username"] = $Nuc_Username.Text
+        $result["Windows"]["Password"] = $Nuc_Password.Text
+        $result["Vcloud"]["Username"] = $Vcloud_Username.Text
+        $result["Vcloud"]["Password"] = $Vcloud_Password.Text
+        $result["Vcloud"]["Url"] = $Vcloud_Url.Text
+
+        ConvertTo-Json -Depth 5 -InputObject $result | Out-File $FilePath
+        $ConfigUI.DialogResult = [System.Windows.Forms.DialogResult]::OK
+    })
+
     $CancelButton.Add_Click({ $ConfigUI.DialogResult = [System.Windows.Forms.DialogResult]::Cancel })
 
     return $ConfigUI.ShowDialog()
