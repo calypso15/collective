@@ -106,14 +106,14 @@ function ShowDialog($FilePath)
     $CreateButton.text               = "Create"
     $CreateButton.width              = 60
     $CreateButton.height             = 30
-    $CreateButton.location           = New-Object System.Drawing.Point(104,379)
+    $CreateButton.location           = New-Object System.Drawing.Point(104,409)
     $CreateButton.Font               = New-Object System.Drawing.Font('Microsoft Sans Serif',10)
 
     $CancelButton                    = New-Object system.Windows.Forms.Button
     $CancelButton.text               = "Cancel"
     $CancelButton.width              = 60
     $CancelButton.height             = 30
-    $CancelButton.location           = New-Object System.Drawing.Point(173,379)
+    $CancelButton.location           = New-Object System.Drawing.Point(173,409)
     $CancelButton.Font               = New-Object System.Drawing.Font('Microsoft Sans Serif',10)
 
     $VcloudGroup                     = New-Object system.Windows.Forms.Groupbox
