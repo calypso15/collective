@@ -94,13 +94,6 @@ function ShowDialog($FilePath)
     $Vcloud_Password.location         = New-Object System.Drawing.Point(123,80)
     $Vcloud_Password.Font             = New-Object System.Drawing.Font('Microsoft Sans Serif',10)
 
-    TextBox1.Text = "Hello, Select Me";
-    TextBox1.ReadOnly = true;
-    TextBox1.BorderStyle = 0;
-    TextBox1.BackColor = this.BackColor;
-    TextBox1.TabStop = false;
-    TextBox1.Multiline = True; // If needed
-
     $Vcloud_LinkLabel                = New-Object system.Windows.Forms.LinkLabel
     $Vcloud_LinkLabel.text           = "Click here to copy the URL for a Google Doc containing setup information. Open in an S1-linked browser."
     $Vcloud_LinkLabel.AutoSize       = $true
@@ -187,7 +180,6 @@ function ShowDialog($FilePath)
 
     $Vcloud_LinkLabel.Add_Click(
     {
-        $Vcloud_LinkLabel.Visited = $true
         Set-Clipboard -Value "https://docs.google.com/document/d/1uY1_32poau6uA7Xnki9bB3DxGm5j5C26_FAKG0HbOV4/"
     })
 
