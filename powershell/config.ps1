@@ -192,21 +192,21 @@ function ShowDialog($FilePath)
             $Vcloud_Url.BackColor = [System.Drawing.Color]::LightPink
             $valid = $false
         } else {
-            $Vcloud_Url.BackColor = [System.Windows.Forms.Control]::Control
+            $Vcloud_Url.UseVisualStyleBackColor = $true
         }
 
         if ($Vcloud_Username.Text -eq "") {
             $Vcloud_Username.BackColor = [System.Drawing.Color]::LightPink
             $valid = $false
         } else {
-            $Vcloud_Username.BackColor = [System.Windows.Forms.Control]::Control
+            $Vcloud_Username.UseVisualStyleBackColor = $true
         }
 
         if ($Vcloud_Password.Text -eq "") {
             $Vcloud_Password.BackColor = [System.Drawing.Color]::LightPink
             $valid = $false
         } else {
-            $Vcloud_Password.BackColor = [System.Windows.Forms.Control]::Control
+            $Vcloud_Password.UseVisualStyleBackColor = $true
         }
 
         if ($Nuc_Autologon.Checked -eq $true) {
@@ -214,14 +214,14 @@ function ShowDialog($FilePath)
                 $Nuc_Username.BackColor = [System.Drawing.Color]::LightPink
                 $valid = $false
             } else {
-                $Nuc_Username.BackColor = [System.Windows.Forms.Control]::Control
+                $Nuc_Username.UseVisualStyleBackColor = $true
             }
 
             if ($Nuc_Password.Text -eq "") {
                 $Nuc_Password.BackColor = [System.Drawing.Color]::LightPink
                 $valid = $false
             } else {
-                $Nuc_Password.BackColor = [System.Windows.Forms.Control]::Control
+                $Nuc_Password.UseVisualStyleBackColor = $true
             }
         }
 
