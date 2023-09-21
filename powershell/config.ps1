@@ -21,14 +21,14 @@ $Nuc_UsernameLabel.text          = "Username"
 $Nuc_UsernameLabel.AutoSize      = $true
 $Nuc_UsernameLabel.width         = 25
 $Nuc_UsernameLabel.height        = 10
-$Nuc_UsernameLabel.location      = New-Object System.Drawing.Point(15,22)
+$Nuc_UsernameLabel.location      = New-Object System.Drawing.Point(15,20)
 $Nuc_UsernameLabel.Font          = New-Object System.Drawing.Font('Microsoft Sans Serif',10)
 
 $Nuc_Username                    = New-Object system.Windows.Forms.TextBox
 $Nuc_Username.multiline          = $false
 $Nuc_Username.width              = 162
 $Nuc_Username.height             = 20
-$Nuc_Username.location           = New-Object System.Drawing.Point(123,19)
+$Nuc_Username.location           = New-Object System.Drawing.Point(123,20)
 $Nuc_Username.Font               = New-Object System.Drawing.Font('Microsoft Sans Serif',10)
 
 $Nuc_PasswordLabel               = New-Object system.Windows.Forms.Label
@@ -36,7 +36,7 @@ $Nuc_PasswordLabel.text          = "Password"
 $Nuc_PasswordLabel.AutoSize      = $true
 $Nuc_PasswordLabel.width         = 25
 $Nuc_PasswordLabel.height        = 10
-$Nuc_PasswordLabel.location      = New-Object System.Drawing.Point(15,51)
+$Nuc_PasswordLabel.location      = New-Object System.Drawing.Point(15,50)
 $Nuc_PasswordLabel.Font          = New-Object System.Drawing.Font('Microsoft Sans Serif',10)
 
 $Nuc_Password                  = New-Object system.Windows.Forms.TextBox
@@ -44,7 +44,7 @@ $Nuc_Password.multiline        = $false
 $Nuc_Password.width            = 162
 $Nuc_Password.height           = 20
 $Nuc_Password.passwordchar     = "*"
-$Nuc_Password.location         = New-Object System.Drawing.Point(123,48)
+$Nuc_Password.location         = New-Object System.Drawing.Point(123,50)
 $Nuc_Password.Font             = New-Object System.Drawing.Font('Microsoft Sans Serif',10)
 
 $Nuc_Autologon                   = New-Object system.Windows.Forms.CheckBox
@@ -52,7 +52,7 @@ $Nuc_Autologon.text              = "Autologon?"
 $Nuc_Autologon.AutoSize          = $true
 $Nuc_Autologon.width             = 95
 $Nuc_Autologon.height            = 20
-$Nuc_Autologon.location          = New-Object System.Drawing.Point(15,79)
+$Nuc_Autologon.location          = New-Object System.Drawing.Point(15,80)
 $Nuc_Autologon.Font              = New-Object System.Drawing.Font('Microsoft Sans Serif',10)
 
 $Vcloud_UrlLabel                 = New-Object system.Windows.Forms.Label
@@ -60,14 +60,14 @@ $Vcloud_UrlLabel.text            = "Url"
 $Vcloud_UrlLabel.AutoSize        = $true
 $Vcloud_UrlLabel.width           = 25
 $Vcloud_UrlLabel.height          = 10
-$Vcloud_UrlLabel.location        = New-Object System.Drawing.Point(17,23)
+$Vcloud_UrlLabel.location        = New-Object System.Drawing.Point(15,20)
 $Vcloud_UrlLabel.Font            = New-Object System.Drawing.Font('Microsoft Sans Serif',10)
 
 $Vcloud_Url                      = New-Object system.Windows.Forms.TextBox
 $Vcloud_Url.multiline            = $false
 $Vcloud_Url.width                = 162
 $Vcloud_Url.height               = 20
-$Vcloud_Url.location             = New-Object System.Drawing.Point(123,19)
+$Vcloud_Url.location             = New-Object System.Drawing.Point(123,20)
 $Vcloud_Url.Font                 = New-Object System.Drawing.Font('Microsoft Sans Serif',10)
 
 $Vcloud_UsernameLabel            = New-Object system.Windows.Forms.Label
@@ -75,14 +75,14 @@ $Vcloud_UsernameLabel.text       = "Username"
 $Vcloud_UsernameLabel.AutoSize   = $true
 $Vcloud_UsernameLabel.width      = 25
 $Vcloud_UsernameLabel.height     = 10
-$Vcloud_UsernameLabel.location   = New-Object System.Drawing.Point(17,52)
+$Vcloud_UsernameLabel.location   = New-Object System.Drawing.Point(15,50)
 $Vcloud_UsernameLabel.Font       = New-Object System.Drawing.Font('Microsoft Sans Serif',10)
 
 $Vcloud_Username                 = New-Object system.Windows.Forms.TextBox
 $Vcloud_Username.multiline       = $false
 $Vcloud_Username.width           = 162
 $Vcloud_Username.height          = 20
-$Vcloud_Username.location        = New-Object System.Drawing.Point(123,49)
+$Vcloud_Username.location        = New-Object System.Drawing.Point(123,50)
 $Vcloud_Username.Font            = New-Object System.Drawing.Font('Microsoft Sans Serif',10)
 
 $Vcloud_PasswordLabel            = New-Object system.Windows.Forms.Label
@@ -90,7 +90,7 @@ $Vcloud_PasswordLabel.text       = "Password"
 $Vcloud_PasswordLabel.AutoSize   = $true
 $Vcloud_PasswordLabel.width      = 25
 $Vcloud_PasswordLabel.height     = 10
-$Vcloud_PasswordLabel.location   = New-Object System.Drawing.Point(17,82)
+$Vcloud_PasswordLabel.location   = New-Object System.Drawing.Point(15,80)
 $Vcloud_PasswordLabel.Font       = New-Object System.Drawing.Font('Microsoft Sans Serif',10)
 
 $Vcloud_Password                  = New-Object system.Windows.Forms.TextBox
@@ -98,7 +98,7 @@ $Vcloud_Password.multiline        = $false
 $Vcloud_Password.width            = 162
 $Vcloud_Password.height           = 20
 $Vcloud_Password.passwordchar     = "*"
-$Vcloud_Password.location         = New-Object System.Drawing.Point(123,79)
+$Vcloud_Password.location         = New-Object System.Drawing.Point(123,80)
 $Vcloud_Password.Font             = New-Object System.Drawing.Font('Microsoft Sans Serif',10)
 
 $CreateButton                    = New-Object system.Windows.Forms.Button
@@ -170,8 +170,16 @@ $ConfigUI.controls.AddRange(@($CreateButton,$CancelButton,$NucGroup,$VcloudGroup
 
 $SiteToken.BringToFront()
 
-#region Logic 
+$ConfigUI.AcceptButton = $CreateButton
+$ConfigUI.CancelButton = $CancelButton
 
-#endregion
+$CreateButton.Add_Click({ createConfig })
+$CancelButton.Add_Click({ $ConfigUI.DialogResult = DialogResult.Cancel })
+
+#region Logic 
+function createConfig
+{
+    $ConfigUI.DialogResult = DialogResult.OK
+}
 
 [void]$ConfigUI.ShowDialog()
