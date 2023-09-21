@@ -135,7 +135,6 @@ function ShowDialog($FilePath)
     $SiteTokenLabel.height           = 10
     $SiteTokenLabel.location         = New-Object System.Drawing.Point(16,302)
     $SiteTokenLabel.Font             = New-Object System.Drawing.Font('Microsoft Sans Serif',10)
-    $SiteTokenLabel.BackColor        = [System.Drawing.ColorTranslator]::FromHtml("transparent")
 
     $SiteToken                       = New-Object system.Windows.Forms.TextBox
     $SiteToken.multiline             = $false
@@ -188,15 +187,31 @@ function ShowDialog($FilePath)
         Write-Host("Attempting to create '$FilePath'.")
 
         $result = [ordered]@{}
+        
+        if ($Vcloud_Url.Text -eq "") {
+            $Vcloud_Url.BackColor = [System.Windows.Forms.Color]::Red
+            return
+        } else {
+            $Vcloud_Url.BackColor = [System.Windows.Forms.Color]::Empty
+        }
+
         $result["Vcloud"] = [ordered]@{}
+        $result["Vcloud"]["Url"] = $Vcloud_Url.Text
         $result["Vcloud"]["Username"] = $Vcloud_Username.Text
         $result["Vcloud"]["Password"] = $Vcloud_Password.Text
-        $result["Vcloud"]["Url"] = $Vcloud_Url.Text
+
         $result["Windows"] = [ordered]@{}
         $result["Windows"]["EnableAutologon"] = $Nuc_Autologon.Checked
         $result["Windows"]["Username"] = $Nuc_Username.Text
         $result["Windows"]["Password"] = $Nuc_Password.Text
-        $result["SiteToken"] = $SiteToken.Text
+
+        if ($SiteToken.Text.Trim() -eq "") {
+            $result["SiteToken"] = $null
+        }
+        else {
+            $result["SiteToken"] = $SiteToken.Text
+        }
+
         $result["IgnoreWarnings"] = $IgnoreWarnings.Checked
         $result["IgnoreErrors"] = $IgnoreErrors.Checked
         $result["NonInteractive"] = $NonInteractive.Checked
