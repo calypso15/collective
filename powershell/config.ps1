@@ -108,17 +108,17 @@ function ShowDialog($FilePath)
     $CancelButton.location           = New-Object System.Drawing.Point(173,379)
     $CancelButton.Font               = New-Object System.Drawing.Font('Microsoft Sans Serif',10)
 
-    $NucGroup                        = New-Object system.Windows.Forms.Groupbox
-    $NucGroup.height                 = 107
-    $NucGroup.width                  = 306
-    $NucGroup.text                   = "NUC"
-    $NucGroup.location               = New-Object System.Drawing.Point(13,18)
-
     $VcloudGroup                     = New-Object system.Windows.Forms.Groupbox
-    $VcloudGroup.height              = 113
+    $VcloudGroup.height              = 110
     $VcloudGroup.width               = 306
     $VcloudGroup.text                = "VCloud"
-    $VcloudGroup.location            = New-Object System.Drawing.Point(13,146)
+    $VcloudGroup.location            = New-Object System.Drawing.Point(13,18)
+
+    $NucGroup                        = New-Object system.Windows.Forms.Groupbox
+    $NucGroup.height                 = 110
+    $NucGroup.width                  = 306
+    $NucGroup.text                   = "NUC"
+    $NucGroup.location               = New-Object System.Drawing.Point(13,146)
 
     $SiteTokenLabel                  = New-Object system.Windows.Forms.Label
     $SiteTokenLabel.text             = "Site Token"
@@ -171,18 +171,18 @@ function ShowDialog($FilePath)
         Write-Host("Attempting to create '$FilePath'.")
 
         $result = [ordered]@{}
-        $result["SiteToken"] = $SiteToken.Text
-        $result["IgnoreWarnings"] = $IgnoreWarnings.Checked
-        $result["IgnoreErrors"] = $IgnoreErrors.Checked
-        $result["NonInteractive"] = $NonInteractive.Checked
-        $result["Windows"] = [ordered]@{}
-        $result["Windows"]["EnableAutologon"] = $Nuc_Autologon.Checked
-        $result["Windows"]["Username"] = $Nuc_Username.Text
-        $result["Windows"]["Password"] = $Nuc_Password.Text
         $result["Vcloud"] = [ordered]@{}
         $result["Vcloud"]["Username"] = $Vcloud_Username.Text
         $result["Vcloud"]["Password"] = $Vcloud_Password.Text
         $result["Vcloud"]["Url"] = $Vcloud_Url.Text
+        $result["Windows"] = [ordered]@{}
+        $result["Windows"]["EnableAutologon"] = $Nuc_Autologon.Checked
+        $result["Windows"]["Username"] = $Nuc_Username.Text
+        $result["Windows"]["Password"] = $Nuc_Password.Text
+        $result["SiteToken"] = $SiteToken.Text
+        $result["IgnoreWarnings"] = $IgnoreWarnings.Checked
+        $result["IgnoreErrors"] = $IgnoreErrors.Checked
+        $result["NonInteractive"] = $NonInteractive.Checked
 
         ConvertTo-Json -Depth 5 -InputObject $result | Out-File $FilePath
         $ConfigUI.DialogResult = [System.Windows.Forms.DialogResult]::OK
