@@ -4,7 +4,7 @@ function ShowDialog($FilePath)
     [System.Windows.Forms.Application]::EnableVisualStyles()
 
     $ConfigUI                        = New-Object system.Windows.Forms.Form
-    $ConfigUI.ClientSize             = New-Object System.Drawing.Point(330,424)
+    $ConfigUI.ClientSize             = New-Object System.Drawing.Point(330,454)
     $ConfigUI.text                   = "Config Creator"
     $ConfigUI.FormBorderStyle        = 'FixedDialog'
     $ConfigUI.TopMost                = $true
@@ -94,6 +94,21 @@ function ShowDialog($FilePath)
     $Vcloud_Password.location         = New-Object System.Drawing.Point(123,80)
     $Vcloud_Password.Font             = New-Object System.Drawing.Font('Microsoft Sans Serif',10)
 
+    TextBox1.Text = "Hello, Select Me";
+    TextBox1.ReadOnly = true;
+    TextBox1.BorderStyle = 0;
+    TextBox1.BackColor = this.BackColor;
+    TextBox1.TabStop = false;
+    TextBox1.Multiline = True; // If needed
+
+    $Vcloud_LinkLabel                = New-Object system.Windows.Forms.LinkLabel
+    $Vcloud_LinkLabel.text           = "Click here to copy the URL for a Google Doc containing setup information. Open in an S1-linked browser."
+    $Vcloud_LinkLabel.AutoSize       = $true
+    $Vcloud_LinkLabel.height         = 10
+    $Vcloud_LinkLabel.location       = New-Object System.Drawing.Point(15,110)
+    $Vcloud_LinkLabel.Font           = New-Object System.Drawing.Font('Microsoft Sans Serif',10)
+    $Vcloud_LinkLabel.LinkArea       = New-Object System.Windows.Forms.LinkArea(0, 10);
+
     $CreateButton                    = New-Object system.Windows.Forms.Button
     $CreateButton.text               = "Create"
     $CreateButton.width              = 60
@@ -109,7 +124,7 @@ function ShowDialog($FilePath)
     $CancelButton.Font               = New-Object System.Drawing.Font('Microsoft Sans Serif',10)
 
     $VcloudGroup                     = New-Object system.Windows.Forms.Groupbox
-    $VcloudGroup.height              = 113
+    $VcloudGroup.height              = 143
     $VcloudGroup.width               = 306
     $VcloudGroup.text                = "VCloud"
     $VcloudGroup.location            = New-Object System.Drawing.Point(13,18)
@@ -118,14 +133,14 @@ function ShowDialog($FilePath)
     $NucGroup.height                 = 107
     $NucGroup.width                  = 306
     $NucGroup.text                   = "NUC"
-    $NucGroup.location               = New-Object System.Drawing.Point(13,146)
+    $NucGroup.location               = New-Object System.Drawing.Point(13,176)
 
     $SiteTokenLabel                  = New-Object system.Windows.Forms.Label
     $SiteTokenLabel.text             = "Site Token"
     $SiteTokenLabel.AutoSize         = $true
     $SiteTokenLabel.width            = 25
     $SiteTokenLabel.height           = 10
-    $SiteTokenLabel.location         = New-Object System.Drawing.Point(16,272)
+    $SiteTokenLabel.location         = New-Object System.Drawing.Point(16,302)
     $SiteTokenLabel.Font             = New-Object System.Drawing.Font('Microsoft Sans Serif',10)
     $SiteTokenLabel.BackColor        = [System.Drawing.ColorTranslator]::FromHtml("transparent")
 
@@ -133,38 +148,48 @@ function ShowDialog($FilePath)
     $SiteToken.multiline             = $false
     $SiteToken.width                 = 298
     $SiteToken.height                = 20
-    $SiteToken.location              = New-Object System.Drawing.Point(16,290)
+    $SiteToken.location              = New-Object System.Drawing.Point(16,320)
     $SiteToken.Font                  = New-Object System.Drawing.Font('Microsoft Sans Serif',10)
 
     $IgnoreWarnings                  = New-Object system.Windows.Forms.CheckBox
     $IgnoreWarnings.text             = "Ignore Warnings?"
     $IgnoreWarnings.AutoSize         = $true
     $IgnoreWarnings.height           = 20
-    $IgnoreWarnings.location         = New-Object System.Drawing.Point(28,321)
+    $IgnoreWarnings.location         = New-Object System.Drawing.Point(28,351)
     $IgnoreWarnings.Font             = New-Object System.Drawing.Font('Microsoft Sans Serif',10)
 
     $IgnoreErrors                    = New-Object system.Windows.Forms.CheckBox
     $IgnoreErrors.text               = "Ignore Errors?"
     $IgnoreErrors.AutoSize           = $true
     $IgnoreErrors.height             = 20
-    $IgnoreErrors.location           = New-Object System.Drawing.Point(28,346)
+    $IgnoreErrors.location           = New-Object System.Drawing.Point(28,376)
     $IgnoreErrors.Font               = New-Object System.Drawing.Font('Microsoft Sans Serif',10)
 
     $NonInteractive                  = New-Object system.Windows.Forms.CheckBox
     $NonInteractive.text             = "Non-Interactive?"
     $NonInteractive.AutoSize         = $true
     $NonInteractive.height           = 20
-    $NonInteractive.location         = New-Object System.Drawing.Point(180,321)
+    $NonInteractive.location         = New-Object System.Drawing.Point(180,351)
     $NonInteractive.Font             = New-Object System.Drawing.Font('Microsoft Sans Serif',10)
 
+    $VcloudGroup.controls.AddRange(@($Vcloud_UrlLabel,$Vcloud_Url,$Vcloud_UsernameLabel,$Vcloud_Username,$Vcloud_PasswordLabel,$Vcloud_Password,$Vcloud_LinkLabel))
     $NucGroup.controls.AddRange(@($Nuc_UsernameLabel,$Nuc_Username,$Nuc_PasswordLabel,$Nuc_Password,$Nuc_Autologon))
-    $VcloudGroup.controls.AddRange(@($Vcloud_UrlLabel,$Vcloud_Url,$Vcloud_UsernameLabel,$Vcloud_Username,$Vcloud_PasswordLabel,$Vcloud_Password))
     $ConfigUI.controls.AddRange(@($CreateButton,$CancelButton,$NucGroup,$VcloudGroup,$SiteTokenLabel,$SiteToken,$IgnoreWarnings,$IgnoreErrors,$NonInteractive))
 
     $SiteToken.BringToFront()
 
     $ConfigUI.AcceptButton = $CreateButton
     $ConfigUI.CancelButton = $CancelButton
+
+    $Vcloud_Url.Text = "https://vcloud.sentinelone.skytapdns.com/"
+    $Vcloud_Username.Text = "sentinel"
+    $IgnoreWarnings.Checked = $true
+
+    $Vcloud_LinkLabel.Add_Click(
+    {
+        $Vcloud_LinkLabel.Visited = $true
+        Set-Clipboard -Value "https://docs.google.com/document/d/1uY1_32poau6uA7Xnki9bB3DxGm5j5C26_FAKG0HbOV4/"
+    })
 
     $CreateButton.Add_Click(
     {
