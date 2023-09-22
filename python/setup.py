@@ -224,7 +224,9 @@ def main():
                 vmx_path = file["vmx_path"]
                 print(f"Setting up {vmx_path}...")
                 setup_vm(vmx_path)
-                install_agent(vmx_path, sitetoken)
+
+                if sitetoken != None:
+                    install_agent(vmx_path, sitetoken)
 
             print(f"Preparing to take snapshots...")
             for file in sorted(install_list, key=lambda x: x["order"]):
