@@ -7,6 +7,16 @@ param (
 
 Start-Transcript -Path $HOME/Documents/log-powershell.txt -Append
 
+$ConfigFile = Resolve-Path $ConfigFile -ErrorAction SilentlyContinue -ErrorVariable PathError
+
+if ($PathError)
+{
+    if (-not($ConfigFile))
+    {
+        $ConfigFile = $PathError[0].TargetObject
+    }
+}
+
 # Update environment variables
 $env:Path = [System.Environment]::GetEnvironmentVariable("Path","Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path","User")
 
@@ -52,21 +62,11 @@ if (-Not (Test-Path -Path $HOME/Documents/collective)) {
     }
 }
 
-Write-Host('Updating collective repo...')
-git pull
-
-$ConfigFile = Resolve-Path $ConfigFile -ErrorAction SilentlyContinue -ErrorVariable PathError
-
-if ($PathError)
-{
-    if (-not($ConfigFile))
-    {
-        $ConfigFile = $PathError[0].TargetObject
-    }
-}
-
 # Update repo
 Set-Location $HOME/Documents/collective
+
+Write-Host('Updating collective repo...')
+git pull
 
 # Check for updated script
 if(Compare-Object -ReferenceObject $(Get-Content $HOME/Documents/collective/join-collective.ps1) -DifferenceObject $(Get-Content $MyInvocation.MyCommand.Path)) {
