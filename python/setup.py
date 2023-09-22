@@ -65,9 +65,7 @@ def main():
     global config
     config = {}
     config_file = args.config_file
-    print(f"Trying to open json file: {config_file}")
     with open(config_file) as f:
-        print(f.read())
         config = json.loads(f.read())
 
     system_requirements.check_requirements(

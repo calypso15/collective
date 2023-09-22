@@ -252,7 +252,7 @@ function ShowDialog($FilePath)
         $result["IgnoreErrors"] = $IgnoreErrors.Checked
         $result["NonInteractive"] = $NonInteractive.Checked
 
-        ConvertTo-Json -Depth 5 -InputObject $result | Out-File $FilePath -Encoding "utf8"
+        ConvertTo-Json -Depth 5 -InputObject $result | Set-Content $FilePath
         $ConfigUI.DialogResult = [System.Windows.Forms.DialogResult]::OK
     })
 
