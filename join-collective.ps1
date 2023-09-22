@@ -58,14 +58,6 @@ Set-Location $HOME/Documents/collective
 Write-Host('Updating collective repo...')
 git pull
 
-# Check for updated script
-if(Compare-Object -ReferenceObject $(Get-Content $HOME/Documents/collective/join-collective.ps1) -DifferenceObject $(Get-Content $MyInvocation.MyCommand.Path)) {
-    Write-Host('Updating collective bootstrap script...')
-    Copy-Item $HOME/Documents/collective/join-collective.ps1 $MyInvocation.MyCommand.Path
-    &$MyInvocation.MyCommand.Path -ConfigFile "$ConfigFile"
-    exit
-}
-
 $ConfigFile = Resolve-Path $ConfigFile -ErrorAction SilentlyContinue -ErrorVariable PathError
 
 if ($PathError)
@@ -74,7 +66,18 @@ if ($PathError)
     {
         $ConfigFile = $PathError[0].TargetObject
     }
+}
 
+# Check for updated script
+if(Compare-Object -ReferenceObject $(Get-Content $HOME/Documents/collective/join-collective.ps1) -DifferenceObject $(Get-Content $MyInvocation.MyCommand.Path)) {
+    Write-Host('Updating collective bootstrap script...')
+    Copy-Item $HOME/Documents/collective/join-collective.ps1 $MyInvocation.MyCommand.Path
+    &$MyInvocation.MyCommand.Path -ConfigFile "$ConfigFile"
+    exit
+}
+
+if ($PathError)
+{
     Write-Host("Config file '$ConfigFile' not found, attempting to create it.")
     Push-Location $HOME/Documents/collective/powershell
     . ".\config.ps1"
