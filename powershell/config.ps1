@@ -166,7 +166,7 @@ function ShowDialog($FilePath)
 
     $VcloudGroup.controls.AddRange(@($Vcloud_UrlLabel,$Vcloud_Url,$Vcloud_UsernameLabel,$Vcloud_Username,$Vcloud_PasswordLabel,$Vcloud_Password,$Vcloud_LinkLabel))
     $NucGroup.controls.AddRange(@($Nuc_UsernameLabel,$Nuc_Username,$Nuc_PasswordLabel,$Nuc_Password,$Nuc_Autologon))
-    $ConfigUI.controls.AddRange(@($CreateButton,$CancelButton,$NucGroup,$VcloudGroup,$SiteTokenLabel,$SiteToken,$IgnoreWarnings,$IgnoreErrors,$NonInteractive))
+    $ConfigUI.controls.AddRange(@($VcloudGroup,$NucGroup,$SiteTokenLabel,$SiteToken,$IgnoreWarnings,$IgnoreErrors,$NonInteractive,$CreateButton,$CancelButton))
 
     $SiteToken.BringToFront()
 
