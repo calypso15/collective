@@ -7,27 +7,6 @@ param (
 
 Start-Transcript -Path $HOME/Documents/log-powershell.txt -Append
 
-$ConfigFile = Resolve-Path $ConfigFile -ErrorAction SilentlyContinue -ErrorVariable PathError
-
-if ($PathError)
-{
-    if (-not($ConfigFile))
-    {
-        $ConfigFile = $PathError[0].TargetObject
-    }
-
-    Write-Host("Config file '$ConfigFile' not found, attempting to create it.")
-    Push-Location $HOME/Documents/collective/powershell
-    . ".\config.ps1"
-    $result = ShowDialog($ConfigFile)
-    Pop-Location
-
-    if ($result -eq [System.Windows.Forms.DialogResult]::Cancel) {
-        throw 'User canceled config file creation, aborting.'
-    }
-}
-
-
 # Update environment variables
 $env:Path = [System.Environment]::GetEnvironmentVariable("Path","Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path","User")
 
@@ -85,6 +64,26 @@ if(Compare-Object -ReferenceObject $(Get-Content $HOME/Documents/collective/join
     Copy-Item $HOME/Documents/collective/join-collective.ps1 $MyInvocation.MyCommand.Path
     &$MyInvocation.MyCommand.Path -ConfigFile "$ConfigFile"
     exit
+}
+
+$ConfigFile = Resolve-Path $ConfigFile -ErrorAction SilentlyContinue -ErrorVariable PathError
+
+if ($PathError)
+{
+    if (-not($ConfigFile))
+    {
+        $ConfigFile = $PathError[0].TargetObject
+    }
+
+    Write-Host("Config file '$ConfigFile' not found, attempting to create it.")
+    Push-Location $HOME/Documents/collective/powershell
+    . ".\config.ps1"
+    $result = ShowDialog($ConfigFile)
+    Pop-Location
+
+    if ($result -eq [System.Windows.Forms.DialogResult]::Cancel) {
+        throw 'User canceled config file creation, aborting.'
+    }
 }
 
 Set-Location $HOME/Documents/collective/powershell
