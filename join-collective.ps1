@@ -52,9 +52,6 @@ if (-Not (Test-Path -Path $HOME/Documents/collective)) {
     }
 }
 
-# Update repo
-Set-Location $HOME/Documents/collective
-
 Write-Host('Updating collective repo...')
 git pull
 
@@ -67,6 +64,9 @@ if ($PathError)
         $ConfigFile = $PathError[0].TargetObject
     }
 }
+
+# Update repo
+Set-Location $HOME/Documents/collective
 
 # Check for updated script
 if(Compare-Object -ReferenceObject $(Get-Content $HOME/Documents/collective/join-collective.ps1) -DifferenceObject $(Get-Content $MyInvocation.MyCommand.Path)) {
