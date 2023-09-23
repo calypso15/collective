@@ -16,7 +16,6 @@ function ShowDialog($FilePath)
     $Vcloud_LinkLabel.location       = New-Object System.Drawing.Point(15,20)
     $Vcloud_LinkLabel.Font           = New-Object System.Drawing.Font('Microsoft Sans Serif',8)
     $Vcloud_LinkLabel.LinkArea       = New-Object System.Windows.Forms.LinkArea(0, 10);
-    $Vcloud_LinkArea                 = $Vcloud_LinkLabel.LinkArea
 
     $Vcloud_UrlLabel                 = New-Object system.Windows.Forms.Label
     $Vcloud_UrlLabel.text            = "Url"
@@ -180,7 +179,7 @@ function ShowDialog($FilePath)
 
     $Vcloud_LinkLabel.Add_Click(
     {
-        $Vcloud_LinkArea.LinkVisited = $true
+        $Vcloud_LinkLabel.LinkVisited = $true
         Set-Clipboard -Value "https://docs.google.com/document/d/1uY1_32poau6uA7Xnki9bB3DxGm5j5C26_FAKG0HbOV4/"
     })
 
