@@ -9,19 +9,27 @@ function ShowDialog($FilePath)
     $ConfigUI.FormBorderStyle        = 'FixedDialog'
     $ConfigUI.TopMost                = $true
 
+    $Vcloud_LinkLabel                = New-Object system.Windows.Forms.LinkLabel
+    $Vcloud_LinkLabel.text           = "Click here to copy the URL for a Google Doc containing setup information. Open in an S1-linked browser."
+    $Vcloud_LinkLabel.AutoSize       = $true
+    $Vcloud_LinkLabel.MaximumSize    = New-Object System.Drawing.Size(280,0)
+    $Vcloud_LinkLabel.location       = New-Object System.Drawing.Point(15,20)
+    $Vcloud_LinkLabel.Font           = New-Object System.Drawing.Font('Microsoft Sans Serif',8)
+    $Vcloud_LinkLabel.LinkArea       = New-Object System.Windows.Forms.LinkArea(0, 10);
+
     $Vcloud_UrlLabel                 = New-Object system.Windows.Forms.Label
     $Vcloud_UrlLabel.text            = "Url"
     $Vcloud_UrlLabel.AutoSize        = $true
     $Vcloud_UrlLabel.width           = 25
     $Vcloud_UrlLabel.height          = 10
-    $Vcloud_UrlLabel.location        = New-Object System.Drawing.Point(15,20)
+    $Vcloud_UrlLabel.location        = New-Object System.Drawing.Point(15,50)
     $Vcloud_UrlLabel.Font            = New-Object System.Drawing.Font('Microsoft Sans Serif',10)
 
     $Vcloud_Url                      = New-Object system.Windows.Forms.TextBox
     $Vcloud_Url.multiline            = $false
     $Vcloud_Url.width                = 162
     $Vcloud_Url.height               = 20
-    $Vcloud_Url.location             = New-Object System.Drawing.Point(123,20)
+    $Vcloud_Url.location             = New-Object System.Drawing.Point(123,50)
     $Vcloud_Url.Font                 = New-Object System.Drawing.Font('Microsoft Sans Serif',10)
 
     $Vcloud_UsernameLabel            = New-Object system.Windows.Forms.Label
@@ -29,14 +37,14 @@ function ShowDialog($FilePath)
     $Vcloud_UsernameLabel.AutoSize   = $true
     $Vcloud_UsernameLabel.width      = 25
     $Vcloud_UsernameLabel.height     = 10
-    $Vcloud_UsernameLabel.location   = New-Object System.Drawing.Point(15,50)
+    $Vcloud_UsernameLabel.location   = New-Object System.Drawing.Point(15,80)
     $Vcloud_UsernameLabel.Font       = New-Object System.Drawing.Font('Microsoft Sans Serif',10)
 
     $Vcloud_Username                 = New-Object system.Windows.Forms.TextBox
     $Vcloud_Username.multiline       = $false
     $Vcloud_Username.width           = 162
     $Vcloud_Username.height          = 20
-    $Vcloud_Username.location        = New-Object System.Drawing.Point(123,50)
+    $Vcloud_Username.location        = New-Object System.Drawing.Point(123,80)
     $Vcloud_Username.Font            = New-Object System.Drawing.Font('Microsoft Sans Serif',10)
 
     $Vcloud_PasswordLabel            = New-Object system.Windows.Forms.Label
@@ -44,7 +52,7 @@ function ShowDialog($FilePath)
     $Vcloud_PasswordLabel.AutoSize   = $true
     $Vcloud_PasswordLabel.width      = 25
     $Vcloud_PasswordLabel.height     = 10
-    $Vcloud_PasswordLabel.location   = New-Object System.Drawing.Point(15,80)
+    $Vcloud_PasswordLabel.location   = New-Object System.Drawing.Point(15,110)
     $Vcloud_PasswordLabel.Font       = New-Object System.Drawing.Font('Microsoft Sans Serif',10)
 
     $Vcloud_Password                  = New-Object system.Windows.Forms.TextBox
@@ -52,16 +60,8 @@ function ShowDialog($FilePath)
     $Vcloud_Password.width            = 162
     $Vcloud_Password.height           = 20
     $Vcloud_Password.passwordchar     = "*"
-    $Vcloud_Password.location         = New-Object System.Drawing.Point(123,80)
+    $Vcloud_Password.location         = New-Object System.Drawing.Point(123,110)
     $Vcloud_Password.Font             = New-Object System.Drawing.Font('Microsoft Sans Serif',10)
-
-    $Vcloud_LinkLabel                = New-Object system.Windows.Forms.LinkLabel
-    $Vcloud_LinkLabel.text           = "Click here to copy the URL for a Google Doc containing setup information. Open in an S1-linked browser."
-    $Vcloud_LinkLabel.AutoSize       = $true
-    $Vcloud_LinkLabel.MaximumSize    = New-Object System.Drawing.Size(280,0)
-    $Vcloud_LinkLabel.location       = New-Object System.Drawing.Point(15,110)
-    $Vcloud_LinkLabel.Font           = New-Object System.Drawing.Font('Microsoft Sans Serif',8)
-    $Vcloud_LinkLabel.LinkArea       = New-Object System.Windows.Forms.LinkArea(0, 10);
 
     $Nuc_UsernameLabel               = New-Object system.Windows.Forms.Label
     $Nuc_UsernameLabel.text          = "Username"
