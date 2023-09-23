@@ -22,14 +22,14 @@ function ShowDialog($FilePath)
     $Vcloud_UrlLabel.AutoSize        = $true
     $Vcloud_UrlLabel.width           = 25
     $Vcloud_UrlLabel.height          = 10
-    $Vcloud_UrlLabel.location        = New-Object System.Drawing.Point(15,60)
+    $Vcloud_UrlLabel.location        = New-Object System.Drawing.Point(15,65)
     $Vcloud_UrlLabel.Font            = New-Object System.Drawing.Font('Microsoft Sans Serif',10)
 
     $Vcloud_Url                      = New-Object system.Windows.Forms.TextBox
     $Vcloud_Url.multiline            = $false
     $Vcloud_Url.width                = 162
     $Vcloud_Url.height               = 20
-    $Vcloud_Url.location             = New-Object System.Drawing.Point(123,60)
+    $Vcloud_Url.location             = New-Object System.Drawing.Point(123,65)
     $Vcloud_Url.Font                 = New-Object System.Drawing.Font('Microsoft Sans Serif',10)
 
     $Vcloud_UsernameLabel            = New-Object system.Windows.Forms.Label
@@ -37,14 +37,14 @@ function ShowDialog($FilePath)
     $Vcloud_UsernameLabel.AutoSize   = $true
     $Vcloud_UsernameLabel.width      = 25
     $Vcloud_UsernameLabel.height     = 10
-    $Vcloud_UsernameLabel.location   = New-Object System.Drawing.Point(15,90)
+    $Vcloud_UsernameLabel.location   = New-Object System.Drawing.Point(15,95)
     $Vcloud_UsernameLabel.Font       = New-Object System.Drawing.Font('Microsoft Sans Serif',10)
 
     $Vcloud_Username                 = New-Object system.Windows.Forms.TextBox
     $Vcloud_Username.multiline       = $false
     $Vcloud_Username.width           = 162
     $Vcloud_Username.height          = 20
-    $Vcloud_Username.location        = New-Object System.Drawing.Point(123,90)
+    $Vcloud_Username.location        = New-Object System.Drawing.Point(123,95)
     $Vcloud_Username.Font            = New-Object System.Drawing.Font('Microsoft Sans Serif',10)
 
     $Vcloud_PasswordLabel            = New-Object system.Windows.Forms.Label
@@ -52,7 +52,7 @@ function ShowDialog($FilePath)
     $Vcloud_PasswordLabel.AutoSize   = $true
     $Vcloud_PasswordLabel.width      = 25
     $Vcloud_PasswordLabel.height     = 10
-    $Vcloud_PasswordLabel.location   = New-Object System.Drawing.Point(15,120)
+    $Vcloud_PasswordLabel.location   = New-Object System.Drawing.Point(15,125)
     $Vcloud_PasswordLabel.Font       = New-Object System.Drawing.Font('Microsoft Sans Serif',10)
 
     $Vcloud_Password                  = New-Object system.Windows.Forms.TextBox
@@ -60,7 +60,7 @@ function ShowDialog($FilePath)
     $Vcloud_Password.width            = 162
     $Vcloud_Password.height           = 20
     $Vcloud_Password.passwordchar     = "*"
-    $Vcloud_Password.location         = New-Object System.Drawing.Point(123,120)
+    $Vcloud_Password.location         = New-Object System.Drawing.Point(123,125)
     $Vcloud_Password.Font             = New-Object System.Drawing.Font('Microsoft Sans Serif',10)
 
     $Nuc_UsernameLabel               = New-Object system.Windows.Forms.Label
@@ -103,7 +103,7 @@ function ShowDialog($FilePath)
     $Nuc_Autologon.Font              = New-Object System.Drawing.Font('Microsoft Sans Serif',10)
 
     $VcloudGroup                     = New-Object system.Windows.Forms.Groupbox
-    $VcloudGroup.height              = 155
+    $VcloudGroup.height              = 160
     $VcloudGroup.width               = 306
     $VcloudGroup.text                = "VCloud Server"
     $VcloudGroup.location            = New-Object System.Drawing.Point(13,18)
