@@ -16,9 +16,7 @@ function ShowDialog($FilePath)
     $Vcloud_LinkLabel.location       = New-Object System.Drawing.Point(15,20)
     $Vcloud_LinkLabel.Font           = New-Object System.Drawing.Font('Microsoft Sans Serif',8)
     $Vcloud_LinkLabel.LinkArea       = New-Object System.Windows.Forms.LinkArea(0, 10);
-
-    $CopyTooltip                     = New-Object System.Windows.Forms.ToolTip
-    $CopyTooltip.SetToolTip($Vcloud_LinkLabel, "")
+    $Vcloud_LinkArea                 = $Vcloud_LinkLabel.LinkArea
 
     $Vcloud_UrlLabel                 = New-Object system.Windows.Forms.Label
     $Vcloud_UrlLabel.text            = "Url"
@@ -108,13 +106,13 @@ function ShowDialog($FilePath)
     $VcloudGroup                     = New-Object system.Windows.Forms.Groupbox
     $VcloudGroup.height              = 143
     $VcloudGroup.width               = 306
-    $VcloudGroup.text                = "VCloud"
+    $VcloudGroup.text                = "VCloud Server"
     $VcloudGroup.location            = New-Object System.Drawing.Point(13,18)
 
     $NucGroup                        = New-Object system.Windows.Forms.Groupbox
     $NucGroup.height                 = 107
     $NucGroup.width                  = 306
-    $NucGroup.text                   = "NUC"
+    $NucGroup.text                   = "Windows (NUC)"
     $NucGroup.location               = New-Object System.Drawing.Point(13,176)
 
     $SiteTokenLabel                  = New-Object system.Windows.Forms.Label
@@ -182,7 +180,7 @@ function ShowDialog($FilePath)
 
     $Vcloud_LinkLabel.Add_Click(
     {
-        $CopyTooltip.SetToolTip($Vcloud_LinkLabel, "Copied!")
+        $Vcloud_LinkArea.LinkVisited = $true
         Set-Clipboard -Value "https://docs.google.com/document/d/1uY1_32poau6uA7Xnki9bB3DxGm5j5C26_FAKG0HbOV4/"
     })
 
