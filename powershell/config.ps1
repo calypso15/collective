@@ -17,6 +17,9 @@ function ShowDialog($FilePath)
     $Vcloud_LinkLabel.Font           = New-Object System.Drawing.Font('Microsoft Sans Serif',8)
     $Vcloud_LinkLabel.LinkArea       = New-Object System.Windows.Forms.LinkArea(0, 10);
 
+    $CopyTooltip                     = New-Object System.Windows.Forms.ToolTip
+    $CopyTooltip.SetToolTip($Vcloud_LinkLabel, "")
+
     $Vcloud_UrlLabel                 = New-Object system.Windows.Forms.Label
     $Vcloud_UrlLabel.text            = "Url"
     $Vcloud_UrlLabel.AutoSize        = $true
@@ -179,6 +182,7 @@ function ShowDialog($FilePath)
 
     $Vcloud_LinkLabel.Add_Click(
     {
+        $CopyTooltip.SetToolTip($Vcloud_LinkLabel, "")
         Set-Clipboard -Value "https://docs.google.com/document/d/1uY1_32poau6uA7Xnki9bB3DxGm5j5C26_FAKG0HbOV4/"
     })
 
