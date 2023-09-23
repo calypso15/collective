@@ -103,7 +103,7 @@ function ShowDialog($FilePath)
     $Nuc_Autologon.Font              = New-Object System.Drawing.Font('Microsoft Sans Serif',10)
 
     $VcloudGroup                     = New-Object system.Windows.Forms.Groupbox
-    $VcloudGroup.height              = 143
+    $VcloudGroup.height              = 155
     $VcloudGroup.width               = 306
     $VcloudGroup.text                = "VCloud Server"
     $VcloudGroup.location            = New-Object System.Drawing.Point(13,18)
@@ -112,7 +112,7 @@ function ShowDialog($FilePath)
     $NucGroup.height                 = 107
     $NucGroup.width                  = 306
     $NucGroup.text                   = "Windows (NUC)"
-    $NucGroup.location               = New-Object System.Drawing.Point(13,176)
+    $NucGroup.location               = New-Object System.Drawing.Point(13,190)
 
     $SiteTokenLabel                  = New-Object system.Windows.Forms.Label
     $SiteTokenLabel.text             = "Site Token"
@@ -140,7 +140,7 @@ function ShowDialog($FilePath)
     $IgnoreErrors.text               = "Ignore Errors?"
     $IgnoreErrors.AutoSize           = $true
     $IgnoreErrors.height             = 20
-    $IgnoreErrors.location           = New-Object System.Drawing.Point(28,390)
+    $IgnoreErrors.location           = New-Object System.Drawing.Point(28,386)
     $IgnoreErrors.Font               = New-Object System.Drawing.Font('Microsoft Sans Serif',10)
 
     $NonInteractive                  = New-Object system.Windows.Forms.CheckBox
