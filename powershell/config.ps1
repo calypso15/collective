@@ -182,7 +182,7 @@ function ShowDialog($FilePath)
 
     $Vcloud_LinkLabel.Add_Click(
     {
-        $CopyTooltip.SetToolTip($Vcloud_LinkLabel, "")
+        $CopyTooltip.SetToolTip($Vcloud_LinkLabel, "Copied!")
         Set-Clipboard -Value "https://docs.google.com/document/d/1uY1_32poau6uA7Xnki9bB3DxGm5j5C26_FAKG0HbOV4/"
     })
 
