@@ -10,7 +10,7 @@ function ShowDialog($FilePath)
     $ConfigUI.TopMost                = $true
 
     $Vcloud_LinkLabel                = New-Object system.Windows.Forms.LinkLabel
-    $Vcloud_LinkLabel.text           = "Click here to copy the URL for a Google Doc containing setup information. Open in an S1-linked browser."
+    $Vcloud_LinkLabel.text           = "Click here to copy the URL for a Google Doc containing setup information. Open in an S1-linked browser. These values MUST match the values in the Google Doc!"
     $Vcloud_LinkLabel.AutoSize       = $true
     $Vcloud_LinkLabel.MaximumSize    = New-Object System.Drawing.Size(280,0)
     $Vcloud_LinkLabel.location       = New-Object System.Drawing.Point(15,20)
