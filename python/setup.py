@@ -275,6 +275,7 @@ def main():
 
 def is_vmware_running():
     for process in psutil.process_iter(attrs=["pid", "name"]):
+        print(process.info["name"])
         if "vmware.exe" in process.info["name"]:
             return True
     return False
