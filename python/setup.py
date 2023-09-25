@@ -231,6 +231,7 @@ def main():
 
             threads = []
             print(f"Taking snapshots...")
+            sys.stdout.flush()
             time.sleep(30)
             for file in sorted(install_list, key=lambda x: x["order"]):
                 vmx_path = file["vmx_path"]
@@ -364,9 +365,12 @@ def install_agent(vmx_path, site_token):
 
 def create_snapshot(vmx_path, name):
     print(f"Creating snapshot 'Baseline' for {vmx_path}...")
+    sys.stdout.flush()
     wait_until_online(vmx_path)
+    sys.stdout.flush()
     subprocess.run(f'"{VMRUN_PATH}" -T ws snapshot "{vmx_path}" "{name}"', shell=True)
     print(f"...Finished creating snapshot 'Baseline' for {vmx_path}.")
+    sys.stdout.flush()
 
 
 def restart(vmx_path):
