@@ -231,9 +231,13 @@ def main():
 
             threads = []
             print(f"Taking snapshots...")
+            time.sleep(30)
             for file in sorted(install_list, key=lambda x: x["order"]):
                 vmx_path = file["vmx_path"]
-                thread = threading.Thread(target=create_snapshot, args=(vmx_path,))
+                thread = threading.Thread(
+                    target=create_snapshot,
+                    args=(vmx_path, "Baseline"),
+                )
                 threads.append(thread)
                 thread.start()
 
