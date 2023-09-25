@@ -94,7 +94,7 @@ def main():
 
         ready = messagebox.askokcancel(
             title="Starting VMWare Workstation",
-            message="VMWare should now be running. Please configure your license and then click OK.",
+            message="VMWare should now be running. Please add a license or start the free trial, then click OK.",
             icon=messagebox.INFO,
             parent=root,
         )
