@@ -300,7 +300,7 @@ def install_vm(ova_path, vmx_path):
     )
 
     print(f"...Starting {vmx_path}.")
-    subprocess.run(f'"{VMRUN_PATH}" -T ws start "{vmx_path}"', shell=True)
+    subprocess.run(f'"{VMRUN_PATH}" -T ws start "{vmx_path}" nogui', shell=True)
 
     ip = get_ip_address(vmx_path)
     print(f"...Machine is up with IP address {ip}.")
