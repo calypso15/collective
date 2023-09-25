@@ -1,11 +1,10 @@
 import argparse
 import atexit
-import ctypes
 import datetime
 import glob
 import json
 import os
-import platform
+import psutil
 import requests
 import shutil
 import subprocess
@@ -88,7 +87,7 @@ def main():
     interactive = not config.get("NonInteractive", False)
     sitetoken = config.get("SiteToken", None)
 
-    if interactive and not check_vmwareworkstation():
+    if interactive and not is_workstation_licensed():
         print("Starting VMWare Workstation...")
         subprocess.Popen(VMWARE_PATH, shell=True)
 
@@ -103,7 +102,7 @@ def main():
             print("Aborting setup at user request.")
             sys.exit()
 
-    if not check_vmwareworkstation():
+    if not is_workstation_licensed():
         print(
             "VMware Workstation license not found, aborting. Please open VMware Workstation and add a license or start the free trial, then re-run setup."
         )
@@ -260,7 +259,6 @@ def main():
             print(f"...Snapshots finished.")
 
             print(f"Setup is complete!")
-
         else:
             print("Skipping environment setup, there was a problem with the manifest.")
     else:
@@ -268,8 +266,18 @@ def main():
 
     root.destroy()
 
+    if not is_vmware_running():
+        os.system(VMWARE_PATH)
 
-def check_vmwareworkstation():
+
+def is_vmware_running():
+    for process in psutil.process_iter(attrs=["pid", "name"]):
+        if "vmware.exe" in process.info["name"]:
+            return True
+    return False
+
+
+def is_workstation_licensed():
     with winreg.OpenKey(
         winreg.HKEY_LOCAL_MACHINE,
         r"SOFTWARE\WOW6432Node\VMware, Inc.\VMware Workstation",
