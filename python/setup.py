@@ -91,7 +91,7 @@ def main():
     print("Starting VMWare...")
     subprocess.Popen(VMWARE_PATH, shell=True)
 
-    if interactive:
+    if interactive and not check_vmwareworkstation():
         ready = messagebox.askokcancel(
             title="Starting VMWare Workstation",
             message="VMWare should now be running. Please configure your license and then click OK.",
@@ -100,8 +100,12 @@ def main():
         )
 
         if not ready:
-            print("Aborting setup.")
+            print("Aborting setup at user request.")
             sys.exit()
+
+    if not check_vmwareworkstation():
+        print("VMware Workstation license not found, aborting.")
+        sys.exit()
 
     make_dir(os.path.join(HOME, "Desktop/Malware"))
     print("Excluding malware directory from Windows Defender.")
@@ -261,6 +265,30 @@ def main():
         print("Skipping environment setup at user request.")
 
     root.destroy()
+
+
+def check_vmwareworkstation():
+    with winreg.OpenKey(
+        winreg.HKEY_LOCAL_MACHINE,
+        r"SOFTWARE\WOW6432Node\VMware, Inc.\VMware Workstation",
+    ) as key:
+        index = 0
+        while True:
+            try:
+                subkey_name = winreg.EnumKey(key, index)
+
+                if "License" in subkey_name:
+                    with winreg.OpenKey(key, subkey_name) as sub:
+                        try:
+                            winreg.QueryValueEx(sub, "Serial")
+                            return True
+                        except FileNotFoundError:
+                            pass
+                index += 1
+            except OSError:
+                break
+
+    return False
 
 
 def install_vm(ova_path, vmx_path):
