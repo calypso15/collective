@@ -89,7 +89,7 @@ def main():
     sitetoken = config.get("SiteToken", None)
 
     if interactive and not check_vmwareworkstation():
-        print("Starting VMWare...")
+        print("Starting VMWare Workstation...")
         subprocess.Popen(VMWARE_PATH, shell=True)
 
         ready = messagebox.askokcancel(
@@ -105,7 +105,7 @@ def main():
 
     if not check_vmwareworkstation():
         print(
-            "VMware Workstation license not found, aborting. Please start VMware Workstation and add a license key or start the free trial."
+            "VMware Workstation license not found, aborting. Please open VMware Workstation and add a license or start the free trial, then re-run setup."
         )
         sys.exit()
 
