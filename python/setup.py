@@ -104,7 +104,9 @@ def main():
             sys.exit()
 
     if not check_vmwareworkstation():
-        print("VMware Workstation license not found, aborting.")
+        print(
+            "VMware Workstation license not found, aborting. Please start VMware Workstation and add a license key or start the free trial."
+        )
         sys.exit()
 
     make_dir(os.path.join(HOME, "Desktop/Malware"))
