@@ -266,8 +266,8 @@ def main():
 
     root.destroy()
 
-    print(f"Starting VMware Workstation...")
     if not is_vmware_running():
+        print(f"Starting VMware Workstation...")
         subprocess.Popen(VMWARE_PATH, shell=True)
 
     print(f"Setup is complete!")
