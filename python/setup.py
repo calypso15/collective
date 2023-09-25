@@ -229,12 +229,18 @@ def main():
                 if sitetoken != None:
                     install_agent(vmx_path, sitetoken)
 
+            print(f"Waiting for agent installation to finish...")
+            time.sleep(30)
+
             threads = []
             print(f"Taking snapshots...")
             sys.stdout.flush()
-            time.sleep(30)
             for file in sorted(install_list, key=lambda x: x["order"]):
                 vmx_path = file["vmx_path"]
+                print(f"Creating snapshot 'Baseline' for {vmx_path}...")
+                wait_until_online(vmx_path)
+                print(f"...Starting snapshot...")
+                sys.stdout.flush()
                 thread = threading.Thread(
                     target=create_snapshot,
                     args=(vmx_path, "Baseline"),
@@ -364,10 +370,6 @@ def install_agent(vmx_path, site_token):
 
 
 def create_snapshot(vmx_path, name):
-    print(f"Creating snapshot 'Baseline' for {vmx_path}...")
-    sys.stdout.flush()
-    wait_until_online(vmx_path)
-    sys.stdout.flush()
     subprocess.run(f'"{VMRUN_PATH}" -T ws snapshot "{vmx_path}" "{name}"', shell=True)
     print(f"...Finished creating snapshot 'Baseline' for {vmx_path}.")
     sys.stdout.flush()
