@@ -102,7 +102,9 @@ def main():
             print("Aborting setup at user request.")
             sys.exit()
 
-    if not is_workstation_licensed():
+    if is_workstation_licensed():
+        print("VMware Workstation license found.")
+    else:
         print(
             "VMware Workstation license not found, aborting. Please open VMware Workstation and add a license or start the free trial, then re-run setup."
         )
