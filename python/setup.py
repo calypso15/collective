@@ -88,10 +88,10 @@ def main():
     interactive = not config.get("NonInteractive", False)
     sitetoken = config.get("SiteToken", None)
 
-    print("Starting VMWare...")
-    subprocess.Popen(VMWARE_PATH, shell=True)
-
     if interactive and not check_vmwareworkstation():
+        print("Starting VMWare...")
+        subprocess.Popen(VMWARE_PATH, shell=True)
+
         ready = messagebox.askokcancel(
             title="Starting VMWare Workstation",
             message="VMWare should now be running. Please configure your license and then click OK.",
