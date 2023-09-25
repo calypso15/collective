@@ -266,9 +266,9 @@ def main():
 
     root.destroy()
 
-    time.sleep(30)
     if not is_vmware_running():
         print(f"Starting VMware Workstation...")
+        time.sleep(5)
         subprocess.Popen(VMWARE_PATH, shell=True)
 
     print(f"Setup is complete!")
@@ -276,7 +276,6 @@ def main():
 
 def is_vmware_running():
     for process in psutil.process_iter(attrs=["pid", "name"]):
-        print(process.info["name"])
         if "vmware.exe" in process.info["name"]:
             return True
     return False
