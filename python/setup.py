@@ -259,8 +259,6 @@ def main():
             for thread in threads:
                 thread.join()
             print(f"...Snapshots finished.")
-
-            print(f"Setup is complete!")
         else:
             print("Skipping environment setup, there was a problem with the manifest.")
     else:
@@ -268,8 +266,11 @@ def main():
 
     root.destroy()
 
+    print(f"Starting VMware Workstation...")
     if not is_vmware_running():
-        os.system(VMWARE_PATH)
+        subprocess.Popen(VMWARE_PATH, shell=True)
+
+    print(f"Setup is complete!")
 
 
 def is_vmware_running():
