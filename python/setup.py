@@ -10,6 +10,7 @@ import requests
 import shutil
 import subprocess
 import sys
+import threading
 import time
 import tkinter
 import traceback
@@ -228,12 +229,20 @@ def main():
                 if sitetoken != None:
                     install_agent(vmx_path, sitetoken)
 
+            threads = []
             print(f"Taking snapshots...")
             for file in sorted(install_list, key=lambda x: x["order"]):
                 vmx_path = file["vmx_path"]
-                print(f"Creating snapshot 'Baseline' for {vmx_path}...")
-                wait_until_online(vmx_path)
-                create_snapshot(vmx_path, "Baseline")
+                thread = threading.Thread(target=create_snapshot, args=(vmx_path,))
+                threads.append(thread)
+                thread.start()
+
+            print(f"Waiting for snapshots to finish...")
+            for thread in threads:
+                thread.join()
+            print(f"...Snapshots finished.")
+
+            print(f"Setup is complete!")
 
         else:
             print("Skipping environment setup, there was a problem with the manifest.")
@@ -350,7 +359,10 @@ def install_agent(vmx_path, site_token):
 
 
 def create_snapshot(vmx_path, name):
-    subprocess.Popen(f'"{VMRUN_PATH}" -T ws snapshot "{vmx_path}" "{name}"', shell=True)
+    print(f"Creating snapshot 'Baseline' for {vmx_path}...")
+    wait_until_online(vmx_path)
+    subprocess.run(f'"{VMRUN_PATH}" -T ws snapshot "{vmx_path}" "{name}"', shell=True)
+    print(f"...Finished creating snapshot 'Baseline' for {vmx_path}.")
 
 
 def restart(vmx_path):
