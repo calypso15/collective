@@ -228,14 +228,11 @@ def main():
                 if sitetoken != None:
                     install_agent(vmx_path, sitetoken)
 
-            print(f"Preparing to take snapshots...")
-            for file in sorted(install_list, key=lambda x: x["order"]):
-                vmx_path = file["vmx_path"]
-                wait_until_online(vmx_path)
-
+            print(f"Taking snapshots...")
             for file in sorted(install_list, key=lambda x: x["order"]):
                 vmx_path = file["vmx_path"]
                 print(f"Creating snapshot 'Baseline' for {vmx_path}...")
+                wait_until_online(vmx_path)
                 create_snapshot(vmx_path, "Baseline")
 
         else:
@@ -353,7 +350,7 @@ def install_agent(vmx_path, site_token):
 
 
 def create_snapshot(vmx_path, name):
-    subprocess.run(f'"{VMRUN_PATH}" -T ws snapshot "{vmx_path}" "{name}"', shell=True)
+    subprocess.Popen(f'"{VMRUN_PATH}" -T ws snapshot "{vmx_path}" "{name}"', shell=True)
 
 
 def restart(vmx_path):
