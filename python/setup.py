@@ -266,6 +266,7 @@ def main():
 
     root.destroy()
 
+    time.sleep(30)
     if not is_vmware_running():
         print(f"Starting VMware Workstation...")
         subprocess.Popen(VMWARE_PATH, shell=True)
