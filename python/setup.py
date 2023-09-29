@@ -8,6 +8,7 @@ import os
 import psutil
 import requests
 import shutil
+import signal
 import subprocess
 import sys
 import threading
@@ -40,10 +41,9 @@ OVFTOOL_PATH = os.path.join(VMWARE_WORKSTATION_DIR, "OVFTool\\ovftool.exe")
 
 
 def main():
-    f = open(os.path.join(DOCUMENTS_DIR, "log-python.txt"), "a")
-
-    print_header(f)
-    atexit.register(print_footer, f)
+    print_header()
+    atexit.register(print_footer)
+    signal.signal(signal.SIGINT, sigint_handler)
 
     parser = argparse.ArgumentParser()
     parser.add_argument("config_file")
@@ -486,7 +486,12 @@ def run_powershell(cmd):
     return completed
 
 
-def print_header(file):
+def sigint_handler():
+    logger.warning("User interrupted, exiting.")
+    sys.exit()
+
+
+def print_header():
     logger.debug("**********************")
     logger.debug("Python transcript start")
     logger.debug("Start time: " + datetime.datetime.today().strftime("%Y%m%d%H%M%S"))
@@ -494,7 +499,7 @@ def print_header(file):
     logger.debug("**********************")
 
 
-def print_footer(file):
+def print_footer():
     logger.debug("**********************")
     logger.debug("Python transcript end")
     logger.debug("End time: " + datetime.datetime.today().strftime("%Y%m%d%H%M%S"))

@@ -69,16 +69,16 @@ def check() -> str:
     if "i7" in test or "i9" in test:
         logger.info("System processor is Intel Core i7 or i9...PASS.")
     else:
-        logger.warn("System processor is Intel Core i7 or i9...WARN.")
-        logger.warn(f"  System reports processor name '{test}'")
+        logger.warning("System processor is Intel Core i7 or i9...WARN.")
+        logger.warning(f"  System reports processor name '{test}'")
         state = state | State.WARN
 
     test = -(get_free_diskspace() // -(2**30))
     if test >= 250:
         logger.info("Disk has at least 250GB of free space...PASS.")
     elif test >= 150:
-        logger.warn("Disk has at least 250GB of free space...WARN!")
-        logger.warn(f"  System reports {test}GB of free space.")
+        logger.warning("Disk has at least 250GB of free space...WARN!")
+        logger.warning(f"  System reports {test}GB of free space.")
         state = state | State.WARN
     else:
         logger.error("Disk has at least 250GB of free space...FAIL!")
@@ -89,8 +89,8 @@ def check() -> str:
     if test >= 64:
         logger.info("System has at least 64GB of memory...PASS.")
     elif test >= 32:
-        logger.warn("System has at least 64GB of memory...WARN.")
-        logger.warn(f"  System reports {test}GB of memory.")
+        logger.warning("System has at least 64GB of memory...WARN.")
+        logger.warning(f"  System reports {test}GB of memory.")
         state = state | State.WARN
     else:
         logger.error("System has at least 64GB of memory...FAIL!")
@@ -108,7 +108,7 @@ def check_requirements(ignore_warnings=False, ignore_errors=False):
         logger.info("This system meets all requirements.")
     elif result == State.WARN:
         if ignore_warnings:
-            logger.warn(
+            logger.warning(
                 "This system may be insufficient, but IgnoreWarnings is set to true."
             )
         else:
@@ -118,7 +118,7 @@ def check_requirements(ignore_warnings=False, ignore_errors=False):
             sys.exit(1)
     elif result == State.FAIL:
         if ignore_errors:
-            logger.warn(
+            logger.warning(
                 "This system does not meet the minimum requirements, but IgnoreErrors is set to true."
             )
         else:
