@@ -486,7 +486,7 @@ def run_powershell(cmd):
     return completed
 
 
-def sigint_handler():
+def sigint_handler(sig, frame):
     logger.warning("User interrupted, exiting.")
     sys.exit()
 
