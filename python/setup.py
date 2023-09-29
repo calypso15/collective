@@ -3,6 +3,7 @@ import atexit
 import datetime
 import glob
 import json
+import logging
 import os
 import psutil
 import requests
@@ -19,23 +20,11 @@ import wmi
 from tkinter import messagebox
 from tkinter import simpledialog
 
+import log_config
 import vcloud_files
 import system_requirements
 
-
-class Tee(object):
-    def __init__(self, *files):
-        self.files = files
-
-    def write(self, obj):
-        for f in self.files:
-            f.write(obj)
-            f.flush()
-
-    def flush(self):
-        for f in self.files:
-            f.flush()
-
+logger = logging.getLogger(__name__)
 
 HOME = os.path.expanduser("~")
 DOCUMENTS_DIR = os.path.join(HOME, "Documents")
@@ -52,8 +41,6 @@ OVFTOOL_PATH = os.path.join(VMWARE_WORKSTATION_DIR, "OVFTool\\ovftool.exe")
 
 def main():
     f = open(os.path.join(DOCUMENTS_DIR, "log-python.txt"), "a")
-    sys.stdout = Tee(sys.stdout, f)
-    sys.stderr = Tee(sys.stderr, f)
 
     print_header(f)
     atexit.register(print_footer, f)
@@ -88,7 +75,7 @@ def main():
     sitetoken = config.get("SiteToken", None)
 
     if interactive and not is_workstation_licensed():
-        print("Starting VMWare Workstation...")
+        logger.info("Starting VMWare Workstation...")
         subprocess.Popen(VMWARE_PATH, shell=True)
 
         ready = messagebox.askokcancel(
@@ -99,19 +86,19 @@ def main():
         )
 
         if not ready:
-            print("Aborting setup at user request.")
+            logger.warning("Aborting setup at user request.")
             sys.exit()
 
     if is_workstation_licensed():
-        print("VMware Workstation license found.")
+        logger.info("VMware Workstation license found.")
     else:
-        print(
+        logger.error(
             "VMware Workstation license not found, aborting. Please open VMware Workstation and add a license or start the free trial, then re-run setup."
         )
         sys.exit()
 
     make_dir(os.path.join(HOME, "Desktop/Malware"))
-    print("Excluding malware directory from Windows Defender.")
+    logger.info("Excluding malware directory from Windows Defender.")
     run_powershell("Set-MpPreference -ExclusionPath $HOME/Desktop/Malware")
 
     global AUTH, VCLOUD_URL
@@ -125,14 +112,14 @@ def main():
         r = requests.get(VCLOUD_URL, auth=AUTH)
         r.raise_for_status()
     except requests.ConnectionError as x:
-        print(traceback.format_exc())
-        print(
+        logger.debug(traceback.format_exc())
+        logger.error(
             f"Unable to connect to {VCLOUD_URL}, exiting. Please contact ryan.ogrady@sentinelone.com for additional support."
         )
         sys.exit()
     except requests.HTTPError as x:
-        print(traceback.format_exc())
-        print(
+        logger.debug(traceback.format_exc())
+        logger.error(
             f"Received HTTP {x.response.status_code}, exiting. Please contact ryan.ogrady@sentinelone.com for additional support."
         )
         sys.exit()
@@ -157,7 +144,7 @@ def main():
                 parent=root,
             )
 
-        print("Configuring vmnet8.")
+        logger.info("Configuring vmnet8.")
         old_lines = []
         with open(os.path.join(VMWARE_DATA_DIR, "vmnetnat.conf"), "r") as f:
             old_lines = f.readlines()
@@ -195,18 +182,18 @@ def main():
 
         if manifest != None:
             if os.path.exists(VM_DIR):
-                print("Stopping VMs...")
+                logger.info("Stopping VMs...")
                 files = glob.glob(os.path.join(VM_DIR, "**/*.vmx"), recursive=True)
                 for file in files:
-                    print(f"...Stopping {file}.")
+                    logger.info(f"...Stopping {file}.")
                     subprocess.run(
                         f'"{VMRUN_PATH}" -T ws stop "{file}" hard', shell=True
                     )
 
-                print("Deleting old VMs.")
+                logger.info("Deleting old VMs.")
                 shutil.rmtree(VM_DIR, ignore_errors=True)
 
-            print("Installing new environment...")
+            logger.info("Installing new environment...")
             make_dir(VM_DIR)
 
             install_list = []
@@ -225,28 +212,28 @@ def main():
             for file in sorted(install_list, key=lambda x: x["order"]):
                 vmx_path = file["vmx_path"]
                 ova_path = file["ova_path"]
-                print(f"Installing {vmx_path}...")
+                logger.info(f"Installing {vmx_path}...")
                 install_vm(ova_path, vmx_path)
 
             for file in sorted(install_list, key=lambda x: x["order"]):
                 vmx_path = file["vmx_path"]
-                print(f"Setting up {vmx_path}...")
+                logger.info(f"Setting up {vmx_path}...")
                 setup_vm(vmx_path)
 
                 if sitetoken != None:
                     install_agent(vmx_path, sitetoken)
 
-            print(f"Waiting for agent installation to finish...")
+            logger.info(f"Waiting for agent installation to finish...")
             time.sleep(30)
 
             threads = []
-            print(f"Taking snapshots...")
+            logger.info(f"Taking snapshots...")
             sys.stdout.flush()
             for file in sorted(install_list, key=lambda x: x["order"]):
                 vmx_path = file["vmx_path"]
-                print(f"Creating snapshot 'Baseline' for {vmx_path}...")
+                logger.info(f"Creating snapshot 'Baseline' for {vmx_path}...")
                 wait_until_online(vmx_path)
-                print(f"...Starting snapshot...")
+                logger.info(f"...Starting snapshot...")
                 sys.stdout.flush()
                 thread = threading.Thread(
                     target=create_snapshot,
@@ -255,23 +242,25 @@ def main():
                 threads.append(thread)
                 thread.start()
 
-            print(f"Waiting for snapshots to finish...")
+            logger.info(f"Waiting for snapshots to finish...")
             for thread in threads:
                 thread.join()
-            print(f"...Snapshots finished.")
+            logger.info(f"...Snapshots finished.")
         else:
-            print("Skipping environment setup, there was a problem with the manifest.")
+            logger.error(
+                "Skipping environment setup, there was a problem with the manifest."
+            )
     else:
-        print("Skipping environment setup at user request.")
+        logger.warning("Skipping environment setup at user request.")
 
     root.destroy()
 
     if not is_vmware_running():
-        print(f"Starting VMware Workstation...")
+        logger.info(f"Starting VMware Workstation...")
         time.sleep(5)
         subprocess.Popen(VMWARE_PATH, shell=True)
 
-    print(f"Setup is complete!")
+    logger.info(f"Setup is complete!")
 
 
 def is_vmware_running():
@@ -306,16 +295,16 @@ def is_workstation_licensed():
 
 
 def install_vm(ova_path, vmx_path):
-    print(f"...Importing {ova_path}.")
+    logger.info(f"...Importing {ova_path}.")
     subprocess.run(
         f'"{OVFTOOL_PATH}" --allowExtraConfig --net:"custom=vmnet8" -o "{ova_path}" "{VM_DIR}"'
     )
 
-    print(f"...Starting {vmx_path}.")
+    logger.info(f"...Starting {vmx_path}.")
     subprocess.run(f'"{VMRUN_PATH}" -T ws start "{vmx_path}" nogui', shell=True)
 
     ip = get_ip_address(vmx_path)
-    print(f"...Machine is up with IP address {ip}.")
+    logger.info(f"...Machine is up with IP address {ip}.")
 
 
 def setup_vm(vmx_path):
@@ -327,7 +316,7 @@ def setup_vm(vmx_path):
 
     if ip in ("192.168.192.10", "192.168.192.20", "192.168.192.21", "192.168.192.22"):
         wait_until_online(vmx_path)
-        print(f"...Re-arming license.")
+        logger.info(f"...Re-arming license.")
         run_script(
             vmx_path=vmx_path,
             username=username,
@@ -342,7 +331,7 @@ def setup_vm(vmx_path):
         identifier = convert_hex_to_base36(identifier)
 
         wait_until_online(vmx_path)
-        print(f"...Renaming Windows VMs with suffix '-{identifier}'.")
+        logger.info(f"...Renaming Windows VMs with suffix '-{identifier}'.")
         run_script(
             vmx_path=vmx_path,
             username=username,
@@ -360,7 +349,7 @@ def setup_vm(vmx_path):
         restart(vmx_path)
         wait_until_online(vmx_path)
 
-        print(f"...Restarting explorer.exe.")
+        logger.info(f"...Restarting explorer.exe.")
         run_script(
             vmx_path=vmx_path,
             username=username,
@@ -369,12 +358,12 @@ def setup_vm(vmx_path):
         )
         restart_required = False
 
-    print(f"...Disabling sound card.")
+    logger.info(f"...Disabling sound card.")
     subprocess.run(
         f'"{VMRUN_PATH}" -T ws disconnectNamedDevice "{vmx_path}" "sound"', shell=True
     )
 
-    print(f"...Disabling shared folders.")
+    logger.info(f"...Disabling shared folders.")
     subprocess.run(
         f'"{VMRUN_PATH}" -T ws disableSharedFolders "{vmx_path}"', shell=True
     )
@@ -388,7 +377,7 @@ def install_agent(vmx_path, site_token):
 
     if ip in ("192.168.192.10", "192.168.192.20", "192.168.192.21"):
         wait_until_online(vmx_path)
-        print(f"...Installing agent with site token '{site_token}'.")
+        logger.info(f"...Installing agent with site token '{site_token}'.")
         run_script(
             vmx_path=vmx_path,
             username=username,
@@ -400,7 +389,7 @@ def install_agent(vmx_path, site_token):
 
     if ip in ("192.168.192.22"):
         wait_until_online(vmx_path)
-        print(f"...Installing agent with site token '{site_token}'.")
+        logger.info(f"...Installing agent with site token '{site_token}'.")
         run_script(
             vmx_path=vmx_path,
             username=username,
@@ -413,12 +402,12 @@ def install_agent(vmx_path, site_token):
 
 def create_snapshot(vmx_path, name):
     subprocess.run(f'"{VMRUN_PATH}" -T ws snapshot "{vmx_path}" "{name}"', shell=True)
-    print(f"...Finished creating snapshot 'Baseline' for {vmx_path}.")
+    logger.info(f"...Finished creating snapshot 'Baseline' for {vmx_path}.")
     sys.stdout.flush()
 
 
 def restart(vmx_path):
-    print(f"...Issuing restart.")
+    logger.info(f"...Issuing restart.")
     subprocess.run(
         f'"{VMRUN_PATH}" -T ws reset "{vmx_path}" soft',
         shell=True,
@@ -429,7 +418,7 @@ def restart(vmx_path):
 def wait_until_online(vmx_path):
     username = "STARFLEET\jeanluc"
     password = "Sentinelone!"
-    print(f"...Waiting for machine to be ready...")
+    logger.info(f"...Waiting for machine to be ready...")
     subprocess.run(
         f'"{VMRUN_PATH}" -T ws -gu "{username}" -gp "{password}" runProgramInGuest "{vmx_path}" "C:\Windows\System32\whoami.exe"',
         shell=True,
@@ -449,7 +438,7 @@ def get_ip_address(vmx_path):
 
 def run_script(vmx_path, username, password, script, interpreter=""):
     full_script = f'"{VMRUN_PATH}" -T ws -gu "{username}" -gp "{password}" runScriptInGuest "{vmx_path}" "{interpreter}" "{script}"'
-    #   print(f"...Running subprocess: {full_script}")
+    #   logger.debug(f"...Running subprocess: {full_script}")
     p = subprocess.run(
         full_script,
         shell=True,
@@ -468,7 +457,9 @@ def get_identifier():
         # Get the last 5 characters of the UUID
         return uuid[-5:]
     except Exception as e:
-        print(f"Failed to get the last 5 characters of the machine UUID. Error: {e}")
+        logger.error(
+            f"Failed to get the last 5 characters of the machine UUID. Error: {e}"
+        )
         sys.exit(1)
 
 
@@ -486,7 +477,7 @@ def convert_hex_to_base36(hex_string):
 
 
 def make_dir(name):
-    print(f"...Creating directory {name}")
+    logger.info(f"...Creating directory {name}")
     os.makedirs(name, exist_ok=True)
 
 
@@ -496,20 +487,22 @@ def run_powershell(cmd):
 
 
 def print_header(file):
-    print("**********************", file=file)
-    print("Python transcript start", file=file)
-    print(
+    logger.debug("**********************", file=file)
+    logger.debug("Python transcript start", file=file)
+    logger.debug(
         "Start time: " + datetime.datetime.today().strftime("%Y%m%d%H%M%S"), file=file
     )
-    print("Python version: " + sys.version, file=file)
-    print("**********************", file=file)
+    logger.debug("Python version: " + sys.version, file=file)
+    logger.debug("**********************", file=file)
 
 
 def print_footer(file):
-    print("**********************", file=file)
-    print("Python transcript end", file=file)
-    print("End time: " + datetime.datetime.today().strftime("%Y%m%d%H%M%S"), file=file)
-    print("**********************", file=file)
+    logger.debug("**********************", file=file)
+    logger.debug("Python transcript end", file=file)
+    logger.debug(
+        "End time: " + datetime.datetime.today().strftime("%Y%m%d%H%M%S"), file=file
+    )
+    logger.debug("**********************", file=file)
 
 
 if __name__ == "__main__":
