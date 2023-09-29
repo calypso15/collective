@@ -487,22 +487,18 @@ def run_powershell(cmd):
 
 
 def print_header(file):
-    logger.debug("**********************", file=file)
-    logger.debug("Python transcript start", file=file)
-    logger.debug(
-        "Start time: " + datetime.datetime.today().strftime("%Y%m%d%H%M%S"), file=file
-    )
-    logger.debug("Python version: " + sys.version, file=file)
-    logger.debug("**********************", file=file)
+    logger.debug("**********************")
+    logger.debug("Python transcript start")
+    logger.debug("Start time: " + datetime.datetime.today().strftime("%Y%m%d%H%M%S"))
+    logger.debug("Python version: " + sys.version)
+    logger.debug("**********************")
 
 
 def print_footer(file):
-    logger.debug("**********************", file=file)
-    logger.debug("Python transcript end", file=file)
-    logger.debug(
-        "End time: " + datetime.datetime.today().strftime("%Y%m%d%H%M%S"), file=file
-    )
-    logger.debug("**********************", file=file)
+    logger.debug("**********************")
+    logger.debug("Python transcript end")
+    logger.debug("End time: " + datetime.datetime.today().strftime("%Y%m%d%H%M%S"))
+    logger.debug("**********************")
 
 
 if __name__ == "__main__":
