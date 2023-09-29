@@ -41,6 +41,8 @@ def download_file(url, filename, local_dir=None, auth=None):
                 )
                 f.write(chunk)
 
+            print("")
+
     return local_filename
 
 
