@@ -7,7 +7,7 @@ LOG_FILENAME = os.path.join(DOCUMENTS_DIR, "log-python.txt")
 
 console_format = logging.Formatter("%(levelname)s: %(message)s")
 file_format = logging.Formatter(
-    "%(asctime)s - {file.name} - %(levelname)s - %(message)s"
+    "%(asctime)s - %(filename)s - %(levelname)s - %(message)s"
 )
 
 console_handler = logging.StreamHandler()
