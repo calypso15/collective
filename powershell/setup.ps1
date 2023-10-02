@@ -57,7 +57,7 @@ if (Confirm-ShouldRun "Enable-Autologon") {
                 Set-ItemProperty $RegistryPath 'DefaultPassword' -Value "$Password" -type String
             }
             else {
-                Write-Host()'Invalid credentials, moving on.')
+                Write-Host('Invalid credentials, moving on.')
             }
         }
     }
