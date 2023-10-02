@@ -91,6 +91,7 @@ if (Confirm-ShouldRun "Run-Python-Setup") {
     python setup.py $ConfigFile
 }
 
+Write-Host("Python script exit code: $LastExitCode")
 if ($LastExitCode -ne 0) {
     throw 'Setup failed.'
 }
