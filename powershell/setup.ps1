@@ -17,8 +17,6 @@ function Confirm-ShouldRun([string] $TargetStep) {
     return $global:Running
 }
 
-Start-Transcript -Path $HOME/Documents/log-powershell.txt -Append
-
 if ('ConfigFile' -NotIn $PSBoundParameters.Keys) {
     Write-Host 'No config file specified with the -ConfigFile parameter, aborting.'
     Exit
