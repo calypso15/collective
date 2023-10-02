@@ -41,231 +41,235 @@ OVFTOOL_PATH = os.path.join(VMWARE_WORKSTATION_DIR, "OVFTool\\ovftool.exe")
 
 
 def main():
-    print_header()
-    atexit.register(print_footer)
-    signal.signal(signal.SIGINT, sigint_handler)
-
-    parser = argparse.ArgumentParser()
-    parser.add_argument("config_file")
-    args = parser.parse_args()
-
-    global config
-    config = {}
-    config_file = args.config_file
-    with open(config_file) as f:
-        config = json.loads(f.read())
-
-    system_requirements.check_requirements(
-        ignore_warnings=config.get("IgnoreWarnings", False),
-        ignore_errors=config.get("IgnoreErrors", False),
-    )
-
-    root = tkinter.Tk()
-    root.attributes("-topmost", True)
-    root.attributes("-toolwindow", True)
-    root.geometry(
-        "1x1+{}+{}".format(
-            int(root.winfo_screenwidth() / 2), int(root.winfo_screenheight() / 2)
-        )
-    )
-    root.overrideredirect(1)
-    root.update_idletasks()
-
-    interactive = not config.get("NonInteractive", False)
-    sitetoken = config.get("SiteToken", None)
-
-    if interactive and not is_workstation_licensed():
-        logger.info("Starting VMWare Workstation...")
-        subprocess.Popen(VMWARE_PATH, shell=True)
-
-        ready = messagebox.askokcancel(
-            title="Starting VMWare Workstation",
-            message="VMWare should now be running. Please add a license or start the free trial, then click OK.",
-            icon=messagebox.INFO,
-            parent=root,
-        )
-
-        if not ready:
-            logger.warning("Aborting setup at user request.")
-            sys.exit(1)
-
-    if is_workstation_licensed():
-        logger.info("VMware Workstation license found.")
-    else:
-        logger.error(
-            "VMware Workstation license not found, aborting. Please open VMware Workstation and add a license or start the free trial, then re-run setup."
-        )
-        sys.exit(1)
-
-    make_dir(os.path.join(HOME, "Desktop/Malware"))
-    logger.info("Excluding malware directory from Windows Defender.")
-    run_powershell("Set-MpPreference -ExclusionPath $HOME/Desktop/Malware")
-
-    global AUTH, VCLOUD_URL
-    AUTH = None
-    VCLOUD_URL = config["Vcloud"]["Url"]
-
     try:
-        AUTH = requests.auth.HTTPBasicAuth(
-            config["Vcloud"]["Username"], config["Vcloud"]["Password"]
-        )
-        r = requests.get(VCLOUD_URL, auth=AUTH)
-        r.raise_for_status()
-    except requests.ConnectionError as x:
-        logger.debug(traceback.format_exc())
-        logger.error(
-            f"Unable to connect to {VCLOUD_URL}, exiting. Please contact ryan.ogrady@sentinelone.com for additional support."
-        )
-        sys.exit(1)
-    except requests.HTTPError as x:
-        logger.debug(traceback.format_exc())
-        logger.error(
-            f"Received HTTP {x.response.status_code}, exiting. Please contact ryan.ogrady@sentinelone.com for additional support."
-        )
-        sys.exit(1)
+        print_header()
+        atexit.register(print_footer)
 
-    if not vcloud_files.download_files(
-        url=VCLOUD_URL, auth=AUTH, interactive=interactive
-    ):
-        logger.error(
-            f"There was a problem downloading the environment files, aborting setup."
+        parser = argparse.ArgumentParser()
+        parser.add_argument("config_file")
+        args = parser.parse_args()
+
+        global config
+        config = {}
+        config_file = args.config_file
+        with open(config_file) as f:
+            config = json.loads(f.read())
+
+        system_requirements.check_requirements(
+            ignore_warnings=config.get("IgnoreWarnings", False),
+            ignore_errors=config.get("IgnoreErrors", False),
         )
 
-    install = True
-    if interactive:
-        install = messagebox.askyesno(
-            title="Install virtual environment?",
-            message="Do you want to install the virtual environment? This will delete the old environment (if any), and you will need to re-install agents, snapshots, etc.",
-            icon=messagebox.WARNING,
-            parent=root,
+        root = tkinter.Tk()
+        root.attributes("-topmost", True)
+        root.attributes("-toolwindow", True)
+        root.geometry(
+            "1x1+{}+{}".format(
+                int(root.winfo_screenwidth() / 2), int(root.winfo_screenheight() / 2)
+            )
         )
+        root.overrideredirect(1)
+        root.update_idletasks()
 
-    if install:
-        if interactive:
-            sitetoken = simpledialog.askstring(
-                title="Install EDR agent?",
-                prompt="Enter a site or group token to automatically install the EDR agent.",
-                initialvalue=sitetoken,
+        interactive = not config.get("NonInteractive", False)
+        sitetoken = config.get("SiteToken", None)
+
+        if interactive and not is_workstation_licensed():
+            logger.info("Starting VMWare Workstation...")
+            subprocess.Popen(VMWARE_PATH, shell=True)
+
+            ready = messagebox.askokcancel(
+                title="Starting VMWare Workstation",
+                message="VMWare should now be running. Please add a license or start the free trial, then click OK.",
+                icon=messagebox.INFO,
                 parent=root,
             )
 
-        logger.info("Configuring vmnet8.")
-        old_lines = []
-        with open(os.path.join(VMWARE_DATA_DIR, "vmnetnat.conf"), "r") as f:
-            old_lines = f.readlines()
+            if not ready:
+                logger.warning("Aborting setup at user request.")
+                return 1
 
-        new_lines = []
-        for l in old_lines:
-            if l.startswith("ip ="):
-                new_lines.append("ip = 192.168.192.2/24\n")
-            else:
-                new_lines.append(l)
-
-        with open(os.path.join(VMWARE_DATA_DIR, "vmnetnat.conf"), "w") as f:
-            f.writelines(new_lines)
-
-        registry_key = winreg.OpenKey(
-            winreg.HKEY_LOCAL_MACHINE,
-            r"SOFTWARE\\WOW6432Node\\VMware, Inc.\\VMnetLib\\VMnetConfig\\vmnet8",
-            0,
-            winreg.KEY_ALL_ACCESS,
-        )
-        winreg.SetValueEx(
-            registry_key, "IPSubnetAddress", 0, winreg.REG_SZ, "192.168.192.0"
-        )
-        winreg.CloseKey(registry_key)
-
-        subprocess.run(f'"{VMNETLIB64_PATH}" -- stop nat', shell=True)
-        subprocess.run(f'"{VMNETLIB64_PATH}" -- stop dhcp', shell=True)
-        subprocess.run(f'"{VMNETLIB64_PATH}" -- start dhcp', shell=True)
-        subprocess.run(f'"{VMNETLIB64_PATH}" -- start nat', shell=True)
-
-        manifest = None
-        if os.path.exists(os.path.join(DOWNLOAD_DIR, "manifest.json")):
-            with open(os.path.join(DOWNLOAD_DIR, "manifest.json")) as f:
-                manifest = json.loads(f.read())
-
-        if manifest != None:
-            if os.path.exists(VM_DIR):
-                logger.info("Stopping VMs...")
-                files = glob.glob(os.path.join(VM_DIR, "**/*.vmx"), recursive=True)
-                for file in files:
-                    logger.info(f"...Stopping {file}.")
-                    subprocess.run(
-                        f'"{VMRUN_PATH}" -T ws stop "{file}" hard', shell=True
-                    )
-
-                logger.info("Deleting old VMs.")
-                shutil.rmtree(VM_DIR, ignore_errors=True)
-
-            logger.info("Installing new environment...")
-            make_dir(VM_DIR)
-
-            install_list = []
-            for file in manifest["files"]:
-                if file["import"]:
-                    item = {}
-                    base_name = os.path.splitext(file["name"])[0]
-                    item["name"] = file["name"]
-                    item["order"] = file.get("order", sys.maxsize)
-                    item["ova_path"] = os.path.join(DOWNLOAD_DIR, file["name"])
-                    item["vmx_path"] = os.path.join(
-                        VM_DIR, base_name, base_name + ".vmx"
-                    )
-                    install_list.append(item)
-
-            for file in sorted(install_list, key=lambda x: x["order"]):
-                vmx_path = file["vmx_path"]
-                ova_path = file["ova_path"]
-                logger.info(f"Installing {vmx_path}...")
-                install_vm(ova_path, vmx_path)
-
-            for file in sorted(install_list, key=lambda x: x["order"]):
-                vmx_path = file["vmx_path"]
-                logger.info(f"Setting up {vmx_path}...")
-                setup_vm(vmx_path)
-
-                if sitetoken != None:
-                    install_agent(vmx_path, sitetoken)
-
-            logger.info(f"Waiting for agent installation to finish...")
-            time.sleep(30)
-
-            threads = []
-            logger.info(f"Taking snapshots...")
-            sys.stdout.flush()
-            for file in sorted(install_list, key=lambda x: x["order"]):
-                vmx_path = file["vmx_path"]
-                logger.info(f"Creating snapshot 'Baseline' for {vmx_path}...")
-                wait_until_online(vmx_path)
-                logger.info(f"...Starting snapshot...")
-                sys.stdout.flush()
-                thread = threading.Thread(
-                    target=create_snapshot,
-                    args=(vmx_path, "Baseline"),
-                )
-                threads.append(thread)
-                thread.start()
-
-            logger.info(f"Waiting for snapshots to finish...")
-            for thread in threads:
-                thread.join()
-            logger.info(f"...Snapshots finished.")
+        if is_workstation_licensed():
+            logger.info("VMware Workstation license found.")
         else:
             logger.error(
-                "Skipping environment setup, there was a problem with the manifest."
+                "VMware Workstation license not found, aborting. Please open VMware Workstation and add a license or start the free trial, then re-run setup."
             )
-    else:
-        logger.warning("Skipping environment setup at user request.")
+            return 1
 
-    root.destroy()
+        make_dir(os.path.join(HOME, "Desktop/Malware"))
+        logger.info("Excluding malware directory from Windows Defender.")
+        run_powershell("Set-MpPreference -ExclusionPath $HOME/Desktop/Malware")
 
-    if not is_vmware_running():
-        logger.info(f"Starting VMware Workstation...")
-        time.sleep(5)
-        subprocess.Popen(VMWARE_PATH, shell=True)
+        global AUTH, VCLOUD_URL
+        AUTH = None
+        VCLOUD_URL = config["Vcloud"]["Url"]
+
+        try:
+            AUTH = requests.auth.HTTPBasicAuth(
+                config["Vcloud"]["Username"], config["Vcloud"]["Password"]
+            )
+            r = requests.get(VCLOUD_URL, auth=AUTH)
+            r.raise_for_status()
+        except requests.ConnectionError as x:
+            logger.debug(traceback.format_exc())
+            logger.error(
+                f"Unable to connect to {VCLOUD_URL}, exiting. Please contact ryan.ogrady@sentinelone.com for additional support."
+            )
+            return 1
+        except requests.HTTPError as x:
+            logger.debug(traceback.format_exc())
+            logger.error(
+                f"Received HTTP {x.response.status_code}, exiting. Please contact ryan.ogrady@sentinelone.com for additional support."
+            )
+            return 1
+
+        if not vcloud_files.download_files(
+            url=VCLOUD_URL, auth=AUTH, interactive=interactive
+        ):
+            logger.error(
+                f"There was a problem downloading the environment files, aborting setup."
+            )
+
+        install = True
+        if interactive:
+            install = messagebox.askyesno(
+                title="Install virtual environment?",
+                message="Do you want to install the virtual environment? This will delete the old environment (if any), and you will need to re-install agents, snapshots, etc.",
+                icon=messagebox.WARNING,
+                parent=root,
+            )
+
+        if install:
+            if interactive:
+                sitetoken = simpledialog.askstring(
+                    title="Install EDR agent?",
+                    prompt="Enter a site or group token to automatically install the EDR agent.",
+                    initialvalue=sitetoken,
+                    parent=root,
+                )
+
+            logger.info("Configuring vmnet8.")
+            old_lines = []
+            with open(os.path.join(VMWARE_DATA_DIR, "vmnetnat.conf"), "r") as f:
+                old_lines = f.readlines()
+
+            new_lines = []
+            for l in old_lines:
+                if l.startswith("ip ="):
+                    new_lines.append("ip = 192.168.192.2/24\n")
+                else:
+                    new_lines.append(l)
+
+            with open(os.path.join(VMWARE_DATA_DIR, "vmnetnat.conf"), "w") as f:
+                f.writelines(new_lines)
+
+            registry_key = winreg.OpenKey(
+                winreg.HKEY_LOCAL_MACHINE,
+                r"SOFTWARE\\WOW6432Node\\VMware, Inc.\\VMnetLib\\VMnetConfig\\vmnet8",
+                0,
+                winreg.KEY_ALL_ACCESS,
+            )
+            winreg.SetValueEx(
+                registry_key, "IPSubnetAddress", 0, winreg.REG_SZ, "192.168.192.0"
+            )
+            winreg.CloseKey(registry_key)
+
+            subprocess.run(f'"{VMNETLIB64_PATH}" -- stop nat', shell=True)
+            subprocess.run(f'"{VMNETLIB64_PATH}" -- stop dhcp', shell=True)
+            subprocess.run(f'"{VMNETLIB64_PATH}" -- start dhcp', shell=True)
+            subprocess.run(f'"{VMNETLIB64_PATH}" -- start nat', shell=True)
+
+            manifest = None
+            if os.path.exists(os.path.join(DOWNLOAD_DIR, "manifest.json")):
+                with open(os.path.join(DOWNLOAD_DIR, "manifest.json")) as f:
+                    manifest = json.loads(f.read())
+
+            if manifest != None:
+                if os.path.exists(VM_DIR):
+                    logger.info("Stopping VMs...")
+                    files = glob.glob(os.path.join(VM_DIR, "**/*.vmx"), recursive=True)
+                    for file in files:
+                        logger.info(f"...Stopping {file}.")
+                        subprocess.run(
+                            f'"{VMRUN_PATH}" -T ws stop "{file}" hard', shell=True
+                        )
+
+                    logger.info("Deleting old VMs.")
+                    shutil.rmtree(VM_DIR, ignore_errors=True)
+
+                logger.info("Installing new environment...")
+                make_dir(VM_DIR)
+
+                install_list = []
+                for file in manifest["files"]:
+                    if file["import"]:
+                        item = {}
+                        base_name = os.path.splitext(file["name"])[0]
+                        item["name"] = file["name"]
+                        item["order"] = file.get("order", sys.maxsize)
+                        item["ova_path"] = os.path.join(DOWNLOAD_DIR, file["name"])
+                        item["vmx_path"] = os.path.join(
+                            VM_DIR, base_name, base_name + ".vmx"
+                        )
+                        install_list.append(item)
+
+                for file in sorted(install_list, key=lambda x: x["order"]):
+                    vmx_path = file["vmx_path"]
+                    ova_path = file["ova_path"]
+                    logger.info(f"Installing {vmx_path}...")
+                    install_vm(ova_path, vmx_path)
+
+                for file in sorted(install_list, key=lambda x: x["order"]):
+                    vmx_path = file["vmx_path"]
+                    logger.info(f"Setting up {vmx_path}...")
+                    setup_vm(vmx_path)
+
+                    if sitetoken != None:
+                        install_agent(vmx_path, sitetoken)
+
+                logger.info(f"Waiting for agent installation to finish...")
+                time.sleep(30)
+
+                threads = []
+                logger.info(f"Taking snapshots...")
+                sys.stdout.flush()
+                for file in sorted(install_list, key=lambda x: x["order"]):
+                    vmx_path = file["vmx_path"]
+                    logger.info(f"Creating snapshot 'Baseline' for {vmx_path}...")
+                    wait_until_online(vmx_path)
+                    logger.info(f"...Starting snapshot...")
+                    sys.stdout.flush()
+                    thread = threading.Thread(
+                        target=create_snapshot,
+                        args=(vmx_path, "Baseline"),
+                    )
+                    threads.append(thread)
+                    thread.start()
+
+                logger.info(f"Waiting for snapshots to finish...")
+                for thread in threads:
+                    thread.join()
+                logger.info(f"...Snapshots finished.")
+            else:
+                logger.error(
+                    "Skipping environment setup, there was a problem with the manifest."
+                )
+        else:
+            logger.warning("Skipping environment setup at user request.")
+
+        root.destroy()
+
+        if not is_vmware_running():
+            logger.info(f"Starting VMware Workstation...")
+            time.sleep(5)
+            subprocess.Popen(VMWARE_PATH, shell=True)
+    except Exception as x:
+        logger.error(f"Unhandled exception: {x}")
+        return 1
 
     logger.info(f"Setup is complete!")
+    return 0
 
 
 def is_vmware_running():
@@ -454,18 +458,12 @@ def run_script(vmx_path, username, password, script, interpreter=""):
 
 
 def get_identifier():
-    try:
-        # Create a new WMI instance
-        c = wmi.WMI()
-        # Get the machine UUID
-        uuid = c.Win32_ComputerSystemProduct()[0].UUID
-        # Get the last 5 characters of the UUID
-        return uuid[-5:]
-    except Exception as e:
-        logger.error(
-            f"Failed to get the last 5 characters of the machine UUID. Error: {e}"
-        )
-        sys.exit(1)
+    # Create a new WMI instance
+    c = wmi.WMI()
+    # Get the machine UUID
+    uuid = c.Win32_ComputerSystemProduct()[0].UUID
+    # Get the last 5 characters of the UUID
+    return uuid[-5:]
 
 
 def convert_hex_to_base36(hex_string):
@@ -489,10 +487,6 @@ def make_dir(name):
 def run_powershell(cmd):
     completed = subprocess.run(["powershell", "-Command", cmd], capture_output=True)
     return completed
-
-
-def sigint_handler(sig, frame):
-    logger.warning("User interrupted, exiting.")
 
 
 def print_header():
