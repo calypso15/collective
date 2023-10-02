@@ -493,7 +493,6 @@ def run_powershell(cmd):
 
 def sigint_handler(sig, frame):
     logger.warning("User interrupted, exiting.")
-    sys.exit(1)
 
 
 def print_header():
