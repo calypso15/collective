@@ -127,8 +127,8 @@ def download_files(url, auth=None, interactive=True):
                     if check_hash(pathname, hash_value, hash_type=hash_type):
                         logger.info("...Hash matches.")
                     else:
-                        logger.error("...Hash does not match. Aborting setup.")
-                        sys.exit()
+                        logger.error("...Hash does not match.")
+                        return False
 
             except Exception as e:
                 print(e)
@@ -137,6 +137,7 @@ def download_files(url, auth=None, interactive=True):
             f.write(json.dumps(manifest, indent=4))
 
         logger.info("Finished downloading OVAs.")
+        return True
 
 
 if __name__ == "__main__":

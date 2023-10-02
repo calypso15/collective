@@ -71,6 +71,7 @@ try {
     if(Compare-Object -ReferenceObject $(Get-Content $HOME/Documents/collective/join-collective.ps1) -DifferenceObject $(Get-Content $MyInvocation.MyCommand.Path)) {
         Write-Host('Updating collective bootstrap script...')
         Copy-Item $HOME/Documents/collective/join-collective.ps1 $MyInvocation.MyCommand.Path
+        Stop-Transcript
         &$MyInvocation.MyCommand.Path -ConfigFile "$ConfigFile"
         exit
     }

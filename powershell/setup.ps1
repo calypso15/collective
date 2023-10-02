@@ -17,84 +17,94 @@ function Confirm-ShouldRun([string] $TargetStep) {
     return $global:Running
 }
 
-if ('ConfigFile' -NotIn $PSBoundParameters.Keys) {
-    Write-Host 'No config file specified with the -ConfigFile parameter, aborting.'
-    Exit
-}
+Start-Transcript -Path $HOME/Documents/log-powershell.txt -Append
 
-$ConfigFile = Resolve-Path $ConfigFile
-$Config = Get-Content $ConfigFile | ConvertFrom-Json
+try {
+    if ('ConfigFile' -NotIn $PSBoundParameters.Keys) {
+        Write-Host 'No config file specified with the -ConfigFile parameter, aborting.'
+        Exit
+    }
 
-# NEED PS v7 for Test-Json schema validation
+    $ConfigFile = Resolve-Path $ConfigFile
+    $Config = Get-Content $ConfigFile | ConvertFrom-Json
 
-if ('Step' -NotIn $PSBoundParameters.Keys) {
-    $Step = $null
-}
+    # NEED PS v7 for Test-Json schema validation
 
-$EnableAutologon = $Config.Windows.EnableAutologon
-$Username = $Config.Windows.Username
-$Password = $Config.Windows.Password
+    if ('Step' -NotIn $PSBoundParameters.Keys) {
+        $Step = $null
+    }
 
-$Running = $false
+    $EnableAutologon = $Config.Windows.EnableAutologon
+    $Username = $Config.Windows.Username
+    $Password = $Config.Windows.Password
 
-Write-Host 'Disabling sleep...'
-powercfg /x -standby-timeout-ac 0
-powercfg /x -hibernate-timeout-ac 0
+    $Running = $false
 
-if (Confirm-ShouldRun "Enable-Autologon") {
-    $RegistryPath = 'HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon'
-    if ((Get-ItemProperty $RegistryPath -ErrorAction SilentlyContinue | Select-Object -ErrorAction SilentlyContinue -ExpandProperty AutoAdminLogon) -ne "1") {
-        if ($EnableAutologon) {
-            Write-Host('Enabling autologon...')
+    Write-Host 'Disabling sleep...'
+    powercfg /x -standby-timeout-ac 0
+    powercfg /x -hibernate-timeout-ac 0
 
-            $Computer = $env:COMPUTERNAME
+    if (Confirm-ShouldRun "Enable-Autologon") {
+        $RegistryPath = 'HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon'
+        if ((Get-ItemProperty $RegistryPath -ErrorAction SilentlyContinue | Select-Object -ErrorAction SilentlyContinue -ExpandProperty AutoAdminLogon) -ne "1") {
+            if ($EnableAutologon) {
+                Write-Host('Enabling autologon...')
 
-            Add-Type -AssemblyName System.DirectoryServices.AccountManagement
-            $obj = New-Object System.DirectoryServices.AccountManagement.PrincipalContext('machine', $Computer)
+                $Computer = $env:COMPUTERNAME
 
-            if ($true -eq $obj.ValidateCredentials($Username, $Password)) {
-                Set-ItemProperty $RegistryPath 'AutoAdminLogon' -Value "1" -Type String
-                Set-ItemProperty $RegistryPath 'DefaultUsername' -Value "$Username" -type String
-                Set-ItemProperty $RegistryPath 'DefaultPassword' -Value "$Password" -type String
-            }
-            else {
-                Write-Host 'Invalid credentials, moving on.'
+                Add-Type -AssemblyName System.DirectoryServices.AccountManagement
+                $obj = New-Object System.DirectoryServices.AccountManagement.PrincipalContext('machine', $Computer)
+
+                if ($true -eq $obj.ValidateCredentials($Username, $Password)) {
+                    Set-ItemProperty $RegistryPath 'AutoAdminLogon' -Value "1" -Type String
+                    Set-ItemProperty $RegistryPath 'DefaultUsername' -Value "$Username" -type String
+                    Set-ItemProperty $RegistryPath 'DefaultPassword' -Value "$Password" -type String
+                }
+                else {
+                    Write-Host 'Invalid credentials, moving on.'
+                }
             }
         }
     }
-}
 
-if (Confirm-ShouldRun "Install-Packages") {
-    # Install other chocolatey packages
-    Set-Location $HOME/Documents/collective/choco
+    if (Confirm-ShouldRun "Install-Packages") {
+        # Install other chocolatey packages
+        Set-Location $HOME/Documents/collective/choco
 
-    Write-Host('Installing chocolatey packages...')
-    Invoke-Command -ScriptBlock {
-        choco install packages.config --yes
+        Write-Host('Installing chocolatey packages...')
+        Invoke-Command -ScriptBlock {
+            choco install packages.config --yes
+        }
+
+        $env:Path = [System.Environment]::GetEnvironmentVariable("Path", "Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path", "User")
+
+        if ($LastExitCode -eq 3010) {
+            Write-Host 'Restarting system...'
+            Register-ScheduledTask -TaskName "Resume-Setup" -Principal (New-ScheduledTaskPrincipal -UserID $env:USERNAME -RunLevel Highest -LogonType Interactive) -Trigger (New-ScheduledTaskTrigger -AtLogon) -Action (New-ScheduledTaskAction -Execute "${Env:WinDir}\System32\WindowsPowerShell\v1.0\powershell.exe" -Argument ("-NoExit -ExecutionPolicy Bypass -File `"$PSCommandPath`" -ConfigFile `"$ConfigFile`" -Step: Run-Python-Setup")) -Force;
+            Restart-Computer
+        }
     }
 
-    $env:Path = [System.Environment]::GetEnvironmentVariable("Path", "Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path", "User")
+    if (Confirm-ShouldRun "Run-Python-Setup") {
+        Unregister-ScheduledTask -TaskName "Resume-Setup" -Confirm:$false -ErrorAction SilentlyContinue
 
-    if ($LastExitCode -eq 3010) {
-        Write-Host 'Restarting system...'
-        Register-ScheduledTask -TaskName "Resume-Setup" -Principal (New-ScheduledTaskPrincipal -UserID $env:USERNAME -RunLevel Highest -LogonType Interactive) -Trigger (New-ScheduledTaskTrigger -AtLogon) -Action (New-ScheduledTaskAction -Execute "${Env:WinDir}\System32\WindowsPowerShell\v1.0\powershell.exe" -Argument ("-NoExit -ExecutionPolicy Bypass -File `"$PSCommandPath`" -ConfigFile `"$ConfigFile`" -Step: Run-Python-Setup")) -Force;
-        Restart-Computer
+        # Start python script
+        Set-Location $HOME/Documents/collective/python
+
+        Write-Host('Starting Python setup...')
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+        python setup.py $ConfigFile
+        Write-Host('')
+    }
+
+    if ($LastExitCode -ne 0) {
+        throw 'Setup failed, aborting.'
     }
 }
-
-if (Confirm-ShouldRun "Run-Python-Setup") {
-    Unregister-ScheduledTask -TaskName "Resume-Setup" -Confirm:$false -ErrorAction SilentlyContinue
-
-    # Start python script
-    Set-Location $HOME/Documents/collective/python
-
-    Write-Host('Starting Python setup...')
-    python -m pip install --upgrade pip
-    pip install -r requirements.txt
-    python setup.py $ConfigFile
-    Write-Host('')
+catch {
+    Write-Host("An uncaught exception occurred: $_")
 }
-
-if ($LastExitCode -ne 0) {
-    throw 'Setup failed, aborting.'
+finally {
+    Stop-Transcript
 }
