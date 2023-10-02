@@ -36,9 +36,7 @@ try {
     # Install git
     if ($null -eq (Get-Command 'git.exe' -ErrorAction SilentlyContinue)) {
         Write-Host('Installing git...')
-        Invoke-Command -ScriptBlock {
-            choco install git --yes
-        }
+        choco install git --yes
 
         $env:Path = [System.Environment]::GetEnvironmentVariable("Path","Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path","User")
 
@@ -52,9 +50,7 @@ try {
         Set-Location $HOME/Documents
 
         Write-Host('Cloning collective repo...')
-        Invoke-Command -ScriptBlock {
-            git clone https://github.com/calypso15/collective.git
-        }
+        git clone https://github.com/calypso15/collective.git
 
         if (-Not (Test-Path -Path $HOME/Documents/collective)) {
             throw 'Failed to clone collective repo, aborting.'
