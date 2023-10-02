@@ -69,9 +69,7 @@ if (Confirm-ShouldRun "Install-Packages") {
     Set-Location $HOME/Documents/collective/choco
 
     Write-Host('Installing chocolatey packages...')
-    Invoke-Command -ScriptBlock {
-        choco install packages.config --yes
-    }
+    choco install packages.config --yes
 
     $env:Path = [System.Environment]::GetEnvironmentVariable("Path", "Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path", "User")
 

@@ -137,7 +137,8 @@ def download_files(url, auth=None, interactive=True):
             f.write(json.dumps(manifest, indent=4))
 
         logger.info("Finished downloading OVAs.")
-        return True
+
+    return True
 
 
 if __name__ == "__main__":
