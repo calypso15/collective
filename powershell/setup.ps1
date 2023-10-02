@@ -89,9 +89,9 @@ if (Confirm-ShouldRun "Run-Python-Setup") {
     python -m pip install --upgrade pip
     pip install -r requirements.txt
     python setup.py $ConfigFile
-}
-
-Write-Host("Python script exit code: $LastExitCode")
-if ($LastExitCode -ne 0) {
-    throw 'Setup failed.'
+    
+    Write-Host("Python script exit code: $LastExitCode")
+    if ($LastExitCode -ne 0) {
+        throw 'Setup failed.'
+    }
 }
