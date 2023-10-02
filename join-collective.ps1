@@ -92,5 +92,6 @@ catch {
     Write-Host("Aborting setup.")
 }
 finally {
+    Write-Host("Exiting.")
     Stop-Transcript
 }
