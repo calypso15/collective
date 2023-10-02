@@ -267,6 +267,12 @@ def main():
     except Exception as x:
         logger.error(f"Unhandled exception: {x}")
         return 1
+    except SystemExit as x:
+        logger.error(f"System exit: {x}")
+        return 1
+    except KeyboardInterrupt as x:
+        logger.error(f"Keyboard interrupt: {x}")
+        return 1
 
     logger.info(f"Setup is complete!")
     return 0
@@ -487,6 +493,10 @@ def make_dir(name):
 def run_powershell(cmd):
     completed = subprocess.run(["powershell", "-Command", cmd], capture_output=True)
     return completed
+
+
+def sigint_handler():
+    logger.warning("User interrupted, exiting.")
 
 
 def print_header():
