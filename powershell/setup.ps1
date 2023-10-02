@@ -17,8 +17,11 @@ function Confirm-ShouldRun([string] $TargetStep) {
     return $global:Running
 }
 
+Start-Transcript -Path $HOME/Documents/log-powershell.txt -Append
+
 if ('ConfigFile' -NotIn $PSBoundParameters.Keys) {
-    throw 'No config file specified with the -ConfigFile parameter.'
+    Write-Host 'No config file specified with the -ConfigFile parameter, aborting.'
+    Exit
 }
 
 $ConfigFile = Resolve-Path $ConfigFile
@@ -57,7 +60,7 @@ if (Confirm-ShouldRun "Enable-Autologon") {
                 Set-ItemProperty $RegistryPath 'DefaultPassword' -Value "$Password" -type String
             }
             else {
-                Write-Host('Invalid credentials, moving on.')
+                Write-Host 'Invalid credentials, moving on.'
             }
         }
     }
@@ -68,7 +71,9 @@ if (Confirm-ShouldRun "Install-Packages") {
     Set-Location $HOME/Documents/collective/choco
 
     Write-Host('Installing chocolatey packages...')
-    choco install packages.config --yes
+    Invoke-Command -ScriptBlock {
+        choco install packages.config --yes
+    }
 
     $env:Path = [System.Environment]::GetEnvironmentVariable("Path", "Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path", "User")
 
@@ -89,9 +94,9 @@ if (Confirm-ShouldRun "Run-Python-Setup") {
     python -m pip install --upgrade pip
     pip install -r requirements.txt
     python setup.py $ConfigFile
+    Write-Host('')
+}
 
-    Write-Host("Python script exit code: $LastExitCode")
-    if ($LastExitCode -ne 0) {
-        throw 'Python setup failed.'
-    }
+if ($LastExitCode -ne 0) {
+    throw 'Setup failed, aborting.'
 }

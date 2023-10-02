@@ -127,10 +127,8 @@ def download_files(url, auth=None, interactive=True):
                     if check_hash(pathname, hash_value, hash_type=hash_type):
                         logger.info("...Hash matches.")
                     else:
-                        logger.error("...Hash does not match.")
-                        raise RuntimeError(
-                            "Hash mismatch while verifying downloaded file."
-                        )
+                        logger.error("...Hash does not match. Aborting setup.")
+                        sys.exit()
 
             except Exception as e:
                 print(e)
