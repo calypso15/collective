@@ -29,7 +29,7 @@ try {
         $env:Path = [System.Environment]::GetEnvironmentVariable("Path","Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path","User")
 
         if ($null -eq (Get-Command 'choco.exe' -ErrorAction SilentlyContinue)) {
-            throw 'Failed to install chocolatey, aborting.'
+            throw 'Failed to install chocolatey.'
         }
     }
 
@@ -41,7 +41,7 @@ try {
         $env:Path = [System.Environment]::GetEnvironmentVariable("Path","Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path","User")
 
         if ($null -eq (Get-Command 'git.exe' -ErrorAction SilentlyContinue)) {
-            throw 'Failed to install git, aborting.'
+            throw 'Failed to install git.'
         }
     }
 
@@ -53,7 +53,7 @@ try {
         git clone https://github.com/calypso15/collective.git
 
         if (-Not (Test-Path -Path $HOME/Documents/collective)) {
-            throw 'Failed to clone collective repo, aborting.'
+            throw 'Failed to clone collective repo.'
         }
     }
 
@@ -80,7 +80,7 @@ try {
         Pop-Location
 
         if ($result -eq [System.Windows.Forms.DialogResult]::Cancel) {
-            throw 'User canceled config file creation, aborting.'
+            throw 'User canceled config file creation.'
         }
     }
 
@@ -88,7 +88,8 @@ try {
     & ./setup.ps1 -ConfigFile "$ConfigFile"
 }
 catch {
-    Write-Host("An uncaught exception occurred: $_")
+    Write-Host("An unhandled exception occurred: $_")
+    Write-Host("Aborting setup.")
 }
 finally {
     Stop-Transcript

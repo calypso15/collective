@@ -18,8 +18,7 @@ function Confirm-ShouldRun([string] $TargetStep) {
 }
 
 if ('ConfigFile' -NotIn $PSBoundParameters.Keys) {
-    Write-Host 'No config file specified with the -ConfigFile parameter, aborting.'
-    Exit
+    throw 'No config file specified with the -ConfigFile parameter.'
 }
 
 $ConfigFile = Resolve-Path $ConfigFile
@@ -58,7 +57,7 @@ if (Confirm-ShouldRun "Enable-Autologon") {
                 Set-ItemProperty $RegistryPath 'DefaultPassword' -Value "$Password" -type String
             }
             else {
-                Write-Host 'Invalid credentials, moving on.'
+                Write-Host('Invalid credentials, moving on.')
             }
         }
     }
@@ -90,9 +89,8 @@ if (Confirm-ShouldRun "Run-Python-Setup") {
     python -m pip install --upgrade pip
     pip install -r requirements.txt
     python setup.py $ConfigFile
-    Write-Host('')
 }
 
 if ($LastExitCode -ne 0) {
-    throw 'Setup failed, aborting.'
+    throw 'Setup failed.'
 }
