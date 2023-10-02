@@ -87,7 +87,7 @@ def main():
 
         if not ready:
             logger.warning("Aborting setup at user request.")
-            sys.exit()
+            sys.exit(1)
 
     if is_workstation_licensed():
         logger.info("VMware Workstation license found.")
@@ -95,7 +95,7 @@ def main():
         logger.error(
             "VMware Workstation license not found, aborting. Please open VMware Workstation and add a license or start the free trial, then re-run setup."
         )
-        sys.exit()
+        sys.exit(1)
 
     make_dir(os.path.join(HOME, "Desktop/Malware"))
     logger.info("Excluding malware directory from Windows Defender.")
@@ -116,13 +116,13 @@ def main():
         logger.error(
             f"Unable to connect to {VCLOUD_URL}, exiting. Please contact ryan.ogrady@sentinelone.com for additional support."
         )
-        sys.exit()
+        sys.exit(1)
     except requests.HTTPError as x:
         logger.debug(traceback.format_exc())
         logger.error(
             f"Received HTTP {x.response.status_code}, exiting. Please contact ryan.ogrady@sentinelone.com for additional support."
         )
-        sys.exit()
+        sys.exit(1)
 
     vcloud_files.download_files(url=VCLOUD_URL, auth=AUTH, interactive=interactive)
 
@@ -488,7 +488,7 @@ def run_powershell(cmd):
 
 def sigint_handler(sig, frame):
     logger.warning("User interrupted, exiting.")
-    sys.exit()
+    sys.exit(1)
 
 
 def print_header():
