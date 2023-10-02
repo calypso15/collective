@@ -87,7 +87,7 @@ def main():
 
             if not ready:
                 logger.warning("Aborting setup at user request.")
-                return 1
+                sys.exit(1)
 
         if is_workstation_licensed():
             logger.info("VMware Workstation license found.")
@@ -95,7 +95,7 @@ def main():
             logger.error(
                 "VMware Workstation license not found, aborting. Please open VMware Workstation and add a license or start the free trial, then re-run setup."
             )
-            return 1
+            sys.exit(1)
 
         make_dir(os.path.join(HOME, "Desktop/Malware"))
         logger.info("Excluding malware directory from Windows Defender.")
@@ -116,20 +116,23 @@ def main():
             logger.error(
                 f"Unable to connect to {VCLOUD_URL}, exiting. Please contact ryan.ogrady@sentinelone.com for additional support."
             )
-            return 1
+            sys.exit(1)
         except requests.HTTPError as x:
             logger.debug(traceback.format_exc())
             logger.error(
                 f"Received HTTP {x.response.status_code}, exiting. Please contact ryan.ogrady@sentinelone.com for additional support."
             )
-            return 1
+            sys.exit(1)
 
-        if not vcloud_files.download_files(
-            url=VCLOUD_URL, auth=AUTH, interactive=interactive
-        ):
+        try:
+            vcloud_files.download_files(
+                url=VCLOUD_URL, auth=AUTH, interactive=interactive
+            )
+        except RuntimeError:
             logger.error(
                 f"There was a problem downloading the environment files, aborting setup."
             )
+            sys.exit(1)
 
         install = True
         if interactive:
@@ -266,16 +269,12 @@ def main():
             subprocess.Popen(VMWARE_PATH, shell=True)
     except Exception as x:
         logger.error(f"Unhandled exception: {x}")
-        return 1
-    except SystemExit as x:
-        logger.error(f"System exit: {x}")
-        return 1
+        sys.exit(1)
     except KeyboardInterrupt as x:
-        logger.error(f"Keyboard interrupt: {x}")
-        return 1
+        logger.error(f"User interrupted.")
+        sys.exit(1)
 
     logger.info(f"Setup is complete!")
-    return 0
 
 
 def is_vmware_running():
@@ -464,12 +463,16 @@ def run_script(vmx_path, username, password, script, interpreter=""):
 
 
 def get_identifier():
-    # Create a new WMI instance
-    c = wmi.WMI()
-    # Get the machine UUID
-    uuid = c.Win32_ComputerSystemProduct()[0].UUID
-    # Get the last 5 characters of the UUID
-    return uuid[-5:]
+    try:
+        # Create a new WMI instance
+        c = wmi.WMI()
+        # Get the machine UUID
+        uuid = c.Win32_ComputerSystemProduct()[0].UUID
+        # Get the last 5 characters of the UUID
+        return uuid[-5:]
+    except Exception as e:
+        print(f"Failed to get the last 5 characters of the machine UUID. Error: {e}")
+        sys.exit(1)
 
 
 def convert_hex_to_base36(hex_string):
@@ -493,10 +496,6 @@ def make_dir(name):
 def run_powershell(cmd):
     completed = subprocess.run(["powershell", "-Command", cmd], capture_output=True)
     return completed
-
-
-def sigint_handler():
-    logger.warning("User interrupted, exiting.")
 
 
 def print_header():

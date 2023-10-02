@@ -128,7 +128,9 @@ def download_files(url, auth=None, interactive=True):
                         logger.info("...Hash matches.")
                     else:
                         logger.error("...Hash does not match.")
-                        return False
+                        raise RuntimeError(
+                            "Hash mismatch while verifying downloaded file."
+                        )
 
             except Exception as e:
                 print(e)
@@ -137,8 +139,6 @@ def download_files(url, auth=None, interactive=True):
             f.write(json.dumps(manifest, indent=4))
 
         logger.info("Finished downloading OVAs.")
-
-    return True
 
 
 if __name__ == "__main__":
