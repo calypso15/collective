@@ -118,7 +118,7 @@ def download_files(url, auth=None, interactive=True):
                     download_file(url, name, auth=auth)
                     recheck_hash = True
                 else:
-                    logger.info("matches.")
+                    logger.info("...Hash matches.")
 
                 if recheck_hash:
                     logger.info(f"Verifying hash of '{name}'...")
