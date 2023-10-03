@@ -128,7 +128,7 @@ def download_files(url, auth=None, interactive=True):
                         logger.info("...Hash matches.")
                     else:
                         logger.error("...Hash does not match. Aborting setup.")
-                        sys.exit()
+                        sys.exit(1)
 
             except Exception as e:
                 print(e)
