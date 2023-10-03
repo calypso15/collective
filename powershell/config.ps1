@@ -254,10 +254,10 @@ function ShowDialog($FilePath)
         $result["NonInteractive"] = $NonInteractive.Checked
 
         ConvertTo-Json -Depth 5 -InputObject $result | Set-Content $FilePath
-        $ConfigUI.DialogResult = [System.Windows.Forms.DialogResult]::OK
     })
 
-    $CancelButton.Add_Click({ $ConfigUI.DialogResult = [System.Windows.Forms.DialogResult]::Cancel })
+    $CreateButton.DialogResult = [System.Windows.Forms.DialogResult]::OK
+    $CancelButton.DialogResult = [System.Windows.Forms.DialogResult]::Cancel
 
     return $ConfigUI.ShowDialog()
 }
