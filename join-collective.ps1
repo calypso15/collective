@@ -64,6 +64,7 @@ try {
 
     Write-Host('Updating collective repo...')
     git pull
+    git switch dev
 
     # Check for updated script
     if(Compare-Object -ReferenceObject $(Get-Content $HOME/Documents/collective/join-collective.ps1) -DifferenceObject $(Get-Content $MyInvocation.MyCommand.Path)) {
