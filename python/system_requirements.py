@@ -1,5 +1,6 @@
 import argparse
 import json
+import logging
 import math
 import os
 import platform
@@ -9,6 +10,10 @@ import sys
 
 from enum import IntEnum
 from subprocess import getoutput
+
+import log_config
+
+logger = logging.getLogger(__name__)
 
 
 class State(IntEnum):
@@ -49,79 +54,80 @@ def check() -> str:
     state = State.PASS
 
     if is_windows():
-        print("System is running Windows...PASS.")
+        logger.info("System is running Windows...PASS.")
     else:
-        print("System is running Windows...FATAL!")
+        logger.error("System is running Windows...FATAL!")
         return State.FATAL
 
     if is_admin():
-        print("Script is running as admin...PASS.")
+        logger.info("Script is running as admin...PASS.")
     else:
-        print("Script is running as admin...FAIL!")
+        logger.error("Script is running as admin...FAIL!")
         state = state | State.FAIL
 
     test = "".join(get_cpu_name().split("\n")[1:]).strip()
     if "i7" in test or "i9" in test:
-        print("System processor is Intel Core i7 or i9...PASS.")
+        logger.info("System processor is Intel Core i7 or i9...PASS.")
     else:
-        print("System processor is Intel Core i7 or i9...WARN.")
-        print(f"  System reports processor name '{test}'")
+        logger.warning("System processor is Intel Core i7 or i9...WARN.")
+        logger.warning(f"  System reports processor name '{test}'")
         state = state | State.WARN
 
     test = -(get_free_diskspace() // -(2**30))
     if test >= 250:
-        print("Disk has at least 250GB of free space...PASS.")
+        logger.info("Disk has at least 250GB of free space...PASS.")
     elif test >= 150:
-        print("Disk has at least 250GB of free space...WARN!")
-        print(f"  System reports {test}GB of free space.")
+        logger.warning("Disk has at least 250GB of free space...WARN!")
+        logger.warning(f"  System reports {test}GB of free space.")
         state = state | State.WARN
     else:
-        print("Disk has at least 250GB of free space...FAIL!")
-        print(f"  System reports {test}GB of free space.")
+        logger.error("Disk has at least 250GB of free space...FAIL!")
+        logger.error(f"  System reports {test}GB of free space.")
         state = state | State.FAIL
 
     test = -(get_total_memory() // -(2**30))
     if test >= 64:
-        print("System has at least 64GB of memory...PASS.")
+        logger.info("System has at least 64GB of memory...PASS.")
     elif test >= 32:
-        print("System has at least 64GB of memory...WARN.")
-        print(f"  System reports {test}GB of memory.")
+        logger.warning("System has at least 64GB of memory...WARN.")
+        logger.warning(f"  System reports {test}GB of memory.")
         state = state | State.WARN
     else:
-        print("System has at least 64GB of memory...FAIL!")
-        print(f"  System reports {test}GB of memory.")
+        logger.error("System has at least 64GB of memory...FAIL!")
+        logger.error(f"  System reports {test}GB of memory.")
         state = state | State.FAIL
 
     return State(2 ** math.floor(math.log2(state)))
 
 
 def check_requirements(ignore_warnings=False, ignore_errors=False):
-    print("Checking system requirements...")
+    logger.info("Checking system requirements...")
     result = check()
-    print("")
 
     if result == State.PASS:
-        print("This system meets all requirements.")
+        logger.info("This system meets all requirements.")
     elif result == State.WARN:
         if ignore_warnings:
-            print("This system may be insufficient, but IgnoreWarnings is set to true.")
+            logger.warning(
+                "This system may be insufficient, but IgnoreWarnings is set to true."
+            )
         else:
-            print(
+            logger.error(
                 "This system may be insufficient. To proceed anyway, change '\"IgnoreWarnings\": false' in the config file to '\"IgnoreWarnings\": true' and re-run setup."
             )
             sys.exit(1)
     elif result == State.FAIL:
         if ignore_errors:
-            print(
+            logger.warning(
                 "This system does not meet the minimum requirements, but IgnoreErrors is set to true."
             )
         else:
-            print(
+            logger.error(
                 "This system does not meet the minimum requirements, aborting. To proceed anyway, change '\"IgnoreErrors\": false' in the config file to '\"IgnoreErrors\": true' and re-run setup."
             )
             sys.exit(1)
     else:
-        print("This system does not meet the minimum requirements, aborting.")
+        logger.error("This system does not meet the minimum requirements, aborting.")
         sys.exit(1)
 
 

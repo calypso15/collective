@@ -17,11 +17,8 @@ function Confirm-ShouldRun([string] $TargetStep) {
     return $global:Running
 }
 
-Start-Transcript -Path $HOME/Documents/log-powershell.txt -Append
-
 if ('ConfigFile' -NotIn $PSBoundParameters.Keys) {
-    Write-Host 'No config file specified with the -ConfigFile parameter, aborting.'
-    Exit
+    throw 'No config file specified with the -ConfigFile parameter, aborting.'
 }
 
 $ConfigFile = Resolve-Path $ConfigFile
@@ -39,7 +36,7 @@ $Password = $Config.Windows.Password
 
 $Running = $false
 
-Write-Host 'Disabling sleep...'
+Write-Host('Disabling sleep...')
 powercfg /x -standby-timeout-ac 0
 powercfg /x -hibernate-timeout-ac 0
 
@@ -60,7 +57,7 @@ if (Confirm-ShouldRun "Enable-Autologon") {
                 Set-ItemProperty $RegistryPath 'DefaultPassword' -Value "$Password" -type String
             }
             else {
-                Write-Host 'Invalid credentials, moving on.'
+                Write-Host('Invalid credentials, moving on.')
             }
         }
     }
@@ -71,14 +68,12 @@ if (Confirm-ShouldRun "Install-Packages") {
     Set-Location $HOME/Documents/collective/choco
 
     Write-Host('Installing chocolatey packages...')
-    Invoke-Command -ScriptBlock {
-        choco install packages.config --yes
-    }
+    choco install packages.config --yes
 
     $env:Path = [System.Environment]::GetEnvironmentVariable("Path", "Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path", "User")
 
     if ($LastExitCode -eq 3010) {
-        Write-Host 'Restarting system...'
+        Write-Host('Restarting system...')
         Register-ScheduledTask -TaskName "Resume-Setup" -Principal (New-ScheduledTaskPrincipal -UserID $env:USERNAME -RunLevel Highest -LogonType Interactive) -Trigger (New-ScheduledTaskTrigger -AtLogon) -Action (New-ScheduledTaskAction -Execute "${Env:WinDir}\System32\WindowsPowerShell\v1.0\powershell.exe" -Argument ("-NoExit -ExecutionPolicy Bypass -File `"$PSCommandPath`" -ConfigFile `"$ConfigFile`" -Step: Run-Python-Setup")) -Force;
         Restart-Computer
     }
@@ -94,9 +89,8 @@ if (Confirm-ShouldRun "Run-Python-Setup") {
     python -m pip install --upgrade pip
     pip install -r requirements.txt
     python setup.py $ConfigFile
-    Write-Host('')
-}
 
-if ($LastExitCode -ne 0) {
-    throw 'Setup failed, aborting.'
+    if ($LastExitCode -ne 0) {
+        throw 'Setup failed, aborting.'
+    }
 }

@@ -2,13 +2,16 @@ import argparse
 import ctypes
 import hashlib
 import json
+import logging
 import os
 import requests
 import sys
 import tempfile
-import timeit
-import traceback
 import urllib
+
+import log_config
+
+logger = logging.getLogger(__name__)
 
 
 def download_file(url, filename, local_dir=None, auth=None):
@@ -31,6 +34,7 @@ def download_file(url, filename, local_dir=None, auth=None):
             for chunk in r.iter_content(chunk_size=chunk_size):
                 current_size += len(chunk)
                 progress = round(100 * current_size / total_size, 2)
+                logger.info(f"Downloading {url} ({total_size//(1024*1024)} MB)...")
                 print(
                     f"\rDownloading {url}... {current_size//(1024*1024)} MB / {total_size//(1024*1024)} MB, {progress}%",
                     end="",
@@ -84,14 +88,14 @@ def download_files(url, auth=None, interactive=True):
                 )
 
                 if rv != 6:
-                    print("Skipping environment download at user request.")
+                    logger.warning("Skipping environment download at user request.")
                     manifest = None
         else:
-            print("Skipping environment download, environment is up-to-date.")
+            logger.info("Skipping environment download, environment is up-to-date.")
             manifest = None
 
     if manifest != None:
-        print("Downloading OVAs...")
+        logger.info("Downloading OVAs...")
         sorted_list = sorted(
             manifest["files"], key=lambda d: d.get("order", sys.maxsize)
         )
@@ -103,29 +107,28 @@ def download_files(url, auth=None, interactive=True):
                 hash_value = file["hash_value"]
                 recheck_hash = False
 
-                print(f"Checking hash of '{name}'...", end="")
-                sys.stdout.flush()
+                logger.info(f"Checking hash of '{name}'...")
 
                 if not os.path.isfile(pathname):
-                    print("file missing.")
+                    logger.warning("...File missing.")
                     download_file(url, name, auth=auth)
                     recheck_hash = True
                 elif not check_hash(pathname, hash_value, hash_type=hash_type):
-                    print("does not match.")
+                    logger.warning("...Hash does not match.")
                     download_file(url, name, auth=auth)
                     recheck_hash = True
                 else:
-                    print("matches.")
+                    logger.info("...Hash matches.")
 
                 if recheck_hash:
-                    print(f"Verifying hash of '{name}'...", end="")
+                    logger.info(f"Verifying hash of '{name}'...")
                     sys.stdout.flush()
 
                     if check_hash(pathname, hash_value, hash_type=hash_type):
-                        print("matches.")
+                        logger.info("...Hash matches.")
                     else:
-                        print("does not match. Aborting setup.")
-                        sys.exit()
+                        logger.error("...Hash does not match. Aborting setup.")
+                        sys.exit(1)
 
             except Exception as e:
                 print(e)
@@ -133,7 +136,7 @@ def download_files(url, auth=None, interactive=True):
         with open(os.path.join(DOWNLOAD_DIR, "manifest.json"), "w") as f:
             f.write(json.dumps(manifest, indent=4))
 
-        print("Finished downloading OVAs.")
+        logger.info("Finished downloading OVAs.")
 
 
 if __name__ == "__main__":
