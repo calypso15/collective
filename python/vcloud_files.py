@@ -31,10 +31,11 @@ def download_file(url, filename, local_dir=None, auth=None):
         with open(local_filename, "wb") as f:
             current_size = 0
 
+            logger.info(f"Downloading {url} ({total_size//(1024*1024)} MB)...")
+
             for chunk in r.iter_content(chunk_size=chunk_size):
                 current_size += len(chunk)
                 progress = round(100 * current_size / total_size, 2)
-                logger.info(f"Downloading {url} ({total_size//(1024*1024)} MB)...")
                 print(
                     f"\rDownloading {url}... {current_size//(1024*1024)} MB / {total_size//(1024*1024)} MB, {progress}%",
                     end="",
