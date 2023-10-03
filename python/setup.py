@@ -255,9 +255,9 @@ def main():
 
     root.destroy()
 
+    time.sleep(5)
     if not is_vmware_running():
         logger.info(f"Starting VMware Workstation...")
-        time.sleep(5)
         subprocess.Popen(VMWARE_PATH, shell=True)
 
     logger.info(f"Setup is complete!")
