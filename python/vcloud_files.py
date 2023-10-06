@@ -111,7 +111,7 @@ def download_files(url, auth=None, interactive=True):
                 logger.info(f"Checking hash of '{name}'...")
 
                 if not os.path.isfile(pathname):
-                    logger.warning("...File missing.")
+                    logger.info("...File missing.")
                     download_file(url, name, auth=auth)
                     recheck_hash = True
                 elif not check_hash(pathname, hash_value, hash_type=hash_type):
