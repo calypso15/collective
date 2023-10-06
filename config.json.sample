@@ -1,5 +1,11 @@
 {
+    "IgnoreErrors": false,
     "IgnoreWarnings": false,
+    "NonInteractive": false,
+    "VM": {
+        "Username": "user",
+        "Password": "pass"
+    },
     "Windows": {
         "EnableAutologon": true,
         "Username": "user",
