@@ -124,8 +124,6 @@ def main():
         )
         sys.exit(1)
 
-    vcloud_files.download_files(url=VCLOUD_URL, auth=AUTH, interactive=interactive)
-
     install = True
     if interactive:
         install = messagebox.askyesno(
@@ -144,6 +142,9 @@ def main():
                 parent=root,
             )
 
+    vcloud_files.download_files(url=VCLOUD_URL, auth=AUTH, interactive=interactive)
+
+    if install:
         logger.info("Configuring vmnet8.")
         old_lines = []
         with open(os.path.join(VMWARE_DATA_DIR, "vmnetnat.conf"), "r") as f:
