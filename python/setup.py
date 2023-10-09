@@ -133,7 +133,6 @@ def main():
             parent=root,
         )
 
-    sitetoken = None
     if install:
         if interactive:
             sitetoken = simpledialog.askstring(
