@@ -86,6 +86,7 @@ if (Confirm-ShouldRun "Run-Python-Setup") {
     Set-Location $HOME/Documents/collective/python
 
     Write-Host('Starting Python setup...')
+    python -m ensurepip
     python -m pip install --upgrade pip
     pip install -r requirements.txt
     python setup.py $ConfigFile
