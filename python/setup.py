@@ -120,7 +120,7 @@ def main():
     except requests.HTTPError as x:
         logger.debug(traceback.format_exc())
         logger.error(
-            f"Received HTTP {x.response.status_code}, exiting. Please contact ryan.ogrady@sentinelone.com for additional support."
+            f"Received HTTP {x.response.status_code} while connecting to {VCLOUD_URL}, exiting. Please contact ryan.ogrady@sentinelone.com for additional support."
         )
         sys.exit(1)
 
