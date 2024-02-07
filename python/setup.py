@@ -309,6 +309,8 @@ def install_vm(ova_path, vmx_path):
 
 
 def setup_vm(vmx_path):
+    # These are "known bad" credentials for use with malware sandbox VMs.
+    # Do not submit as a bug bounty, it will not be awarded.
     username = "STARFLEET\jeanluc"
     password = "Sentinelone!"
     restart_required = False
