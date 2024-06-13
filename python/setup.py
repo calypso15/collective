@@ -311,8 +311,8 @@ def install_vm(ova_path, vmx_path):
 def setup_vm(vmx_path):
     # These are "known bad" credentials for use with malware sandbox VMs.
     # Do not submit as a bug bounty, it will not be awarded.
-    username = "STARFLEET\jeanluc"
-    password = "Sentinelone!"
+    username = r"STARFLEET\jeanluc"
+    password = r"Sentinelone!"
     restart_required = False
 
     ip = get_ip_address(vmx_path)
@@ -324,7 +324,7 @@ def setup_vm(vmx_path):
             vmx_path=vmx_path,
             username=username,
             password=password,
-            script=(f"cscript.exe C:\Windows\system32\slmgr.vbs /rearm"),
+            script=(rf"cscript.exe C:\Windows\system32\slmgr.vbs /rearm"),
         )
 
         restart_required = True
@@ -373,8 +373,8 @@ def setup_vm(vmx_path):
 
 
 def install_agent(vmx_path, site_token):
-    username = "STARFLEET\jeanluc"
-    password = "Sentinelone!"
+    username = r"STARFLEET\jeanluc"
+    password = r"Sentinelone!"
 
     ip = get_ip_address(vmx_path)
 
@@ -419,11 +419,11 @@ def restart(vmx_path):
 
 
 def wait_until_online(vmx_path):
-    username = "STARFLEET\jeanluc"
-    password = "Sentinelone!"
+    username = r"STARFLEET\jeanluc"
+    password = r"Sentinelone!"
     logger.info(f"...Waiting for machine to be ready...")
     subprocess.run(
-        f'"{VMRUN_PATH}" -T ws -gu "{username}" -gp "{password}" runProgramInGuest "{vmx_path}" "C:\Windows\System32\whoami.exe"',
+        rf'"{VMRUN_PATH}" -T ws -gu "{username}" -gp "{password}" runProgramInGuest "{vmx_path}" "C:\Windows\System32\whoami.exe"',
         shell=True,
         capture_output=True,
     )
