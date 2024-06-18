@@ -28,16 +28,16 @@ import system_requirements
 logger = logging.getLogger(__name__)
 
 HOME = os.path.expanduser("~")
-DOCUMENTS_DIR = os.path.join(HOME, "Documents")
-DOWNLOAD_DIR = os.path.join(DOCUMENTS_DIR, ".vcloud")
-VM_DIR = os.path.join(HOME, "Documents\\Virtual Machines\\S1")
-PROGRAM_FILES_DIR = "C:\\Program Files (x86)"
-VMWARE_DATA_DIR = "C:\\ProgramData\\VMware"
-VMWARE_WORKSTATION_DIR = os.path.join(PROGRAM_FILES_DIR, "VMware\\VMware Workstation")
-VMNETLIB64_PATH = os.path.join(VMWARE_WORKSTATION_DIR, "vnetlib64.exe")
-VMRUN_PATH = os.path.join(VMWARE_WORKSTATION_DIR, "vmrun.exe")
-VMWARE_PATH = os.path.join(VMWARE_WORKSTATION_DIR, "vmware.exe")
-OVFTOOL_PATH = os.path.join(VMWARE_WORKSTATION_DIR, "OVFTool\\ovftool.exe")
+DOCUMENTS_DIR = os.path.join(HOME, R"Documents")
+DOWNLOAD_DIR = os.path.join(DOCUMENTS_DIR, R".vcloud")
+VM_DIR = os.path.join(HOME, R"Documents\Virtual Machines\S1")
+PROGRAM_FILES_DIR = R"C:\Program Files (x86)"
+VMWARE_DATA_DIR = R"C:\ProgramData\VMware"
+VMWARE_WORKSTATION_DIR = os.path.join(PROGRAM_FILES_DIR, R"VMware\VMware Workstation")
+VMNETLIB64_PATH = os.path.join(VMWARE_WORKSTATION_DIR, R"vnetlib64.exe")
+VMRUN_PATH = os.path.join(VMWARE_WORKSTATION_DIR, R"vmrun.exe")
+VMWARE_PATH = os.path.join(VMWARE_WORKSTATION_DIR, R"vmware.exe")
+OVFTOOL_PATH = os.path.join(VMWARE_WORKSTATION_DIR, R"OVFTool\ovftool.exe")
 
 
 def main():
@@ -147,7 +147,7 @@ def main():
     if install:
         logger.info("Configuring vmnet8.")
         old_lines = []
-        with open(os.path.join(VMWARE_DATA_DIR, "vmnetnat.conf"), "r") as f:
+        with open(os.path.join(VMWARE_DATA_DIR, "vmnetnat.conf"), "R") as f:
             old_lines = f.readlines()
 
         new_lines = []
@@ -162,7 +162,7 @@ def main():
 
         registry_key = winreg.OpenKey(
             winreg.HKEY_LOCAL_MACHINE,
-            r"SOFTWARE\\WOW6432Node\\VMware, Inc.\\VMnetLib\\VMnetConfig\\vmnet8",
+            R"SOFTWARE\WOW6432Node\VMware, Inc.\VMnetLib\VMnetConfig\vmnet8",
             0,
             winreg.KEY_ALL_ACCESS,
         )
@@ -203,20 +203,20 @@ def main():
                     item = {}
                     base_name = os.path.splitext(file["name"])[0]
                     item["name"] = file["name"]
-                    item["order"] = file.get("order", sys.maxsize)
+                    item["ordeR"] = file.get("ordeR", sys.maxsize)
                     item["ova_path"] = os.path.join(DOWNLOAD_DIR, file["name"])
                     item["vmx_path"] = os.path.join(
                         VM_DIR, base_name, base_name + ".vmx"
                     )
                     install_list.append(item)
 
-            for file in sorted(install_list, key=lambda x: x["order"]):
+            for file in sorted(install_list, key=lambda x: x["ordeR"]):
                 vmx_path = file["vmx_path"]
                 ova_path = file["ova_path"]
                 logger.info(f"Installing {vmx_path}...")
                 install_vm(ova_path, vmx_path)
 
-            for file in sorted(install_list, key=lambda x: x["order"]):
+            for file in sorted(install_list, key=lambda x: x["ordeR"]):
                 vmx_path = file["vmx_path"]
                 logger.info(f"Setting up {vmx_path}...")
                 setup_vm(vmx_path)
@@ -230,7 +230,7 @@ def main():
             threads = []
             logger.info(f"Taking snapshots...")
             sys.stdout.flush()
-            for file in sorted(install_list, key=lambda x: x["order"]):
+            for file in sorted(install_list, key=lambda x: x["ordeR"]):
                 vmx_path = file["vmx_path"]
                 logger.info(f"Creating snapshot 'Baseline' for {vmx_path}...")
                 wait_until_online(vmx_path)
@@ -275,7 +275,7 @@ def is_workstation_licensed():
     try:
         with winreg.OpenKey(
             winreg.HKEY_LOCAL_MACHINE,
-            r"SOFTWARE\WOW6432Node\VMware, Inc.\VMware Workstation",
+            R"SOFTWARE\WOW6432Node\VMware, Inc.\VMware Workstation",
         ) as key:
             index = 0
             while True:
@@ -314,8 +314,8 @@ def install_vm(ova_path, vmx_path):
 def setup_vm(vmx_path):
     # These are "known bad" credentials for use with malware sandbox VMs.
     # Do not submit as a bug bounty, it will not be awarded.
-    username = "STARFLEET\jeanluc"
-    password = "Sentinelone!"
+    username = R"STARFLEET\jeanluc"
+    password = R"Sentinelone!"
     restart_required = False
 
     ip = get_ip_address(vmx_path)
@@ -327,7 +327,7 @@ def setup_vm(vmx_path):
             vmx_path=vmx_path,
             username=username,
             password=password,
-            script=(f"cscript.exe C:\Windows\system32\slmgr.vbs /rearm"),
+            script=(Rf"cscript.exe C:\Windows\system32\slmgr.vbs /rearm"),
         )
 
         restart_required = True
@@ -376,8 +376,8 @@ def setup_vm(vmx_path):
 
 
 def install_agent(vmx_path, site_token):
-    username = "STARFLEET\jeanluc"
-    password = "Sentinelone!"
+    username = R"STARFLEET\jeanluc"
+    password = R"Sentinelone!"
 
     ip = get_ip_address(vmx_path)
 
@@ -389,7 +389,7 @@ def install_agent(vmx_path, site_token):
             username=username,
             password=password,
             script=(
-                f'SCHTASKS /create /tn Agent /sc once /tr ""msiexec /passive /i ""C:\\Users\\jeanluc\\Desktop\\SentinelInstaller_windows_64bit.msi"" SITE_TOKEN={site_token}"" /ru interactive /rl highest /st 00:00 /f && SCHTASKS /run /tn Agent && SCHTASKS /delete /tn Agent /f'
+                Rf'SCHTASKS /create /tn Agent /sc once /tr ""msiexec /passive /i ""C:\Users\jeanluc\Desktop\SentinelInstaller_windows_64bit.msi"" SITE_TOKEN={site_token}"" /ru interactive /rl highest /st 00:00 /f && SCHTASKS /run /tn Agent && SCHTASKS /delete /tn Agent /f'
             ),
         )
 
@@ -401,7 +401,7 @@ def install_agent(vmx_path, site_token):
             username=username,
             password=password,
             script=(
-                f'SCHTASKS /create /tn Agent /sc once /tr ""msiexec /passive /i ""C:\\Users\\jeanluc\\Desktop\\SentinelInstaller_windows_32bit.msi"" SITE_TOKEN={site_token}"" /ru interactive /rl highest /st 00:00 /f && SCHTASKS /run /tn Agent && SCHTASKS /delete /tn Agent /f'
+                Rf'SCHTASKS /create /tn Agent /sc once /tr ""msiexec /passive /i ""C:\Users\jeanluc\Desktop\SentinelInstaller_windows_32bit.msi"" SITE_TOKEN={site_token}"" /ru interactive /rl highest /st 00:00 /f && SCHTASKS /run /tn Agent && SCHTASKS /delete /tn Agent /f'
             ),
         )
 
@@ -422,11 +422,11 @@ def restart(vmx_path):
 
 
 def wait_until_online(vmx_path):
-    username = "STARFLEET\jeanluc"
-    password = "Sentinelone!"
+    username = R"STARFLEET\jeanluc"
+    password = R"Sentinelone!"
     logger.info(f"...Waiting for machine to be ready...")
     subprocess.run(
-        f'"{VMRUN_PATH}" -T ws -gu "{username}" -gp "{password}" runProgramInGuest "{vmx_path}" "C:\Windows\System32\whoami.exe"',
+        rf'"{VMRUN_PATH}" -T ws -gu "{username}" -gp "{password}" runProgramInGuest "{vmx_path}" "C:\Windows\System32\whoami.exe"',
         shell=True,
         capture_output=True,
     )
