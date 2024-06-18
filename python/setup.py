@@ -147,7 +147,7 @@ def main():
     if install:
         logger.info("Configuring vmnet8.")
         old_lines = []
-        with open(os.path.join(VMWARE_DATA_DIR, "vmnetnat.conf"), "R") as f:
+        with open(os.path.join(VMWARE_DATA_DIR, "vmnetnat.conf"), "r") as f:
             old_lines = f.readlines()
 
         new_lines = []
