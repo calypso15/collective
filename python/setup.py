@@ -93,7 +93,7 @@ def main():
         logger.info("VMware Workstation license found.")
     else:
         logger.error(
-            "VMware Workstation license not found, aborting. Please open VMware Workstation and add a license or start the free trial, then re-run setup."
+            "VMware Workstation license not found, aborting. Please install and open VMware Workstation and add a license or start the free trial, then re-run setup."
         )
         sys.exit(1)
 
@@ -272,25 +272,28 @@ def is_vmware_running():
 
 
 def is_workstation_licensed():
-    with winreg.OpenKey(
-        winreg.HKEY_LOCAL_MACHINE,
-        r"SOFTWARE\WOW6432Node\VMware, Inc.\VMware Workstation",
-    ) as key:
-        index = 0
-        while True:
-            try:
-                subkey_name = winreg.EnumKey(key, index)
+    try:
+        with winreg.OpenKey(
+            winreg.HKEY_LOCAL_MACHINE,
+            r"SOFTWARE\WOW6432Node\VMware, Inc.\VMware Workstation",
+        ) as key:
+            index = 0
+            while True:
+                try:
+                    subkey_name = winreg.EnumKey(key, index)
 
-                if "License" in subkey_name:
-                    with winreg.OpenKey(key, subkey_name) as sub:
-                        try:
-                            winreg.QueryValueEx(sub, "Serial")
-                            return True
-                        except FileNotFoundError:
-                            pass
-                index += 1
-            except OSError:
-                break
+                    if "License" in subkey_name:
+                        with winreg.OpenKey(key, subkey_name) as sub:
+                            try:
+                                winreg.QueryValueEx(sub, "Serial")
+                                return True
+                            except FileNotFoundError:
+                                pass
+                    index += 1
+                except OSError:
+                    break
+    except FileNotFoundError as x:
+        return False
 
     return False
 
