@@ -203,20 +203,20 @@ def main():
                     item = {}
                     base_name = os.path.splitext(file["name"])[0]
                     item["name"] = file["name"]
-                    item["ordeR"] = file.get("ordeR", sys.maxsize)
+                    item["order"] = file.get("order", sys.maxsize)
                     item["ova_path"] = os.path.join(DOWNLOAD_DIR, file["name"])
                     item["vmx_path"] = os.path.join(
                         VM_DIR, base_name, base_name + ".vmx"
                     )
                     install_list.append(item)
 
-            for file in sorted(install_list, key=lambda x: x["ordeR"]):
+            for file in sorted(install_list, key=lambda x: x["order"]):
                 vmx_path = file["vmx_path"]
                 ova_path = file["ova_path"]
                 logger.info(f"Installing {vmx_path}...")
                 install_vm(ova_path, vmx_path)
 
-            for file in sorted(install_list, key=lambda x: x["ordeR"]):
+            for file in sorted(install_list, key=lambda x: x["order"]):
                 vmx_path = file["vmx_path"]
                 logger.info(f"Setting up {vmx_path}...")
                 setup_vm(vmx_path)
@@ -230,7 +230,7 @@ def main():
             threads = []
             logger.info(f"Taking snapshots...")
             sys.stdout.flush()
-            for file in sorted(install_list, key=lambda x: x["ordeR"]):
+            for file in sorted(install_list, key=lambda x: x["order"]):
                 vmx_path = file["vmx_path"]
                 logger.info(f"Creating snapshot 'Baseline' for {vmx_path}...")
                 wait_until_online(vmx_path)
