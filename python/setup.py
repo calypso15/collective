@@ -74,19 +74,6 @@ def main():
     interactive = not config.get("NonInteractive", False)
     sitetoken = config.get("SiteToken", None)
 
-    if not is_workstation_licensed():
-        logger.info("Starting VMWare Workstation...")
-        subprocess.Popen(f'"{VMWARE_PATH}"', shell=True)
-        time.sleep(10)
-
-    if is_workstation_licensed():
-        logger.info("VMware Workstation license found.")
-    else:
-        logger.error(
-            "VMware Workstation license not found, aborting. Please open VMware Workstation and add a personal use license, then re-run setup."
-        )
-        sys.exit(1)
-
     make_dir(os.path.join(HOME, "Desktop/Malware"))
     logger.info("Excluding malware directory from Windows Defender.")
     run_powershell("Set-MpPreference -ExclusionPath $HOME/Desktop/Malware")
