@@ -76,7 +76,7 @@ def main():
 
     if interactive and not is_workstation_licensed():
         logger.info("Starting VMWare Workstation...")
-        subprocess.Popen(VMWARE_PATH, shell=True)
+        subprocess.Popen(f'"{VMWARE_PATH}"', shell=True)
 
         ready = messagebox.askokcancel(
             title="Starting VMWare Workstation",
