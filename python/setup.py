@@ -74,26 +74,16 @@ def main():
     interactive = not config.get("NonInteractive", False)
     sitetoken = config.get("SiteToken", None)
 
-    if interactive and not is_workstation_licensed():
+    if not is_workstation_licensed():
         logger.info("Starting VMWare Workstation...")
         subprocess.Popen(f'"{VMWARE_PATH}"', shell=True)
-
-        ready = messagebox.askokcancel(
-            title="Starting VMWare Workstation",
-            message="VMWare should now be running. Please add a license or start the free trial, then click OK.",
-            icon=messagebox.INFO,
-            parent=root,
-        )
-
-        if not ready:
-            logger.warning("Aborting setup at user request.")
-            sys.exit(1)
+        time.sleep(10)
 
     if is_workstation_licensed():
         logger.info("VMware Workstation license found.")
     else:
         logger.error(
-            "VMware Workstation license not found, aborting. Please install and open VMware Workstation and add a license or start the free trial, then re-run setup."
+            "VMware Workstation license not found, aborting. Please open VMware Workstation and add a personal use license, then re-run setup."
         )
         sys.exit(1)
 
